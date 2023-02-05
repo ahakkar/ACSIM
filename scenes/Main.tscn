@@ -1,0 +1,70 @@
+[gd_scene load_steps=4 format=3 uid="uid://ciperl36hv26g"]
+
+[ext_resource type="Script" path="res://scripts/Main.gd" id="1_ysxum"]
+[ext_resource type="Script" path="res://scripts/View.gd" id="2_rg0qh"]
+[ext_resource type="Script" path="res://scripts/Control.gd" id="3_1t1c8"]
+
+[node name="Main" type="Node"]
+script = ExtResource("1_ysxum")
+
+[node name="View" type="Node2D" parent="."]
+script = ExtResource("2_rg0qh")
+
+[node name="Control" type="Control" parent="."]
+layout_mode = 3
+anchor_right = 0.193
+anchor_bottom = 0.299
+offset_left = 265.0
+offset_top = 243.0
+offset_right = 82.664
+offset_bottom = 89.248
+script = ExtResource("3_1t1c8")
+
+[node name="ConstructionPanel" type="Panel" parent="Control"]
+layout_mode = 0
+offset_right = 40.0
+offset_bottom = 40.0
+
+[node name="button_residental" type="Button" parent="Control/ConstructionPanel"]
+layout_mode = 0
+offset_right = 8.0
+offset_bottom = 8.0
+
+[node name="button_commercial" type="Button" parent="Control/ConstructionPanel"]
+layout_mode = 0
+offset_right = 8.0
+offset_bottom = 8.0
+
+[node name="button_industrial" type="Button" parent="Control/ConstructionPanel"]
+layout_mode = 0
+offset_right = 8.0
+offset_bottom = 8.0
+
+[node name="button_roads" type="Button" parent="Control/ConstructionPanel"]
+layout_mode = 0
+offset_right = 8.0
+offset_bottom = 8.0
+
+[node name="button_demolish" type="Button" parent="Control/ConstructionPanel"]
+layout_mode = 0
+offset_right = 8.0
+offset_bottom = 8.0
+
+[node name="button_services" type="Button" parent="Control/ConstructionPanel"]
+layout_mode = 0
+offset_right = 8.0
+offset_bottom = 8.0
+
+[node name="button_social" type="Button" parent="Control/ConstructionPanel"]
+layout_mode = 0
+offset_right = 8.0
+offset_bottom = 8.0
+
+[connection signal="button_pressed" from="Control" to="View" method="_on_control_button_pressed"]
+[connection signal="pressed" from="Control/ConstructionPanel/button_residental" to="Control" method="_on_button_residental_pressed"]
+[connection signal="pressed" from="Control/ConstructionPanel/button_commercial" to="Control" method="_on_button_commercial_pressed"]
+[connection signal="pressed" from="Control/ConstructionPanel/button_industrial" to="Control" method="_on_button_industrial_pressed"]
+[connection signal="pressed" from="Control/ConstructionPanel/button_roads" to="Control" method="_on_button_roads_pressed"]
+[connection signal="pressed" from="Control/ConstructionPanel/button_demolish" to="Control" method="_on_button_demolish_pressed"]
+[connection signal="pressed" from="Control/ConstructionPanel/button_services" to="Control" method="_on_button_services_pressed"]
+[connection signal="pressed" from="Control/ConstructionPanel/button_social" to="Control" method="_on_button_social_pressed"]
