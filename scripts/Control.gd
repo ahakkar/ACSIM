@@ -3,8 +3,7 @@ extends Control
 # var view = get_node("../View")
 
 signal button_pressed(button_name)
-
-var BUTTON_SIZE = Vector2i(50,50)
+@onready var debug_info = get_node("DebugInfo")
 
 # name, position
 var buttons = {
@@ -19,18 +18,12 @@ var buttons = {
 
 # Called when the node enters the scene tree for the first time.
 func _ready():
-	adjust_construction_panel()
-	$ConstructionPanel.set_size(Vector2(500, 120))
 	create_buttons()	
 
 # Called every frame. 'delta' is the elapsed time since the previous frame.
 func _process(_delta):
-	pass
+	debug_info.set_text(str(get_viewport().get_mouse_position()))
 	
-func adjust_construction_panel():
-	$ConstructionPanel.set_size(Vector2i(500, 120))
-	$ConstructionPanel.set_position(Vector2i(0, -200))
-
 # defines construction toolbar buttons	
 func create_buttons():
 	for button in buttons:		
@@ -40,7 +33,7 @@ func create_buttons():
 		if(!node_path):
 			push_error("Error: Button '" + button + "' not found when trying to set it's properties in Control.gd!")		
 		
-		node_path.set_size(BUTTON_SIZE)
+		node_path.set_size(Globals.GUI_BUILD_BUTTON_SIZE)
 		node_path.set_position(values[0])
 		node_path.set_anchor(SIDE_TOP, anchor_top)
 		node_path.set_text(values[1])
