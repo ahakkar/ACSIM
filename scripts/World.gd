@@ -40,23 +40,32 @@ func _input(event):
 			
 
 func place_building_to_map():
-	
+	# layer | position coords | tilemap id | coords of the tile at tilemap | alternative tile
+		
 	match building_type:
 		Globals.TYPE_RESIDENTIAL:
-			tilemap = Vector2i(4,4)
+			tilemap = Vector2i(0,0)
+			set_cell(0, local_to_map(get_viewport().get_mouse_position()) , 0, tilemap, 0)
 		Globals.TYPE_COMMERCIAL:
 			tilemap = Vector2i(4,12)
+			set_cell(0, local_to_map(get_viewport().get_mouse_position()) , 1, tilemap, 0)
 		Globals.TYPE_INDUSTRIAL:
 			tilemap = Vector2i(4,20)
+			set_cell(0, local_to_map(get_viewport().get_mouse_position()) , 1, tilemap, 0)
 		Globals.TYPE_ROADS:
 			tilemap = Vector2i(14,2)
+			set_cell(0, local_to_map(get_viewport().get_mouse_position()) , 1, tilemap, 0)
 		Globals.TYPE_DEMOLISH:
 			tilemap = Vector2i(4,4)
+			set_cell(0, local_to_map(get_viewport().get_mouse_position()) , 1, tilemap, 0)
 		Globals.TYPE_SERVICES:
 			tilemap = Vector2i(4,8)
+			set_cell(0, local_to_map(get_viewport().get_mouse_position()) , 1, tilemap, 0)
 		Globals.TYPE_SOCIAL:
 			tilemap = Vector2i(4,0)
+			set_cell(0, local_to_map(get_viewport().get_mouse_position()) , 1, tilemap, 0)
 		_:	#default
 			tilemap = Vector2i(16,16)
+			set_cell(0, local_to_map(get_viewport().get_mouse_position()) , 1, tilemap, 0)
 			
-	set_cell(0, local_to_map(get_viewport().get_mouse_position()), 1, tilemap, 0)
+	# set_cell(0, local_to_map(get_viewport().get_mouse_position()) , 1, tilemap, 0)

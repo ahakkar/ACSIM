@@ -20,8 +20,11 @@ const TYPE_POWERPLANT = "powerplant"
 const TYPE_ROADS = "roads"
 const TYPE_DEMOLISH = "demolish"
 
-const CAMERA_MIN_ZOOM_LEVEL: float = 0.5
+# camera movement settings
+var CAMERA_ZOOM_LEVEL : float = 1.0
+
+const CAMERA_MIN_ZOOM_LEVEL: float = 0.1
 const CAMERA_MAX_ZOOM_LEVEL: float = 2.0
 const CAMERA_ZOOM_FACTOR: float = 0.1
 const CAMERA_ZOOM_DURATION: float = 0.1
-const CAMERA_DRAG_MULTI:float = 2.0
+const CAMERA_PAN_MULTI:float = 2.0

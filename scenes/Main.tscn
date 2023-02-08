@@ -1,10 +1,18 @@
-[gd_scene load_steps=8 format=3 uid="uid://ciperl36hv26g"]
+[gd_scene load_steps=12 format=3 uid="uid://ciperl36hv26g"]
 
 [ext_resource type="Script" path="res://scripts/Main.gd" id="1_ysxum"]
+[ext_resource type="Texture2D" uid="uid://byy4k72uxx7sj" path="res://art/buildings/residential/med/med20x20res001.png" id="2_sfv1p"]
 [ext_resource type="Script" path="res://scripts/Control.gd" id="3_1t1c8"]
 [ext_resource type="Script" path="res://scripts/World.gd" id="3_6q5ju"]
 [ext_resource type="Texture2D" uid="uid://dakvtfpnjuwwl" path="res://art/placeholder/outdoors.png" id="3_yddbk"]
+[ext_resource type="Texture2D" uid="uid://bor3gkli3s8eg" path="res://art/terrain/water.png" id="4_i5fj4"]
 [ext_resource type="PackedScene" uid="uid://2we3txfr812u" path="res://scenes/Camera_zoom_2d.tscn" id="4_rx82t"]
+
+[sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_3q7ue"]
+texture = ExtResource("2_sfv1p")
+0:0/size_in_atlas = Vector2i(20, 20)
+0:0/next_alternative_id = 2
+0:0/0 = 0
 
 [sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_s55i2"]
 texture = ExtResource("3_yddbk")
@@ -452,8 +460,15 @@ texture = ExtResource("3_yddbk")
 14:2/size_in_atlas = Vector2i(4, 4)
 14:2/0 = 0
 
+[sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_bcy6h"]
+texture = ExtResource("4_i5fj4")
+0:0/0 = 0
+
 [sub_resource type="TileSet" id="TileSet_t3bbo"]
+terrain_set_0/mode = 0
 sources/1 = SubResource("TileSetAtlasSource_s55i2")
+sources/0 = SubResource("TileSetAtlasSource_3q7ue")
+sources/2 = SubResource("TileSetAtlasSource_bcy6h")
 
 [node name="Main" type="Node"]
 script = ExtResource("1_ysxum")
@@ -462,6 +477,13 @@ script = ExtResource("1_ysxum")
 tile_set = SubResource("TileSet_t3bbo")
 format = 2
 layer_0/name = "Buildings"
+layer_1/name = "Terrain"
+layer_1/enabled = true
+layer_1/modulate = Color(1, 1, 1, 1)
+layer_1/y_sort_enabled = false
+layer_1/y_sort_origin = 0
+layer_1/z_index = 0
+layer_1/tile_data = PackedInt32Array()
 script = ExtResource("3_6q5ju")
 
 [node name="CameraZoom2D" parent="World" instance=ExtResource("4_rx82t")]
@@ -526,6 +548,7 @@ offset_right = 8.0
 offset_bottom = 8.0
 
 [node name="DebugInfo" type="Label" parent="UILayer/Control"]
+layout_mode = 0
 offset_left = 568.0
 offset_top = 24.0
 offset_right = 928.0
