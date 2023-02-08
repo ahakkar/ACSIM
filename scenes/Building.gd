@@ -1,4 +1,4 @@
-extends Node2D
+extends TileMap
 
-func _process(delta):
+func _process(_delta):
 	position = get_viewport().get_mouse_position()

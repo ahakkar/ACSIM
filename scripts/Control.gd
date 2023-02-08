@@ -22,7 +22,7 @@ func _ready():
 
 # Called every frame. 'delta' is the elapsed time since the previous frame.
 func _process(_delta):
-	debug_info.set_text(str(get_viewport().get_mouse_position()))
+	debug_info.set_text(str(get_viewport().get_mouse_position()) +"\n" + "FPS " + str(Engine.get_frames_per_second()))
 	
 # defines construction toolbar buttons	
 func create_buttons():
@@ -31,7 +31,8 @@ func create_buttons():
 		var node_path = get_node(Globals.CONSTRUCTION_PANEL_NODE + "/" + str(button))
 		
 		if(!node_path):
-			push_error("Error: Button '%s' not found when trying to set it's properties in Control.gd!", button)		
+			var errmsg = Globals.ERROR_BUTTON_NOT_FOUND % button
+			push_error(errmsg)		
 		
 		node_path.set_size(Globals.GUI_BUILD_BUTTON_SIZE)
 		node_path.set_position(values[0])

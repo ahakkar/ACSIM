@@ -61,7 +61,15 @@ const TILE_SIZE_X:int = 16
 const TILE_SIZE_Y:int = 16
 
 # error messages
+const ERROR_BUILDING_TYPE_NOT_SET:String = "Building type not set, while trying to place building."
+const ERROR_BUTTON_NOT_FOUND:String = "Button '%s' not found when trying to set it's properties in Control.gd!"
+const ERROR_FAILED_TO_LOAD_FILE:String = "Failed to load image with filename: '%s'"
+const ERROR_TILE_X_COORDS_OUT_OF_BOUNDS:String = "Trying to build outside the game area: '%s'. Cell should be between '%s-%s'"
+const ERROR_TILE_Y_COORDS_OUT_OF_BOUNDS:String = "Trying to build outside the game area: y is: '%s'. Cell should be between '%s-%s'"
 const ERROR_IMAGE_WIDTH_INCORRECT:String = "Provided map image width '%s' too small or too large. Width should be between: '%s-%s'"
 const ERROR_IMAGE_HEIGHT_INCORRECT:String = "Provided map image height '%s' too small or too large. Height should be between: '%s-%s'"
-const ERROR_FAILED_TO_LOAD_FILE:String = "Failed to load image with filename: '%s'"
+const ERROR_MAKING_WORLD_INSTANCE:String = "Error while making an instance of World node."
+const ERROR_WHILE_GENERATING_MAP:String = "Error in generating the map. Game won't start."
+const ERROR_WORLD_TILEMAP_NODE_MISSING:String = "World TileMap node missing or name is wrong. Tried to load: '%s'"
+
 

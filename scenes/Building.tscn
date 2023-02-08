@@ -1,8 +1,6 @@
-[gd_scene load_steps=3 format=3 uid="uid://sqvd1ev6ubp"]
+[gd_scene load_steps=2 format=3 uid="uid://sqvd1ev6ubp"]
 
 [ext_resource type="Script" path="res://scenes/Building.gd" id="1_uqlnt"]
-[ext_resource type="Texture2D" uid="uid://dabmo11wkiwm3" path="res://art/buildings/building_grid.png" id="1_yd1tr"]
 
 [node name="Building" type="Sprite2D"]
-texture = ExtResource("1_yd1tr")
 script = ExtResource("1_uqlnt")

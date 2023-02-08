@@ -25,7 +25,6 @@ func _set_camera_zoom_level(value: float) -> void:
 	)
 	
 func _on_world_set_camera_position(pos: Vector2) -> void:
-	print("Setting camera pos:", pos)
 	self.position = pos
 	
 func _unhandled_input(event):	

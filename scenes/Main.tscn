@@ -549,10 +549,11 @@ offset_bottom = 8.0
 
 [node name="DebugInfo" type="Label" parent="UILayer/Control"]
 layout_mode = 0
-offset_left = 568.0
-offset_top = 24.0
-offset_right = 928.0
-offset_bottom = 280.0
+offset_left = 648.0
+offset_top = 16.0
+offset_right = 936.0
+offset_bottom = 256.0
+horizontal_alignment = 2
 
 [connection signal="set_camera_position" from="World" to="World/CameraZoom2D" method="_on_world_set_camera_position"]
 [connection signal="button_pressed" from="UILayer/Control" to="World" method="_on_control_button_pressed"]

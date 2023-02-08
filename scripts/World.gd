@@ -2,9 +2,10 @@ extends TileMap
 
 signal set_camera_position(pos:Vector2)
 
-var building : bool = false
+var has_placeable_building: bool = false
+var building
 var building_type: String
-#var scene
+var scene
 
 # Called when the node enters the scene tree for the first time.
 func _ready():	
@@ -14,37 +15,13 @@ func _ready():
 func _process(_delta):
 	pass
 
-
-func _on_control_button_pressed(type):
-	# create new building, in Building node it is attached to mouse cursor
-	#scene = load(Globals.SCENE_PATH + "Building.tscn")
-	#building = scene.instantiate()	
-	#add_child(building)	
-	self.building = true
-	self.building_type = type
-
-	#print(button_name + " button pressed in Control! :-0")
-	pass
-
-func _input(event):	
-	# place the building
-	if event.is_action_pressed("place_building") and building != false:
-		# stop processing the sprite (fix it in place). no idea if it is a good idea yet..	
-		#building.set_process(false)
-		building = false
-		place_building_to_map(event)
-	
-	# cancel placement
-	if event.is_action_pressed("cancel"):
-		if building != false:
-			pass
-			
-func calculate_grid_coordinates(map_position: Vector2) -> Vector2:
-	return (map_position).floor()
-
-func place_building_to_map(event):
+func get_building_properties() -> Array:
 	var tileset_id = 0 # default value
 	var tilemap_tile_coords: Vector2i
+	
+	if building_type == null:
+		push_error(Globals.ERROR_BUILDING_TYPE_NOT_SET)
+		return []
 	
 	# layer | position coords | tileset id | coords of the tile at tilemap | alternative tile		
 	match building_type:
@@ -73,11 +50,52 @@ func place_building_to_map(event):
 			tilemap_tile_coords = Vector2i(16,16)
 			tileset_id = 1
 			
-	var mouse_pos = local_to_map(get_global_mouse_position())
-	set_cell(Globals.LAYER_BUILDINGS, mouse_pos, tileset_id, tilemap_tile_coords, 0)
-	#print("cell set at layer ", Globals.LAYER_BUILDINGS)
-	#print("cellpos:", local_to_map(get_global_mouse_position()))
-	#print("event position:", event.position)
+	return [tileset_id, tilemap_tile_coords]	
+
+func _on_control_button_pressed(type):	
+	self.building_type = type	
+	
+	# create new building, in Building node it is attached to mouse cursor
+	var building_properties = get_building_properties()	
+	scene = load(Globals.SCENE_PATH + "Building.tscn")	
+	building = scene.instantiate()	
+	#building.set_cell(0, Vector2i(0,0), building_properties[0], building_properties[1], 0)
+	add_child(building)
+	
+	has_placeable_building = true	
+
+func _input(event):	
+	# place the building
+	if event.is_action_pressed("place_building") and has_placeable_building:
+		has_placeable_building = false
+		place_building_to_map()
+	
+	# cancel placement
+	if event.is_action_pressed("cancel"):
+		if has_placeable_building:
+			pass
+			
+func calculate_grid_coordinates(map_position: Vector2) -> Vector2:
+	return (map_position).floor()
+	
+func are_coords_valid(value:int, errmsg:String) -> bool:
+	if Globals.MAP_MIN_HEIGHT > value or value > Globals.MAP_MAX_HEIGHT:		
+		errmsg = errmsg % [value, Globals.MAP_MIN_HEIGHT, Globals.MAP_MAX_HEIGHT]
+		push_error(errmsg)
+		return false
+	
+	return true
+
+func place_building_to_map():
+	var building_properties = get_building_properties()
+	var tile_on_mouse = local_to_map(get_global_mouse_position())
+	
+	if !are_coords_valid(tile_on_mouse.y,Globals.ERROR_TILE_Y_COORDS_OUT_OF_BOUNDS):
+		return false
+	elif !are_coords_valid(tile_on_mouse.x,Globals.ERROR_TILE_X_COORDS_OUT_OF_BOUNDS):
+		return false	
+
+	set_cell(Globals.LAYER_BUILDINGS, tile_on_mouse, building_properties[0], building_properties[1], 0)
 
 func generate_terrain(filename) -> bool:	
 	# Try to load the image which we used to place water & ground to world map
@@ -87,31 +105,23 @@ func generate_terrain(filename) -> bool:
 		var errmsg = Globals.ERROR_FAILED_TO_LOAD_FILE
 		push_error(errmsg % filename)
 		return false
-		
-	var image_height:int = image.get_height()
-	var image_width:int = image.get_width()
-		
+				
 	# Check if image is too small or too large
-	if Globals.MAP_MIN_HEIGHT > image_height or image_height > Globals.MAP_MAX_HEIGHT:
-		var errmsg = Globals.ERROR_IMAGE_HEIGHT_INCORRECT
-		errmsg = errmsg % [image_height, Globals.MAP_MIN_HEIGHT, Globals.MAP_MAX_HEIGHT]
-		push_error(errmsg)
+	var image_size:Vector2i = image.get_size()
+	if !are_coords_valid(image_size.y,Globals.ERROR_IMAGE_HEIGHT_INCORRECT):
 		return false
-	elif Globals.MAP_MIN_WIDTH > image_width or image_width > Globals.MAP_MAX_WIDTH:
-		var errmsg = Globals.ERROR_IMAGE_WIDTH_INCORRECT
-		errmsg = errmsg % [image_width, Globals.MAP_MIN_WIDTH, Globals.MAP_MAX_WIDTH]
-		push_error(errmsg)
+	elif !are_coords_valid(image_size.x,Globals.ERROR_IMAGE_WIDTH_INCORRECT):
 		return false
 		
 	# Try to load the world tilemap where we place the tiles
 	if (Globals.world_map == null):
-		print("World TileMap node missing or name is wrong.\n
-			  Tried to load: '%s'", Globals.WORLD_NODE)
+		var errmsg = Globals.ERROR_WORLD_TILEMAP_NODE_MISSING % Globals.WORLD_NODE
+		push_error(errmsg)
 		return false	
 		
 	# Finally populate the world map with hopefully valid tiles!	
-	for x in image_width:
-		for y in image_height:
+	for x in image_size.x:
+		for y in image_size.y:
 			# layer | position coords | tilemap id | coords of the tile at tilemap | alternative tile
 			if image.get_pixel(x, y) == Globals.WATER_TILE_COLOR_IN_MAP_FILE:
 				Globals.world_map.set_cell(Globals.LAYER_TERRAIN, Vector2i(x, y), 2, Vector2i(0,0), 0)	
@@ -119,6 +129,6 @@ func generate_terrain(filename) -> bool:
 	# center camera to world map
 	emit_signal(
 		"set_camera_position", 
-		Vector2(image_height/2.0*Globals.TILE_SIZE_X, image_width/2.0*Globals.TILE_SIZE_Y)
+		Vector2(image_size.x/2.0*Globals.TILE_SIZE_X, image_size.y/2.0*Globals.TILE_SIZE_Y)
 	)
 	return true

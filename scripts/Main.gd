@@ -20,14 +20,13 @@ func _init():
 func _ready():	 
 	Globals.world_map = get_node("World")
 	if !Globals.world_map:
-		push_error("Error while making an instance of World node.")
+		push_error(Globals.ERROR_MAKING_WORLD_INSTANCE)
 		quit_game()
 		
 	# generate terrain. quit game if generation fails.	
 	if !Globals.world_map.generate_terrain(map_file_name):
-		push_error("Error in generating the map. Game won't start.")
-		quit_game()
-		#SceneTree.quit
+		push_error(Globals.ERROR_WHILE_GENERATING_MAP)
+		quit_game()		
 
 # Called every frame. 'delta' is the elapsed time since the previous frame.
 func _process(_delta):
@@ -35,5 +34,6 @@ func _process(_delta):
 	
 func quit_game():
 	get_tree().get_root().propagate_notification(NOTIFICATION_WM_CLOSE_REQUEST)
+	#SceneTree.quit
 
 
