@@ -8,7 +8,8 @@
 
 extends Node
 
-var world_map: TileMap
+# The idea is for the user to be able to choose the map from GUI later
+var map_file_name: String = "res://maps/tampere_10x10km_1000px.png"
 
 func _init():
 	DisplayServer.window_set_size(
@@ -17,21 +18,22 @@ func _init():
 	
 # Called when the node enters the scene tree for the first time.
 func _ready():	 
-	generate_terrain()
-	
-
+	Globals.world_map = get_node("World")
+	if !Globals.world_map:
+		push_error("Error while making an instance of World node.")
+		quit_game()
+		
+	# generate terrain. quit game if generation fails.	
+	if !Globals.world_map.generate_terrain(map_file_name):
+		push_error("Error in generating the map. Game won't start.")
+		quit_game()
+		#SceneTree.quit
 
 # Called every frame. 'delta' is the elapsed time since the previous frame.
 func _process(_delta):
 	pass
+	
+func quit_game():
+	get_tree().get_root().propagate_notification(NOTIFICATION_WM_CLOSE_REQUEST)
 
-func generate_terrain():
-	world_map = get_node("World")
-	var image = Image.new()
-	image.load("res://maps/tampere_10x10km_1000px.png")		
-		
-	for x in 1000:
-		for y in 1000:
-			# layer | position coords | tilemap id | coords of the tile at tilemap | alternative tile
-			if image.get_pixel(x, y) == Color(1,1,1,1):
-				world_map.set_cell(0, Vector2i(x, y), 2, Vector2i(0,0), 0)
+

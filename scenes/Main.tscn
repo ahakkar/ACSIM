@@ -476,8 +476,8 @@ script = ExtResource("1_ysxum")
 [node name="World" type="TileMap" parent="."]
 tile_set = SubResource("TileSet_t3bbo")
 format = 2
-layer_0/name = "Buildings"
-layer_1/name = "Terrain"
+layer_0/name = "Terrain"
+layer_1/name = "Buildings"
 layer_1/enabled = true
 layer_1/modulate = Color(1, 1, 1, 1)
 layer_1/y_sort_enabled = false
@@ -554,6 +554,7 @@ offset_top = 24.0
 offset_right = 928.0
 offset_bottom = 280.0
 
+[connection signal="set_camera_position" from="World" to="World/CameraZoom2D" method="_on_world_set_camera_position"]
 [connection signal="button_pressed" from="UILayer/Control" to="World" method="_on_control_button_pressed"]
 [connection signal="pressed" from="UILayer/Control/ConstructionPanel/button_residental" to="UILayer/Control" method="_on_button_residental_pressed"]
 [connection signal="pressed" from="UILayer/Control/ConstructionPanel/button_commercial" to="UILayer/Control" method="_on_button_commercial_pressed"]

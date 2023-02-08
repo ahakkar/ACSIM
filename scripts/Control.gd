@@ -3,7 +3,7 @@ extends Control
 # var view = get_node("../View")
 
 signal button_pressed(button_name)
-@onready var debug_info = get_node("DebugInfo")
+@onready var debug_info = get_node(Globals.DEBUGINFO_NODE)
 
 # name, position
 var buttons = {
@@ -28,10 +28,10 @@ func _process(_delta):
 func create_buttons():
 	for button in buttons:		
 		var values = buttons[button]	
-		var node_path = get_node("ConstructionPanel/" + str(button))
+		var node_path = get_node(Globals.CONSTRUCTION_PANEL_NODE + "/" + str(button))
 		
 		if(!node_path):
-			push_error("Error: Button '" + button + "' not found when trying to set it's properties in Control.gd!")		
+			push_error("Error: Button '%s' not found when trying to set it's properties in Control.gd!", button)		
 		
 		node_path.set_size(Globals.GUI_BUILD_BUTTON_SIZE)
 		node_path.set_position(values[0])

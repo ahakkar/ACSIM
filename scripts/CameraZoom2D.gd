@@ -5,6 +5,13 @@ extends Camera2D
 var is_panning_camera = false
 var tween
 
+func camera_zoom_in() -> void:	
+	_set_camera_zoom_level(Globals.CAMERA_ZOOM_LEVEL - Globals.CAMERA_ZOOM_FACTOR)		
+
+func camera_zoom_out() -> void:
+	_set_camera_zoom_level(Globals.CAMERA_ZOOM_LEVEL + Globals.CAMERA_ZOOM_DURATION)
+		
+
 func _set_camera_zoom_level(value: float) -> void:
 	Globals.CAMERA_ZOOM_LEVEL = clamp(value, Globals.CAMERA_MIN_ZOOM_LEVEL, Globals.CAMERA_MAX_ZOOM_LEVEL)		
 	
@@ -17,13 +24,10 @@ func _set_camera_zoom_level(value: float) -> void:
 		Globals.CAMERA_ZOOM_DURATION
 	)
 	
-func camera_zoom_in() -> void:	
-	_set_camera_zoom_level(Globals.CAMERA_ZOOM_LEVEL - Globals.CAMERA_ZOOM_FACTOR)		
-
-func camera_zoom_out() -> void:
-	_set_camera_zoom_level(Globals.CAMERA_ZOOM_LEVEL + Globals.CAMERA_ZOOM_DURATION)
-		
-
+func _on_world_set_camera_position(pos: Vector2) -> void:
+	print("Setting camera pos:", pos)
+	self.position = pos
+	
 func _unhandled_input(event):	
 	if event.is_action_pressed("camera_zoom_in"):
 		camera_zoom_in()
@@ -39,3 +43,4 @@ func _unhandled_input(event):
 	if event is InputEventMouseMotion and is_panning_camera:
 		self.position -= event.relative * Globals.CAMERA_PAN_MULTI
 	
+
