@@ -14,6 +14,25 @@ var directions:Array = [
 
 var count:int = 0
 
+func choose_tile(tile:Vector2i) -> Vector2i:
+	var surrounding_tiles:Array = []
+			
+	# determine which directions have land around the tile
+	for dir in directions:
+		# avoid index out of bounds
+		if (tile.y+dir.y >= Globals.map_image_size.y) or (tile.x+dir.x >= Globals.map_image_size.x):
+			surrounding_tiles.append(Globals.TILE_WATER)
+		elif map_tile_data[tile.y+dir.y][tile.x+dir.x] == Globals.TILE_TERRAIN:
+			surrounding_tiles.append(Globals.TILE_TERRAIN)
+			continue
+		surrounding_tiles.append(Globals.TILE_WATER)	
+		
+	var selected_tile = match_tile(surrounding_tiles)
+	if selected_tile.x == -1 or selected_tile.y == -1:
+		selected_tile = Vector2i(1,0)
+		
+	return selected_tile
+
 func choose_randomly(list_of_entries:Array[int]) -> int:
 	return list_of_entries[randi() % list_of_entries.size()]
 	
@@ -40,8 +59,7 @@ func generate_world(filename) -> bool:
 	smooth_land_features()
 	generate_biomes()
 	set_tilemap_tiles()
-	set_shorelines()
-	print(count)
+	#print("Recursions:", count)
 	
 	# center camera to world map
 	emit_signal(
@@ -98,46 +116,19 @@ func read_image_pixel_data():
 			if image.get_pixel(x, y) == Globals.WATER_TILE_COLOR_IN_MAP_FILE:
 				map_tile_data[y][x] = Globals.TILE_WATER
 			else:
-				map_tile_data[y][x] = Globals.TILE_TERRAIN	
-				
-func set_shorelines() -> void:
-	# for testing avoid map borders to make it simpler to implement			
-	for y in range(1, Globals.map_image_size.y-1):
-		for x in range(1, Globals.map_image_size.x-1):
-			# skip tiles with land
-			if map_tile_data[y][x] != Globals.TILE_WATER:
-				continue
-				
-			# now we are supposed to be inspecting a tile with land
-			# 1 = water 0 = land
-			var surrounding_tiles:Array = []
-			
-			# determine which directions have land around the tile
-			for dir in directions:
-				if map_tile_data[y+dir.y][x+dir.x] == Globals.TILE_TERRAIN:
-					surrounding_tiles.append(Globals.TILE_TERRAIN)
-					continue
-				surrounding_tiles.append(Globals.TILE_WATER)	
-				
-			var selected_tile = match_tile(surrounding_tiles)
-			if selected_tile.x == -1 or selected_tile.y == -1:
-				continue
-
-			# layer | position coords | tilemap id | coords of the tile at tilemap | alternative tile			
-			Globals.world_map.set_cell(Globals.LAYER_TERRAIN, Vector2i(x, y), 2, selected_tile, 0)	
+				map_tile_data[y][x] = Globals.TILE_TERRAIN				
 			
 func set_tilemap_tiles() -> void:
 	for y in map_tile_data.size():
 		for x in map_tile_data[y].size():
 			# layer | position coords | tilemap id | coords of the tile at tilemap | alternative tile
-			# set water or ground
 			match map_tile_data[y][x]:
-				Globals.TILE_WATER:
+				Globals.TILE_WATER:					
 					Globals.world_map.set_cell(
 						Globals.LAYER_TERRAIN,
 						Vector2i(x, y),
 						2,
-						Vector2i(15,5),
+						choose_tile(Vector2i(x, y)), # choose tile based on surrounding tiles
 						0
 					)	
 				Globals.TILE_TERRAIN:
@@ -150,6 +141,7 @@ func set_tilemap_tiles() -> void:
 					)	
 				_:  #default
 					pass
+					
 
 # Fill water tiles, surrounded in 3-4 sides by land, with land.
 # Do it recursively with limit of n recursions!

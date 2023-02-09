@@ -10,7 +10,7 @@ class_name Main
 extends Node
 
 # The idea is for the user to be able to choose the map from GUI later
-var map_filename: String = "res://maps/tampere_10x10km_1000px.png"
+var map_filename: String = "res://maps/tampere_200px_crop.png"
 var _world := World.new()
 var _world_generator := WorldGeneration.new()
 
