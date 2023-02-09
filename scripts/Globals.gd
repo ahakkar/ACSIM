@@ -3,6 +3,16 @@
 
 extends Node
 
+enum {TILE_WATER, TILE_TERRAIN, TILE_FOREST, TILE_BOG}
+
+func are_coords_valid(value:int, bounds:Vector2i, errmsg:String) -> bool:
+	if bounds.x > value or value > bounds.y:		
+		errmsg = errmsg % [value, bounds.x, bounds.y]
+		push_error(errmsg)
+		return false
+	
+	return true
+
 var world_map: TileMap
 var map_image_size:Vector2i
 

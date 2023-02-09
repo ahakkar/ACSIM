@@ -6,25 +6,28 @@
 # - Then click and drag to draw the lines of grey cubes.
 # - etc.
 
+class_name Main
 extends Node
 
 # The idea is for the user to be able to choose the map from GUI later
-var map_file_name: String = "res://maps/tampere_200px_crop.png"
+var map_filename: String = "res://maps/tampere_10x10km_1000px.png"
+var _world := World.new()
+var _world_generator := WorldGeneration.new()
 
 func _init():
 	DisplayServer.window_set_size(
-		Vector2i(Globals.DEFAULT_X_RES, Globals.DEFAULT_Y_RES)
+		#Vector2i(Globals.DEFAULT_X_RES, Globals.DEFAULT_Y_RES)
+		Vector2i(2560,1440)
 	)
 	
 # Called when the node enters the scene tree for the first time.
 func _ready():	 
-	Globals.world_map = get_node("World")
-	if !Globals.world_map:
+	if !_world:
 		push_error(Globals.ERROR_MAKING_WORLD_INSTANCE)
 		quit_game()
 		
 	# generate terrain. quit game if generation fails.	
-	if !Globals.world_map.generate_terrain(map_file_name):
+	if !_world_generator.generate_world(map_filename):
 		push_error(Globals.ERROR_WHILE_GENERATING_MAP)
 		quit_game()		
 
