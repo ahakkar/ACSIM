@@ -9,7 +9,7 @@
 extends Node
 
 # The idea is for the user to be able to choose the map from GUI later
-var map_file_name: String = "res://maps/tampere_10x10km_1000px.png"
+var map_file_name: String = "res://maps/tampere_200px_crop.png"
 
 func _init():
 	DisplayServer.window_set_size(

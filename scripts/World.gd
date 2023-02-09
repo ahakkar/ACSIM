@@ -6,6 +6,7 @@ var has_placeable_building: bool = false
 var building
 var building_type: String
 var scene
+var image:Image = Image.new()	
 
 # Called when the node enters the scene tree for the first time.
 func _ready():	
@@ -78,9 +79,9 @@ func _input(event):
 func calculate_grid_coordinates(map_position: Vector2) -> Vector2:
 	return (map_position).floor()
 	
-func are_coords_valid(value:int, errmsg:String) -> bool:
-	if Globals.MAP_MIN_HEIGHT > value or value > Globals.MAP_MAX_HEIGHT:		
-		errmsg = errmsg % [value, Globals.MAP_MIN_HEIGHT, Globals.MAP_MAX_HEIGHT]
+func are_coords_valid(value:int, bounds:Vector2i, errmsg:String) -> bool:
+	if bounds.x > value or value > bounds.y:		
+		errmsg = errmsg % [value, bounds.x, bounds.y]
 		push_error(errmsg)
 		return false
 	
@@ -90,16 +91,23 @@ func place_building_to_map():
 	var building_properties = get_building_properties()
 	var tile_on_mouse = local_to_map(get_global_mouse_position())
 	
-	if !are_coords_valid(tile_on_mouse.y,Globals.ERROR_TILE_Y_COORDS_OUT_OF_BOUNDS):
+	if !are_coords_valid(
+		tile_on_mouse.y,
+		Vector2i(0, Globals.map_image_size.y),
+		Globals.ERROR_TILE_Y_COORDS_OUT_OF_BOUNDS
+	):
 		return false
-	elif !are_coords_valid(tile_on_mouse.x,Globals.ERROR_TILE_X_COORDS_OUT_OF_BOUNDS):
+	elif !are_coords_valid(
+		tile_on_mouse.x,
+		Vector2i(0, Globals.map_image_size.x),
+		Globals.ERROR_TILE_X_COORDS_OUT_OF_BOUNDS
+	):
 		return false	
 
 	set_cell(Globals.LAYER_BUILDINGS, tile_on_mouse, building_properties[0], building_properties[1], 0)
 
 func generate_terrain(filename) -> bool:	
-	# Try to load the image which we used to place water & ground to world map
-	var image:Image = Image.new()		
+	# Try to load the image which we used to place water & ground to world map		
 	image = load(filename)		
 	if image == null:
 		var errmsg = Globals.ERROR_FAILED_TO_LOAD_FILE
@@ -107,28 +115,99 @@ func generate_terrain(filename) -> bool:
 		return false
 				
 	# Check if image is too small or too large
-	var image_size:Vector2i = image.get_size()
-	if !are_coords_valid(image_size.y,Globals.ERROR_IMAGE_HEIGHT_INCORRECT):
+	Globals.map_image_size = image.get_size()		
+	if !validate_mapgen_params():
 		return false
-	elif !are_coords_valid(image_size.x,Globals.ERROR_IMAGE_WIDTH_INCORRECT):
+		
+	generate_water_and_land()
+	generate_shorelines()
+	
+	# center camera to world map
+	emit_signal(
+		"set_camera_position", 
+		Vector2(Globals.map_image_size.x / 2.0 * Globals.TILE_SIZE_X, 
+				Globals.map_image_size.y / 2.0 * Globals.TILE_SIZE_Y)
+	)
+	return true
+	
+func validate_mapgen_params() -> bool:
+	if !are_coords_valid(
+		Globals.map_image_size.y,
+		Vector2i(Globals.MAP_MIN_HEIGHT, Globals.MAP_MAX_HEIGHT),
+		Globals.ERROR_IMAGE_HEIGHT_INCORRECT):
+		return false
+	elif !are_coords_valid(
+		Globals.map_image_size.x,
+		Vector2i(Globals.MAP_MIN_WIDTH, Globals.MAP_MAX_WIDTH),
+		Globals.ERROR_IMAGE_WIDTH_INCORRECT):
 		return false
 		
 	# Try to load the world tilemap where we place the tiles
 	if (Globals.world_map == null):
 		var errmsg = Globals.ERROR_WORLD_TILEMAP_NODE_MISSING % Globals.WORLD_NODE
 		push_error(errmsg)
-		return false	
+		return false
 		
-	# Finally populate the world map with hopefully valid tiles!	
-	for x in image_size.x:
-		for y in image_size.y:
+	return true
+	
+func generate_water_and_land() -> void:
+	for x in Globals.map_image_size.x:
+		for y in Globals.map_image_size.y:
 			# layer | position coords | tilemap id | coords of the tile at tilemap | alternative tile
 			if image.get_pixel(x, y) == Globals.WATER_TILE_COLOR_IN_MAP_FILE:
+				Globals.world_map.set_cell(Globals.LAYER_TERRAIN, Vector2i(x, y), 2, Vector2i(15,5), 0)	
+			else:
 				Globals.world_map.set_cell(Globals.LAYER_TERRAIN, Vector2i(x, y), 2, Vector2i(0,0), 0)	
+				
+func generate_shorelines() -> void:
+	# for testing avoid map borders to make it simpler to implement
+	var directions:Array = [
+		Vector2i(0,1),	# south
+		Vector2i(1,0),	# east
+		Vector2i(0,-1), # north
+		Vector2i(-1,0)  # west
+		]
+		
+	for x in range(1, Globals.map_image_size.x-1):
+		for y in range(1, Globals.map_image_size.y-1):
+			# skip tiles with water
+			if image.get_pixel(x, y) == Globals.WATER_TILE_COLOR_IN_MAP_FILE:
+				continue
+				
+			# now we are supposed to be inspecting a tile with land
+			# 1 = water 0 = land
+			var surrounding_water_tiles:Array = []
+			
+			# determine which directions have water around the tile
+			for dir in directions:
+				if image.get_pixel(x+dir.x, y+dir.y) == Globals.WATER_TILE_COLOR_IN_MAP_FILE:
+					surrounding_water_tiles.append(1)
+					continue
+				surrounding_water_tiles.append(0)	
+				
+			var selected_tile:Vector2i = Vector2i(0,0)
+			
+			match surrounding_water_tiles:					
+				[1,1,0,0]: # south & east
+					selected_tile = Vector2i(19,0) # or 20	
+				[0,1,1,0]: # north & east
+					selected_tile = Vector2i(15,0) # or 60	
+				[0,0,1,1]: # north & west
+					selected_tile = Vector2i(11,0) # or 12	
+				[1,0,0,1]: # south & west
+					selected_tile = Vector2i(7,0) # or 8
+				[0,0,0,1]: # water in west only
+					selected_tile = Vector2i(9,0) # or 10
+				[0,0,1,0]: # water in north only
+					selected_tile = Vector2i(13,0) # or 14
+				[0,1,0,0]: # water in east only
+					selected_tile = Vector2i(17,0) # or 18
+				[1,0,0,0]: # water in south only
+					selected_tile = Vector2i(5,0) # or 6
+				_: # otherwise skip drawing
+					continue				
+						
+			# layer | position coords | tilemap id | coords of the tile at tilemap | alternative tile			
+			Globals.world_map.set_cell(Globals.LAYER_TERRAIN, Vector2i(x, y), 2, selected_tile, 0)	
+			
 	
-	# center camera to world map
-	emit_signal(
-		"set_camera_position", 
-		Vector2(image_size.x/2.0*Globals.TILE_SIZE_X, image_size.y/2.0*Globals.TILE_SIZE_Y)
-	)
-	return true

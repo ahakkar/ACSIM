@@ -4,6 +4,7 @@
 extends Node
 
 var world_map: TileMap
+var map_image_size:Vector2i
 
 # FILE PATHS
 const SCENE_PATH:String = "res://scenes/"
