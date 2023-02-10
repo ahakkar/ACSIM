@@ -10,14 +10,14 @@ class_name Main
 extends Node
 
 # The idea is for the user to be able to choose the map from GUI later
-var map_filename: String = "res://maps/tampere_200px_crop.png"
+var map_filename: String = "res://maps/varkaus_256x256px_test.png"
 var _world := World.new()
 var _world_generator := WorldGeneration.new()
 
 func _init():
 	DisplayServer.window_set_size(
 		#Vector2i(Globals.DEFAULT_X_RES, Globals.DEFAULT_Y_RES)
-		Vector2i(2560,1440)
+		Vector2i(3800,2000)
 	)
 	
 # Called when the node enters the scene tree for the first time.

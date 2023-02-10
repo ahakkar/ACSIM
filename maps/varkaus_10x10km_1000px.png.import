@@ -1,0 +1,14 @@
+[remap]
+
+importer="image"
+type="Image"
+uid="uid://bujeshs11asmb"
+path="res://.godot/imported/varkaus_10x10km_1000px.png-e4dfbae59b6511cd7f5092e2690ac3e6.image"
+
+[deps]
+
+source_file="res://maps/varkaus_10x10km_1000px.png"
+dest_files=["res://.godot/imported/varkaus_10x10km_1000px.png-e4dfbae59b6511cd7f5092e2690ac3e6.image"]
+
+[params]
+

@@ -11,8 +11,27 @@ var directions:Array = [
 	Vector2i(0,-1), # north
 	Vector2i(-1,0)  # west
 	]
-
+	
 var count:int = 0
+
+func choose_forest_tile(tile:Vector2i) -> Vector2i:
+	var surrounding_tiles:Array = []
+			
+	# determine which directions have forest around the tile
+	for dir in directions:
+		# avoid index out of bounds
+		if (tile.y+dir.y >= Globals.map_image_size.y) or (tile.x+dir.x >= Globals.map_image_size.x):
+			surrounding_tiles.append(Globals.TILE_TERRAIN)
+		elif map_tile_data[tile.y+dir.y][tile.x+dir.x] == Globals.TILE_FOREST:
+			surrounding_tiles.append(Globals.TILE_FOREST)
+			continue
+		surrounding_tiles.append(Globals.TILE_TERRAIN)	
+		
+	var selected_tile = match_forest_tile(surrounding_tiles)
+	if selected_tile.x == -1 or selected_tile.y == -1:
+		selected_tile = Vector2i(0,0)
+		
+	return selected_tile
 
 func choose_tile(tile:Vector2i) -> Vector2i:
 	var surrounding_tiles:Array = []
@@ -36,11 +55,42 @@ func choose_tile(tile:Vector2i) -> Vector2i:
 func choose_randomly(list_of_entries:Array[int]) -> int:
 	return list_of_entries[randi() % list_of_entries.size()]
 	
-#
 # Generates biomes, like forest and bog
-#
 func generate_biomes() -> void:
-	pass
+	
+	print("biome generation")
+	var fnl = FastNoiseLite.new()
+	fnl.noise_type = FastNoiseLite.TYPE_PERLIN
+	fnl.seed = randi()
+	fnl.frequency = 0.1
+	fnl.fractal_type = FastNoiseLite.FRACTAL_FBM
+	fnl.fractal_octaves = 3
+	fnl.fractal_lacunarity = 1
+	fnl.fractal_gain = 1.746
+	
+	var water_next_to_tile:bool = false
+	
+	#var noise_img = Image.new()
+	#noise_img = fnl.get_image(Globals.map_image_size.x, Globals.map_image_size.y)
+	for y in map_tile_data.size():
+		for x in map_tile_data[y].size():
+			# replace non-water with biomes			
+			if map_tile_data[y][x] > 0:	
+				water_next_to_tile = false
+				# don't put forest next to water
+				for dir in directions:
+					if (y+dir.y >= Globals.map_image_size.y) or (x+dir.x >= Globals.map_image_size.x):
+						continue
+					if map_tile_data[y+dir.y][x+dir.x] == Globals.TILE_WATER:
+						water_next_to_tile = true
+				
+				if !water_next_to_tile:
+					var noise_sample = fnl.get_noise_2d(x,y)
+					if noise_sample < 0.1:
+						count += 1
+						map_tile_data[y][x] = Globals.TILE_FOREST	
+					
+	print("maata korvattu ", count)
 
 func generate_world(filename) -> bool:	
 	# Try to load the image which we used to place water & ground to world map		
@@ -54,12 +104,11 @@ func generate_world(filename) -> bool:
 	Globals.map_image_size = image.get_size()		
 	if !validate_mapgen_params():
 		return false
-		
+	
 	read_image_pixel_data()
 	smooth_land_features()
 	generate_biomes()
 	set_tilemap_tiles()
-	#print("Recursions:", count)
 	
 	# center camera to world map
 	emit_signal(
@@ -69,8 +118,51 @@ func generate_world(filename) -> bool:
 	)
 	return true
 	
+func match_forest_tile(surrounding_tiles) -> Vector2i:
+	match surrounding_tiles:		
+		# 4 forest tiles around land
+		[2,2,2,2]:
+			return Vector2i(5,1) # forest tile
+			
+		# 3 forest tiles around land
+		[2,2,2,1]:
+			return Vector2i(5,1) # forest tile	
+		[2,2,1,2]:
+			return Vector2i(5,1) # forest tile	
+		[2,1,2,2]:
+			return Vector2i(5,1) # forest tile	
+		[1,2,2,2]:
+			return Vector2i(5,1) # forest tile	
+			
+		# 2 forest tiles around land
+		[2,2,1,1]: # south & east
+			return Vector2i(28,0)
+		[1,2,2,1]: # north & east
+			return Vector2i(26,0)
+		[1,1,2,2]: # north & west
+			return Vector2i(24,0)
+		[2,1,1,2]: # south & west
+			return Vector2i(22,0)
+			
+		# 1 forest tile around land
+		[1,1,1,2]: # west only
+			return Vector2i(23,0)
+		[1,1,2,1]: # north only
+			return Vector2i(25,0)
+		[1,2,1,1]: # east only
+			return Vector2i(27,0)
+		[2,1,1,1]: # south only
+			return Vector2i(29,0)
+			
+		_: # otherwise skip drawing
+			return Vector2i(-1,-1)
+	
 func match_tile(surrounding_tiles) -> Vector2i:
 	match surrounding_tiles:		
+		# 4 land tiles around water
+		[1,1,1,1]:
+			return Vector2i(0,0) # land tile
+			
 		# 3 land tiles around water
 		[1,1,1,0]:
 			return Vector2i(0,0) # land tile	
@@ -136,9 +228,17 @@ func set_tilemap_tiles() -> void:
 						Globals.LAYER_TERRAIN,
 						Vector2i(x, y),
 						2,
-						Vector2i(0,0),
+						choose_forest_tile(Vector2i(x,y)),
+						0
+					)
+				Globals.TILE_FOREST:
+					Globals.world_map.set_cell(
+						Globals.LAYER_TERRAIN,
+						Vector2i(x, y),
+						2,
+						Vector2i(5,1),
 						choose_randomly([0,1,2,3])
-					)	
+					)		
 				_:  #default
 					pass
 					
@@ -146,7 +246,7 @@ func set_tilemap_tiles() -> void:
 # Fill water tiles, surrounded in 3-4 sides by land, with land.
 # Do it recursively with limit of n recursions!
 func smooth_land_features() -> void:
-	# for testing avoid map borders to make it simpler to implement			
+	# TODO for testing avoid map borders to make it simpler to implement			
 	for y in range(1, Globals.map_image_size.y-1):
 		for x in range(1, Globals.map_image_size.x-1):
 			if map_tile_data[y][x] != Globals.TILE_WATER:
@@ -158,7 +258,6 @@ func smooth_recursively(pos:Vector2i) -> void:
 	# now we are supposed to be inspecting a tile with land
 	# 1 = water 0 = land
 	var surrounding_tiles:Array = []
-	count += 1
 
 	# determine which directions have land around the tile
 	for dir in directions:

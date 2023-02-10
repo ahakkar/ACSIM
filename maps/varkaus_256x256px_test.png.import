@@ -1,0 +1,14 @@
+[remap]
+
+importer="image"
+type="Image"
+uid="uid://boqavhoxnpyla"
+path="res://.godot/imported/varkaus_256x256px_test.png-473f28b8dc9e0f5d18c042490c776914.image"
+
+[deps]
+
+source_file="res://maps/varkaus_256x256px_test.png"
+dest_files=["res://.godot/imported/varkaus_256x256px_test.png-473f28b8dc9e0f5d18c042490c776914.image"]
+
+[params]
+
