@@ -3,7 +3,11 @@
 
 extends Node
 
+# tilemap tile types
 enum {TILE_WATER, TILE_TERRAIN, TILE_FOREST, TILE_BOG}
+
+# tilemap layers
+enum {LAYER_TERRAIN, LAYER_BUILDINGS}
 
 func are_coords_valid(value:int, bounds:Vector2i, errmsg:String) -> bool:
 	if bounds.x > value or value > bounds.y:		
@@ -12,6 +16,9 @@ func are_coords_valid(value:int, bounds:Vector2i, errmsg:String) -> bool:
 		return false
 	
 	return true
+	
+func choose_randomly(list_of_entries):
+	return list_of_entries[randi() % list_of_entries.size()]
 
 var world_map: TileMap
 var map_image_size:Vector2i
@@ -44,10 +51,6 @@ const TYPE_POWERPLANT:String = "powerplant"
 const TYPE_ROADS:String = "roads"
 const TYPE_DEMOLISH:String = "demolish"
 
-# tilemap layers
-const LAYER_TERRAIN:int = 0
-const LAYER_BUILDINGS:int = 1
-
 # camera movement settings
 var CAMERA_ZOOM_LEVEL: float = 1.0
 
@@ -70,6 +73,56 @@ const MAP_MAX_WIDTH:int = 1000
 # tile size
 const TILE_SIZE_X:int = 16
 const TILE_SIZE_Y:int = 16
+
+# tile dict to tilemap
+var td = {
+	TILE_WATER: {
+		"default": [Vector2i(1,0)]
+		},
+	TILE_TERRAIN: {
+		"default": [Vector2i(0,0)],
+		# 4 land tiles around water
+		[1,1,1,1]: [Vector2i(0,0)],
+		# 3 land tiles around water
+		[1,1,1,0]: [Vector2i(0,0)], 
+		[1,1,0,1]: [Vector2i(0,0)], 
+		[1,0,1,1]: [Vector2i(0,0)], 
+		[0,1,1,1]: [Vector2i(0,0)], 
+		# 2 land tiles around water		
+		[1,1,0,0]: [Vector2i(11,0), Vector2i(12,0)],
+		[0,1,1,0]: [Vector2i(7,0), Vector2i(8,0)],
+		[0,0,1,1]: [Vector2i(19,0), Vector2i(20,0)],
+		[1,0,0,1]: [Vector2i(15,0), Vector2i(16,0)],
+			# 1 land tile around water
+		[0,0,0,1]: [Vector2i(17,0), Vector2i(18,0)],
+		[0,0,1,0]: [Vector2i(5,0), Vector2i(6,0)],
+		[0,1,0,0]: [Vector2i(9,0), Vector2i(10,0)],
+		[1,0,0,0]: [Vector2i(13,0), Vector2i(14,0)],
+		},
+	TILE_FOREST: {
+		"default": [Vector2i(5,1)],
+		# 4 forest tiles around land
+		[2,2,2,2]: [Vector2i(5,1)],
+		# 3 forest tiles around land
+		[2,2,2,1]: [Vector2i(5,1)],
+		[2,2,1,2]: [Vector2i(5,1)],
+		[2,1,2,2]: [Vector2i(5,1)],
+		[1,2,2,2]: [Vector2i(5,1)],
+		# 2 forest tiles around land
+		[2,2,1,1]: [Vector2i(28,0)],
+		[1,2,2,1]: [Vector2i(26,0)],
+		[1,1,2,2]: [Vector2i(24,0)],
+		[2,1,1,2]: [Vector2i(22,0)],	
+		# 1 forest tile around land
+		[1,1,1,2]: [Vector2i(23,0)],
+		[1,1,2,1]: [Vector2i(25,0)],
+		[1,2,1,1]: [Vector2i(27,0)],
+		[2,1,1,1]: [Vector2i(29,0)],
+		},
+	TILE_BOG: {
+		"key": [Vector2i(0,0)]
+		}
+	}
 
 # error messages
 const ERROR_BUILDING_TYPE_NOT_SET:String = "Building type not set, while trying to place building."

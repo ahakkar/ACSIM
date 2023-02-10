@@ -470,7 +470,14 @@ texture = ExtResource("5_bqev6")
 0:0/2/flip_v = true
 0:0/3 = 3
 0:0/3/transpose = true
+1:0/next_alternative_id = 4
 1:0/0 = 0
+1:0/1 = 1
+1:0/1/flip_h = true
+1:0/2 = 2
+1:0/2/flip_v = true
+1:0/3 = 3
+1:0/3/transpose = true
 2:0/0 = 0
 3:0/0 = 0
 4:0/0 = 0
@@ -1528,6 +1535,7 @@ offset_right = 936.0
 offset_bottom = 256.0
 horizontal_alignment = 2
 
+[connection signal="set_camera_position" from="." to="World/CameraZoom2D" method="_on_set_camera_position"]
 [connection signal="button_pressed" from="UILayer/Control" to="World" method="_on_control_button_pressed"]
 [connection signal="pressed" from="UILayer/Control/ConstructionPanel/button_residental" to="UILayer/Control" method="_on_button_residental_pressed"]
 [connection signal="pressed" from="UILayer/Control/ConstructionPanel/button_commercial" to="UILayer/Control" method="_on_button_commercial_pressed"]
