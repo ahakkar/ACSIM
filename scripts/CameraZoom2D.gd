@@ -24,8 +24,9 @@ func _set_camera_zoom_level(value: float) -> void:
 		Globals.CAMERA_ZOOM_DURATION
 	)
 	
-func _on_set_camera_position(pos: Vector2) -> void:
-	self.position = pos
+func _on_set_camera_position(_pos: Vector2) -> void:	
+	#self.position = pos
+	pass
 	
 func _unhandled_input(event):	
 	if event.is_action_pressed("camera_zoom_in"):

@@ -3,6 +3,9 @@
 
 extends Node
 
+# world map chunk size
+const CHUNK_SIZE:int = 128
+
 # tilemap tile types
 enum {TILE_WATER, TILE_TERRAIN, TILE_FOREST, TILE_BOG}
 
@@ -21,7 +24,7 @@ func choose_randomly(list_of_entries):
 	return list_of_entries[randi() % list_of_entries.size()]
 
 # map size is based on input image x*y pixel size
-var map_size:Vector2i
+var map_size:int
 
 # store terrain type (water, land, forest etc. for every map cell)
 var map_terrain_data:Array[Array] = [[]]

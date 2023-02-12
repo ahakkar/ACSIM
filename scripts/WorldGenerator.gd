@@ -16,7 +16,7 @@ func choose_tile(tile:Vector2i, selected, surrounding) -> Array:
 	# determine which directions have land around the tile
 	for dir in directions:
 		# avoid index out of bounds
-		if (tile.y+dir.y >= Globals.map_size.y) or (tile.x+dir.x >= Globals.map_size.x):
+		if (tile.y+dir.y >= Globals.map_size) or (tile.x+dir.x >= Globals.map_size):
 			surrounding_tiles.append(surrounding)
 		elif Globals.map_terrain_data[tile.y+dir.y][tile.x+dir.x] == surrounding:
 			surrounding_tiles.append(surrounding)
@@ -61,7 +61,7 @@ func generate_biomes() -> void:
 				
 				# don't put forest next to water
 				for dir in directions:
-					if (y+dir.y >= Globals.map_size.y) or (x+dir.x >= Globals.map_size.x):
+					if (y+dir.y >= Globals.map_size) or (x+dir.x >= Globals.map_size):
 						continue
 					if Globals.map_terrain_data[y+dir.y][x+dir.x] == Globals.TILE_WATER:
 						water_next_to_tile = true
@@ -74,6 +74,8 @@ func generate_biomes() -> void:
 					# can add other tresholds here for other biomes
 
 func generate_world(filename) -> bool:	
+	var image_size:Vector2i
+	
 	# Try to load the image which we used to place water & ground to world map		
 	image = load(filename)		
 	if image == null:
@@ -81,11 +83,18 @@ func generate_world(filename) -> bool:
 		push_error(errmsg % filename)
 		return false
 				
-	# Check if image is too small or too large
-	Globals.map_size = image.get_size()		
-	if !validate_mapgen_params():
+	if (image.get_size().x / image.get_size().y) != 1:
+		push_error("Error: image size was invalidin world generator")
 		return false
+		
+	image_size = image.get_size()
+	Globals.map_size = image_size.x
 	
+	if !validate_mapgen_params():
+		push_error("Error: invalid mapgen size parameters in world generator")
+		return false	
+
+	print("Worldgen speed stats:")
 	var start = Time.get_ticks_usec()	
 	read_image_pixel_data()
 	var end = Time.get_ticks_usec()
@@ -107,30 +116,30 @@ func generate_world(filename) -> bool:
 	print("smooth forest ", (end-start)/1000.0, "ms")
 	
 	start = Time.get_ticks_usec()	
-	set_tilemap_tiles()
+	select_tilemap_tiles()
 	end = Time.get_ticks_usec()
-	print("set tiles ", (end-start)/1000.0, "ms")
+	print("select tiles ", (end-start)/1000.0, "ms")
 
 	return true
 
 func read_image_pixel_data():
 	# initialize the array to have enough rows
-	Globals.map_terrain_data.resize(Globals.map_size.y)
-	Globals.map_tile_data.resize(Globals.map_size.y)
+	Globals.map_terrain_data.resize(Globals.map_size)
+	Globals.map_tile_data.resize(Globals.map_size)
 	
-	for y in Globals.map_size.y:
+	for y in Globals.map_size:
 		#initialize the row to have enough columns
-		Globals.map_terrain_data[y].resize(Globals.map_size.y)
-		Globals.map_tile_data[y].resize(Globals.map_size.y)
+		Globals.map_terrain_data[y].resize(Globals.map_size)
+		Globals.map_tile_data[y].resize(Globals.map_size)
 		
 
-		for x in Globals.map_size.x:
+		for x in Globals.map_size:
 			if image.get_pixel(x, y) == Globals.WATER_TILE_COLOR_IN_MAP_FILE:
 				Globals.map_terrain_data[y][x] = Globals.TILE_WATER
 			else:
 				Globals.map_terrain_data[y][x] = Globals.TILE_TERRAIN				
 			
-func set_tilemap_tiles() -> void:
+func select_tilemap_tiles() -> void:
 	for y in Globals.map_terrain_data.size():
 		for x in Globals.map_terrain_data[y].size():			
 			# layer | position coords | tilemap id | coords of the tile at tilemap | alternative tile
@@ -152,8 +161,8 @@ func set_tilemap_tiles() -> void:
 # Do it recursively with limit of n recursions!
 func smooth_land_features(tile_type:int) -> void:
 	# TODO for testing avoid map borders to make it simpler to implement			
-	for y in range(1, Globals.map_size.y-1):
-		for x in range(1, Globals.map_size.x-1):
+	for y in range(1, Globals.map_size-1):
+		for x in range(1, Globals.map_size-1):
 			if Globals.map_terrain_data[y][x] != tile_type:
 				continue
 				
@@ -178,7 +187,10 @@ func smooth_forest_recursively(pos:Vector2i, selected:int, comp:int) -> void:
 
 	# determine which directions have land around the tile
 	for dir in directions:
-		if Globals.map_terrain_data[pos.y+dir.y][pos.x+dir.x] == comp:
+		# avoid out of bounds hack
+		if (pos.y+dir.y >= Globals.map_size) or (pos.x+dir.x >= Globals.map_size):
+			surrounding_tiles.append(comp)
+		elif Globals.map_terrain_data[pos.y+dir.y][pos.x+dir.x] == comp:
 			surrounding_tiles.append(comp)
 		elif Globals.map_terrain_data[pos.y+dir.y][pos.x+dir.x] == selected:
 			surrounding_tiles.append(selected)	
@@ -210,7 +222,10 @@ func smooth_recursively(pos:Vector2i, selected:int, comp:int) -> void:
 
 	# determine which directions have land around the tile
 	for dir in directions:
-		if Globals.map_terrain_data[pos.y+dir.y][pos.x+dir.x] == comp:
+		# avoid out of bounds hack
+		if (pos.y+dir.y >= Globals.map_size) or (pos.x+dir.x >= Globals.map_size):
+			surrounding_tiles.append(comp)
+		elif Globals.map_terrain_data[pos.y+dir.y][pos.x+dir.x] == comp:
 			surrounding_tiles.append(comp)
 		elif Globals.map_terrain_data[pos.y+dir.y][pos.x+dir.x] == selected:
 			surrounding_tiles.append(selected)	
@@ -235,13 +250,13 @@ func smooth_recursively(pos:Vector2i, selected:int, comp:int) -> void:
 	
 func validate_mapgen_params() -> bool:
 	if !Globals.are_coords_valid(
-		Globals.map_size.y,
+		Globals.map_size,
 		Vector2i(Globals.MAP_MIN_HEIGHT, Globals.MAP_MAX_HEIGHT),
 		Globals.ERROR_IMAGE_HEIGHT_INCORRECT):
 		return false
 		
 	elif !Globals.are_coords_valid(
-		Globals.map_size.x,
+		Globals.map_size,
 		Vector2i(Globals.MAP_MIN_WIDTH, Globals.MAP_MAX_WIDTH),
 		Globals.ERROR_IMAGE_WIDTH_INCORRECT):
 		return false
