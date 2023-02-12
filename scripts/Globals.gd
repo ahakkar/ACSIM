@@ -4,13 +4,15 @@
 extends Node
 
 # world map chunk size
-const CHUNK_SIZE:int = 128
+const CHUNK_SIZE:int = 16
 
 # tilemap tile types
 enum {TILE_WATER, TILE_TERRAIN, TILE_FOREST, TILE_BOG}
 
 # tilemap layers
 enum {LAYER_TERRAIN, LAYER_BUILDINGS}
+
+const TILESET_TERRAIN:TileSet = preload("res://scenes/Chunk.tres")
 
 func are_coords_valid(value:int, bounds:Vector2i, errmsg:String) -> bool:
 	if bounds.x > value or value > bounds.y:		

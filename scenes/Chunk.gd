@@ -7,18 +7,18 @@ var y:int = -1
 # Called when the node enters the scene tree for the first time.
 func _init(xpos:int, ypos:int):
 	self.x = xpos
-	self.y = ypos
-	
-func _draw():
-	draw_circle(Vector2(x,y), 25.0, Color(0,0,0))
+	self.y = ypos	
+	self.name = "Chunk [%d,%d]" % [x, y]	
+	self.set_tileset(Globals.TILESET_TERRAIN)
+	self.position = Vector2i(
+		x*Globals.CHUNK_SIZE*Globals.TILE_SIZE_X,
+		y*Globals.CHUNK_SIZE*Globals.TILE_SIZE_Y
+		)
 
 func generate_chunk() -> void:	
 	for row in Globals.CHUNK_SIZE:
 		for col in Globals.CHUNK_SIZE:
-			var tile_data: Array = Globals.map_tile_data[row+y*Globals.CHUNK_SIZE][col+x*Globals.CHUNK_SIZE]
-			#var msg = "%s %s %s"
-			#print(msg % [tile_data, row, col])
-			
+			var tile_data: Array = Globals.map_tile_data[row+y*Globals.CHUNK_SIZE][col+x*Globals.CHUNK_SIZE]			
 			# layer | tile coords at tilemap | tilemap id | coords of the tile at tileset | alternative tile
 			self.set_cell(
 				Globals.LAYER_TERRAIN,

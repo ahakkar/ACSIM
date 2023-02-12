@@ -40,13 +40,11 @@ func _ready():
 	var result = _world_generator.generate_world(map_filename)
 	
 	if result:		
-		#_chunk_handler.start_handler()
-		_chunk_handler.set_visible(true)		
-		_chunk_handler.add_chunk(0, 0)		
-		#_chunk_handler.show()
-		#_chunk_handler.set_visible(true)
-		print("main visible? ", is_visible_in_tree())
-		
+		_chunk_handler.start_handler()
+		for y in Globals.map_size/Globals.CHUNK_SIZE:
+			for x in Globals.map_size/Globals.CHUNK_SIZE:
+				if (y + x) % 2 == 0:
+					_chunk_handler.add_chunk(x, y)
 	else:
 		push_error("World generation failed :-(")
 		
@@ -56,10 +54,6 @@ func _ready():
 		Vector2(Globals.map_size / 2.0 * Globals.TILE_SIZE_X, 
 				Globals.map_size / 2.0 * Globals.TILE_SIZE_Y)
 	)
-
-# Called every frame. 'delta' is the elapsed time since the previous frame.
-func _process(_delta):
-	pass
 	
 func quit_game():
 	get_tree().get_root().propagate_notification(NOTIFICATION_WM_CLOSE_REQUEST)

@@ -1,21 +1,12 @@
-[gd_scene load_steps=7 format=3 uid="uid://nfayf78xiuap"]
+[gd_scene load_steps=5 format=3 uid="uid://nfayf78xiuap"]
 
 [ext_resource type="Script" path="res://scripts/Main.gd" id="1_ysxum"]
-[ext_resource type="Script" path="res://scripts/ChunkHandler.gd" id="2_2e0t1"]
 [ext_resource type="Script" path="res://scripts/Control.gd" id="3_1t1c8"]
-[ext_resource type="Texture2D" uid="uid://cxn2fno1j7vf5" path="res://icon.svg" id="3_c64oi"]
 [ext_resource type="PackedScene" uid="uid://2we3txfr812u" path="res://scenes/Camera_zoom_2d.tscn" id="4_rx82t"]
 [ext_resource type="Script" path="res://scripts/EntityPlacer.gd" id="5_8jju5"]
 
 [node name="Main" type="Node2D"]
 script = ExtResource("1_ysxum")
-
-[node name="ChunkHandler" type="Node2D" parent="."]
-script = ExtResource("2_2e0t1")
-
-[node name="Sprite2D" type="Sprite2D" parent="ChunkHandler"]
-position = Vector2(952, 536)
-texture = ExtResource("3_c64oi")
 
 [node name="EntityPlacer" type="Control" parent="."]
 layout_mode = 3
