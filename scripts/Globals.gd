@@ -20,8 +20,17 @@ func are_coords_valid(value:int, bounds:Vector2i, errmsg:String) -> bool:
 func choose_randomly(list_of_entries):
 	return list_of_entries[randi() % list_of_entries.size()]
 
-var world_map: TileMap
-var map_image_size:Vector2i
+# map size is based on input image x*y pixel size
+var map_size:Vector2i
+
+# store terrain type (water, land, forest etc. for every map cell)
+var map_terrain_data:Array[Array] = [[]]
+
+# preprocess and store exact tile for every map cell to speed up setting tiles
+var map_tile_data:Array[Array] = [[]]
+
+# current camera zoom level
+var CAMERA_ZOOM_LEVEL: float = 1.0
 
 # FILE PATHS
 const SCENE_PATH:String = "res://scenes/"
@@ -52,8 +61,6 @@ const TYPE_ROADS:String = "roads"
 const TYPE_DEMOLISH:String = "demolish"
 
 # camera movement settings
-var CAMERA_ZOOM_LEVEL: float = 1.0
-
 const CAMERA_MIN_ZOOM_LEVEL: float = 0.1
 const CAMERA_MAX_ZOOM_LEVEL: float = 2.0
 const CAMERA_ZOOM_FACTOR: float = 0.1
@@ -65,10 +72,10 @@ const GROUND_TILE_COLOR_IN_MAP_FILE: Color = Color(0,0,0,1)
 const WATER_TILE_COLOR_IN_MAP_FILE: Color = Color(1,1,1,1)
 
 # min and max sizes for a map so the map won't be unreasonably small or large
-const MAP_MIN_HEIGHT:int = 100
-const MAP_MAX_HEIGHT:int = 1000
-const MAP_MIN_WIDTH:int = 100
-const MAP_MAX_WIDTH:int = 1000
+const MAP_MIN_HEIGHT:int = 128
+const MAP_MAX_HEIGHT:int = 4096
+const MAP_MIN_WIDTH:int = 128
+const MAP_MAX_WIDTH:int = 4096
 
 # tile size
 const TILE_SIZE_X:int = 16

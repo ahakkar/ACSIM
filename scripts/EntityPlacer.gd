@@ -1,21 +1,10 @@
-class_name World
-extends TileMap
+class_name EntityPlacer
+extends Control
 
 var has_placeable_building: bool = false
 var building
 var building_type: String
 var scene
-
-func _init():
-	Globals.world_map = self
-
-# Called when the node enters the scene tree for the first time.
-func _ready():	
-	pass
-	
-# Called every frame. 'delta' is the elapsed time since the previous frame.
-func _process(_delta):
-	pass
 
 func get_building_properties() -> Array:
 	var tileset_id = 0 # default value
@@ -62,40 +51,40 @@ func _on_control_button_pressed(type):
 	scene = load(Globals.SCENE_PATH + "Building.tscn")	
 	building = scene.instantiate()	
 	#building.set_cell(0, Vector2i(0,0), building_properties[0], building_properties[1], 0)
-	add_child(building)
+	#add_child(building)
 	
 	has_placeable_building = true	
 
-func _input(event):	
-	# place the building
-	if event.is_action_pressed("place_building") and has_placeable_building:
-		has_placeable_building = false
-		place_building_to_map()
-	
-	# cancel placement
-	if event.is_action_pressed("cancel"):
-		if has_placeable_building:
-			pass
+#func _input(event):	
+#	# place the building
+#	if event.is_action_pressed("place_building") and has_placeable_building:
+#		has_placeable_building = false
+#		place_building_to_map()
+#
+#	# cancel placement
+#	if event.is_action_pressed("cancel"):
+#		if has_placeable_building:
+#			pass
 
 func calculate_grid_coordinates(map_position: Vector2) -> Vector2:
 	return (map_position).floor()
 	
-func place_building_to_map():
-	var building_properties = get_building_properties()
-	var tile_on_mouse = local_to_map(get_global_mouse_position())
-	
-	if !Globals.are_coords_valid(
-		tile_on_mouse.y,
-		Vector2i(0, Globals.map_image_size.y),
-		Globals.ERROR_TILE_Y_COORDS_OUT_OF_BOUNDS
-	):
-		return false
-	elif !Globals.are_coords_valid(
-		tile_on_mouse.x,
-		Vector2i(0, Globals.map_image_size.x),
-		Globals.ERROR_TILE_X_COORDS_OUT_OF_BOUNDS
-	):
-		return false	
+#func place_building_to_map():
+#	var building_properties = get_building_properties()
+#	#var tile_on_mouse = local_to_map(get_global_mouse_position())
+#
+#	if !Globals.are_coords_valid(
+#		tile_on_mouse.y,
+#		Vector2i(0, Globals.map_image_size.y),
+#		Globals.ERROR_TILE_Y_COORDS_OUT_OF_BOUNDS
+#	):
+#		return false
+#	elif !Globals.are_coords_valid(
+#		tile_on_mouse.x,
+#		Vector2i(0, Globals.map_image_size.x),
+#		Globals.ERROR_TILE_X_COORDS_OUT_OF_BOUNDS
+#	):
+#		return false	
 
-	set_cell(Globals.LAYER_BUILDINGS, tile_on_mouse, building_properties[0], building_properties[1], 0)
+#	set_cell(Globals.LAYER_BUILDINGS, tile_on_mouse, building_properties[0], building_properties[1], 0)
 	

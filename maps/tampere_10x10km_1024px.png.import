@@ -1,0 +1,14 @@
+[remap]
+
+importer="image"
+type="Image"
+uid="uid://dprlyk4ednkp8"
+path="res://.godot/imported/tampere_10x10km_1024px.png-569f3285557c876bd7277d49b8414424.image"
+
+[deps]
+
+source_file="res://maps/tampere_10x10km_1024px.png"
+dest_files=["res://.godot/imported/tampere_10x10km_1024px.png-569f3285557c876bd7277d49b8414424.image"]
+
+[params]
+

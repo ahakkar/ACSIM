@@ -12,10 +12,15 @@ extends Node
 signal set_camera_position(pos:Vector2)
 
 # The idea is for the user to be able to choose the map from GUI later
-#var map_filename: String = "res://maps/tampere_10x10km_1000px.png"
-var map_filename:String = "res://maps/tampere_200px_crop.png"
-var _world := World.new()
-var _world_generator := WorldGeneration.new()
+var map_filenames:Array = [
+	"res://maps/tampere_10x10km_1000px.png",
+	"res://maps/tampere_10x10km_1024px.png",
+	"res://maps/varkaus_256x256px_test.png"
+	]
+var map_filename:String = map_filenames[2]
+var _world_generator:WorldGenerator
+var _tilemap_generator:TileMapGenerator
+
 
 func _init():
 #	DisplayServer.window_set_size(
@@ -26,20 +31,27 @@ func _init():
 	
 # Called when the node enters the scene tree for the first time.
 func _ready():	 
-	if !_world:
-		push_error(Globals.ERROR_MAKING_WORLD_INSTANCE)
-		quit_game()
-		
+	# create a new world and worldgenerator
+	_world_generator = WorldGenerator.new()
+	_tilemap_generator = TileMapGenerator.new()	
+	
 	# generate terrain. quit game if generation fails.	
 	if !_world_generator.generate_world(map_filename):
 		push_error(Globals.ERROR_WHILE_GENERATING_MAP)
-		quit_game()		
+		quit_game()	
+	
+	if !_tilemap_generator:
+		push_error(Globals.ERROR_MAKING_WORLD_INSTANCE)
+		quit_game()
+		
+	_tilemap_generator.start()
+	_tilemap_generator.test_func()
 		
 	# center camera to world map
 	emit_signal(
 		"set_camera_position", 
-		Vector2(Globals.map_image_size.x / 2.0 * Globals.TILE_SIZE_X, 
-				Globals.map_image_size.y / 2.0 * Globals.TILE_SIZE_Y)
+		Vector2(Globals.map_size.x / 2.0 * Globals.TILE_SIZE_X, 
+				Globals.map_size.y / 2.0 * Globals.TILE_SIZE_Y)
 	)
 
 # Called every frame. 'delta' is the elapsed time since the previous frame.
