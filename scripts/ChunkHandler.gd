@@ -9,36 +9,74 @@ extends Node2D
 # This is done to speed up game loading and avoiding setting one large tilemap in one go
 # which is extremely slow in godot 4.0, 4096x4096 takes minutes to fill with set_cell() commands
 
-var map_tiles:Array[Array] = [[]]
 var chunks:Dictionary = {}
-var unused_chunks:Dictionary = {}
+var unready_chunks:Dictionary = {}
+var chunk_amount = 16
+var window_width = DisplayServer.window_get_size(0).x
+var distance = abs((window_width/(Globals.CHUNK_SIZE.x*Globals.TILE_SIZE_X)) / 2 +1 )
 
 func _init() -> void:
 	self.name = "ChunkHandler"
+	
+func _process(_delta):
+	update_chunks()
+	clean_up_chunks()
+	reset_chunks()
 
 func _ready():
 	#thread = Thread.new()
+	
+
+	#print(distance)
 	pass
 
-
-
-func start_handler() -> void:
-	# Initialize the map tile array with enough chunks to cover the whole map	
-	map_tiles.resize(Globals.map_size/Globals.CHUNK_SIZE)	
-	for y in map_tiles.size():
-		map_tiles[y].resize(Globals.map_size/Globals.CHUNK_SIZE)		
+func add_chunk(x:int, y:int) -> void:
+	var key = str(y) + "," + str(x)
+	if chunks.has(key):
+		return
+		
+	load_chunk(x, y, key)
 	
-func add_chunk(x:int, y:int):	
+func clean_up_chunks():
+	for key in chunks:
+		var chunk = chunks[key]
+		if chunk.should_remove:
+			chunk.queue_free()
+			chunks.erase(key)
+	
+func clear_chunk(pos:Vector2i) -> void:
+	self.chunks[pos.y][pos.x].clear()
+
+func get_chunk(x:int, y:int):
+	var key = str(y) + "," + str(x)
+	if self.chunks.has(key):
+		return chunks.get(key)
+		
+	return null
+
+func load_chunk(x:int, y:int, key:String):
 	var chunk = Chunk.new(x,y)
-	
-	var start = Time.get_ticks_usec()	
-	chunk.generate_chunk()	
 	self.add_child(chunk)
-	var end = Time.get_ticks_usec()
-	print("generate a chunk ", (end-start)/1000.0, "ms")	
+	chunks[key] = chunk	
 	
-	
-	#chunk.set_position(Vector2(x*Globals.CHUNK_SIZE,y*Globals.CHUNK_SIZE))
+	Globals.chunks_loaded += 1
 
 	
-	#map_tiles[chunk_pos.y][chunk_pos.x].clear()
+func reset_chunks():
+	for key in chunks:
+		chunks[key].should_remove = true
+	
+func update_chunks():		 
+	var p_x = int(Globals.CAMERA_POSITION.x- Globals.CHUNK_SIZE.x) / Globals.TILE_SIZE_X / Globals.CHUNK_SIZE.x
+	var p_y = int(Globals.CAMERA_POSITION.y- Globals.CHUNK_SIZE.y) / Globals.TILE_SIZE_Y / Globals.CHUNK_SIZE.y
+
+	for y in Globals.map_size/Globals.CHUNK_SIZE.y:
+		for x in Globals.map_size/Globals.CHUNK_SIZE.x:
+			if (abs(x - p_x) <= distance && abs(y - p_y) <= distance):
+				add_chunk(x, y)
+				
+				var chunk = get_chunk(x,y) 
+				if chunk != null:
+					chunk.should_remove = false
+
+

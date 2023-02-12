@@ -10,7 +10,12 @@ func camera_zoom_in() -> void:
 
 func camera_zoom_out() -> void:
 	_set_camera_zoom_level(Globals.CAMERA_ZOOM_LEVEL + Globals.CAMERA_ZOOM_DURATION)
-		
+	
+func get_camera_position():
+	return self.position
+	
+func _process(delta) -> void:
+	Globals.CAMERA_POSITION = self.position		
 
 func _set_camera_zoom_level(value: float) -> void:
 	Globals.CAMERA_ZOOM_LEVEL = clamp(value, Globals.CAMERA_MIN_ZOOM_LEVEL, Globals.CAMERA_MAX_ZOOM_LEVEL)		
@@ -24,9 +29,8 @@ func _set_camera_zoom_level(value: float) -> void:
 		Globals.CAMERA_ZOOM_DURATION
 	)
 	
-func _on_set_camera_position(_pos: Vector2) -> void:	
-	#self.position = pos
-	pass
+func _on_set_camera_position(pos: Vector2) -> void:	
+	self.position = pos	
 	
 func _unhandled_input(event):	
 	if event.is_action_pressed("camera_zoom_in"):

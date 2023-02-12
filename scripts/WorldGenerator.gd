@@ -9,6 +9,14 @@ var directions:Array = [
 	Vector2i(0,-1), # north
 	Vector2i(-1,0)  # west
 	]
+	
+func are_coords_valid(value:int, bounds:Vector2i, errmsg:String) -> bool:
+	if bounds.x > value or value > bounds.y:		
+		errmsg = errmsg % [value, bounds.x, bounds.y]
+		push_error(errmsg)
+		return false
+	
+	return true
 
 func choose_tile(tile:Vector2i, selected, surrounding) -> Array:
 	var surrounding_tiles:Array = []
@@ -249,13 +257,13 @@ func smooth_recursively(pos:Vector2i, selected:int, comp:int) -> void:
 	smooth_recursively(pos, selected, comp)
 	
 func validate_mapgen_params() -> bool:
-	if !Globals.are_coords_valid(
+	if !are_coords_valid(
 		Globals.map_size,
 		Vector2i(Globals.MAP_MIN_HEIGHT, Globals.MAP_MAX_HEIGHT),
 		Globals.ERROR_IMAGE_HEIGHT_INCORRECT):
 		return false
 		
-	elif !Globals.are_coords_valid(
+	elif !are_coords_valid(
 		Globals.map_size,
 		Vector2i(Globals.MAP_MIN_WIDTH, Globals.MAP_MAX_WIDTH),
 		Globals.ERROR_IMAGE_WIDTH_INCORRECT):

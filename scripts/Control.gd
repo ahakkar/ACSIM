@@ -25,7 +25,9 @@ func _process(_delta):
 	debug_info.set_text(
 		str(get_viewport().get_mouse_position()) +"\n" + 
 		"FPS " + str(Engine.get_frames_per_second()) + "\n" +
-		"Zoom lvl: " + str(Globals.CAMERA_ZOOM_LEVEL)
+		"Zoom lvl: " + str(Globals.CAMERA_ZOOM_LEVEL) + "\n" + 
+		"Chunks loaded: " + str(Globals.chunks_loaded) + "\n" +
+		"Camera pos: " + str(Globals.CAMERA_POSITION)
 	)
 	
 # defines construction toolbar buttons	

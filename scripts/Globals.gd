@@ -3,24 +3,18 @@
 
 extends Node
 
-# world map chunk size
-const CHUNK_SIZE:int = 16
+var chunks_loaded:int = 0
 
+###################################
+# CHUNK AND TERRAIN SETTINGS	  #
+###################################
+# world map chunk size
+const CHUNK_SIZE:Vector2i = Vector2i(32,32)
 # tilemap tile types
 enum {TILE_WATER, TILE_TERRAIN, TILE_FOREST, TILE_BOG}
-
 # tilemap layers
 enum {LAYER_TERRAIN, LAYER_BUILDINGS}
-
 const TILESET_TERRAIN:TileSet = preload("res://scenes/Chunk.tres")
-
-func are_coords_valid(value:int, bounds:Vector2i, errmsg:String) -> bool:
-	if bounds.x > value or value > bounds.y:		
-		errmsg = errmsg % [value, bounds.x, bounds.y]
-		push_error(errmsg)
-		return false
-	
-	return true
 	
 func choose_randomly(list_of_entries):
 	return list_of_entries[randi() % list_of_entries.size()]
@@ -34,8 +28,20 @@ var map_terrain_data:Array[Array] = [[]]
 # preprocess and store exact tile for every map cell to speed up setting tiles
 var map_tile_data:Array[Array] = [[]]
 
+###################################
+# CAMERA SETTINGS				  #
+###################################
+
 # current camera zoom level
 var CAMERA_ZOOM_LEVEL: float = 1.0
+var CAMERA_POSITION
+
+# camera movement settings
+const CAMERA_MIN_ZOOM_LEVEL: float = 0.1
+const CAMERA_MAX_ZOOM_LEVEL: float = 2.0
+const CAMERA_ZOOM_FACTOR: float = 0.1
+const CAMERA_ZOOM_DURATION: float = 0.1
+const CAMERA_PAN_MULTI:float = 2.0
 
 # FILE PATHS
 const SCENE_PATH:String = "res://scenes/"
@@ -64,13 +70,6 @@ const TYPE_SOCIAL:String = "social"
 const TYPE_POWERPLANT:String = "powerplant"
 const TYPE_ROADS:String = "roads"
 const TYPE_DEMOLISH:String = "demolish"
-
-# camera movement settings
-const CAMERA_MIN_ZOOM_LEVEL: float = 0.1
-const CAMERA_MAX_ZOOM_LEVEL: float = 2.0
-const CAMERA_ZOOM_FACTOR: float = 0.1
-const CAMERA_ZOOM_DURATION: float = 0.1
-const CAMERA_PAN_MULTI:float = 2.0
 
 # city map generation file should have black ground (0,0,0) and white water (1,1,1)
 const GROUND_TILE_COLOR_IN_MAP_FILE: Color = Color(0,0,0,1)

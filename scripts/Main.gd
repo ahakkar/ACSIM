@@ -16,11 +16,13 @@ var map_filenames:Array = [
 	"res://maps/tampere_10x10km_1000px.png",
 	"res://maps/tampere_10x10km_1024px.png",
 	"res://maps/varkaus_256x256px_test.png",
-	"res://maps/tampere_256px.png"
+	"res://maps/tampere_256px.png",
+	"res://maps/tampere_10x10km_4096px.png"
 	]
-var map_filename:String = map_filenames[3]
+var map_filename:String = map_filenames[1]
 var _world_generator:WorldGenerator
 var _chunk_handler:ChunkHandler
+#var _2d_camera:CameraZoom2D
 
 
 func _init():
@@ -28,23 +30,27 @@ func _init():
 #		#Vector2i(Globals.DEFAULT_X_RES, Globals.DEFAULT_Y_RES)
 #		Vector2i(3800,2000)
 #	)
-	pass
-	
+		Globals.CAMERA_POSITION = Vector2(16*256/2, 16*256/2)
+		
+#func _process(_delta):
+#	Globals.CAMERA_POSITION = _2d_camera.position
+
 # Called when the node enters the scene tree for the first time.
 func _ready():	 
 	# create a new world and worldgenerator
 	_world_generator = WorldGenerator.new()
-	_chunk_handler = ChunkHandler.new()		
-	add_child(_chunk_handler)	
+	_chunk_handler = ChunkHandler.new()
+	#_2d_camera = CameraZoom2D.new()
 
-	var result = _world_generator.generate_world(map_filename)
-	
-	if result:		
-		_chunk_handler.start_handler()
-		for y in Globals.map_size/Globals.CHUNK_SIZE:
-			for x in Globals.map_size/Globals.CHUNK_SIZE:
-				if (y + x) % 2 == 0:
-					_chunk_handler.add_chunk(x, y)
+	# add chunk handler if worldgen was successful
+	if _world_generator.generate_world(map_filename):
+		add_child(_chunk_handler)
+		#add_child(_2d_camera)		
+		
+#		for y in Globals.map_size/Globals.CHUNK_SIZE.y:
+#			for x in Globals.map_size/Globals.CHUNK_SIZE.x:
+#				#if (y + x) % 2 == 0:
+#				_chunk_handler.load_chunk(x, y)
 	else:
 		push_error("World generation failed :-(")
 		
