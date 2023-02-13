@@ -26,7 +26,7 @@ func _process(_delta):
 		str(get_viewport().get_mouse_position()) +"\n" + 
 		"FPS " + str(Engine.get_frames_per_second()) + "\n" +
 		"Zoom lvl: " + str(Globals.CAMERA_ZOOM_LEVEL) + "\n" + 
-		"Chunks loaded: " + str(Globals.chunks_loaded) + "\n" +
+		"Chunk queue: " + str(Globals.chunk_queue.size()) + "\n" +
 		"Camera pos: " + str(Globals.CAMERA_POSITION)
 	)
 	

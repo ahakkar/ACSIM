@@ -31,29 +31,22 @@ func _init():
 #		Vector2i(3800,2000)
 #	)
 		Globals.CAMERA_POSITION = Vector2(16*256/2, 16*256/2)
-		
-#func _process(_delta):
-#	Globals.CAMERA_POSITION = _2d_camera.position
+
 
 # Called when the node enters the scene tree for the first time.
 func _ready():	 
 	# create a new world and worldgenerator
-	_world_generator = WorldGenerator.new()
-	_chunk_handler = ChunkHandler.new()
+	_world_generator = WorldGenerator.new()	
 	#_2d_camera = CameraZoom2D.new()
 
 	# add chunk handler if worldgen was successful
 	if _world_generator.generate_world(map_filename):
+		Globals.worlgen_ready = true
+		_chunk_handler = ChunkHandler.new()
 		add_child(_chunk_handler)
-		#add_child(_2d_camera)		
-		
-#		for y in Globals.map_size/Globals.CHUNK_SIZE.y:
-#			for x in Globals.map_size/Globals.CHUNK_SIZE.x:
-#				#if (y + x) % 2 == 0:
-#				_chunk_handler.load_chunk(x, y)
 	else:
 		push_error("World generation failed :-(")
-		
+				
 	# center camera to world map
 	emit_signal(
 		"set_camera_position", 

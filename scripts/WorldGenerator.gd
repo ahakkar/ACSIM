@@ -3,12 +3,14 @@ extends RefCounted
 
 var image:Image = Image.new()	
 
+
 var directions:Array = [
 	Vector2i(0,1),	# south
 	Vector2i(1,0),	# east
 	Vector2i(0,-1), # north
 	Vector2i(-1,0)  # west
 	]
+	
 	
 func are_coords_valid(value:int, bounds:Vector2i, errmsg:String) -> bool:
 	if bounds.x > value or value > bounds.y:		
@@ -17,6 +19,11 @@ func are_coords_valid(value:int, bounds:Vector2i, errmsg:String) -> bool:
 		return false
 	
 	return true
+	
+	
+func choose_randomly(list_of_entries):
+	return list_of_entries[randi() % list_of_entries.size()]
+	
 
 func choose_tile(tile:Vector2i, selected, surrounding) -> Array:
 	var surrounding_tiles:Array = []
@@ -37,14 +44,15 @@ func choose_tile(tile:Vector2i, selected, surrounding) -> Array:
 	if selected_tile == null:
 		tile_coords = Globals.td[selected].get("default")[0]
 	elif selected_tile.size() > 1:
-		tile_coords = Globals.choose_randomly(selected_tile)
+		tile_coords = choose_randomly(selected_tile)
 	else:
 		tile_coords = selected_tile[0]
 		
 	return [
 		tile_coords,
-		0 if selected_tile else Globals.choose_randomly([0,1,2,3])
+		0 if selected_tile else choose_randomly([0,1,2,3])
 		]
+		
 	
 # Generates biomes, like forest and bog
 func generate_biomes() -> void:
@@ -80,6 +88,7 @@ func generate_biomes() -> void:
 					if noise_sample < 0.1:
 						Globals.map_terrain_data[y][x] = Globals.TILE_FOREST	
 					# can add other tresholds here for other biomes
+					
 
 func generate_world(filename) -> bool:	
 	var image_size:Vector2i
@@ -106,29 +115,30 @@ func generate_world(filename) -> bool:
 	var start = Time.get_ticks_usec()	
 	read_image_pixel_data()
 	var end = Time.get_ticks_usec()
-	print("read image data ", (end-start)/1000.0, "ms")
+	print("1/5: read image data ", (end-start)/1000.0, "ms")
 	
 	start = Time.get_ticks_usec()	
 	smooth_land_features(Globals.TILE_WATER)  # smooth water	
 	end = Time.get_ticks_usec()
-	print("smooth water ", (end-start)/1000.0, "ms")
+	print("2/5: smooth water ", (end-start)/1000.0, "ms")
 	
 	start = Time.get_ticks_usec()	
 	generate_biomes()
 	end = Time.get_ticks_usec()
-	print("generate biomes ", (end-start)/1000.0, "ms")
+	print("3/5: generate biomes ", (end-start)/1000.0, "ms")
 	
 	start = Time.get_ticks_usec()	
 	smooth_land_features(Globals.TILE_FOREST) # smooth out forest
 	end = Time.get_ticks_usec()
-	print("smooth forest ", (end-start)/1000.0, "ms")
-	
+	print("4/5: smooth forest ", (end-start)/1000.0, "ms")	
+
 	start = Time.get_ticks_usec()	
 	select_tilemap_tiles()
 	end = Time.get_ticks_usec()
-	print("select tiles ", (end-start)/1000.0, "ms")
+	print("5/5: select tiles ", (end-start)/1000.0, "ms")	
 
 	return true
+	
 
 func read_image_pixel_data():
 	# initialize the array to have enough rows
@@ -145,23 +155,25 @@ func read_image_pixel_data():
 			if image.get_pixel(x, y) == Globals.WATER_TILE_COLOR_IN_MAP_FILE:
 				Globals.map_terrain_data[y][x] = Globals.TILE_WATER
 			else:
-				Globals.map_terrain_data[y][x] = Globals.TILE_TERRAIN				
+				Globals.map_terrain_data[y][x] = Globals.TILE_TERRAIN
+				
 			
 func select_tilemap_tiles() -> void:
 	for y in Globals.map_terrain_data.size():
-		for x in Globals.map_terrain_data[y].size():			
+		for x in Globals.map_terrain_data[y].size():
 			# layer | position coords | tilemap id | coords of the tile at tilemap | alternative tile
 			match Globals.map_terrain_data[y][x]:
 				Globals.TILE_WATER:	 # water or shoreline
-					Globals.map_tile_data[y][x] = choose_tile(Vector2i(x, y), Globals.TILE_WATER, Globals.TILE_TERRAIN)
+					Globals.map_tile_data[y][x] = choose_tile(Vector2i(x,y), Globals.TILE_WATER, Globals.TILE_TERRAIN)
 						
 				Globals.TILE_TERRAIN: #terrain or forest edge
 					Globals.map_tile_data[y][x] = choose_tile(Vector2i(x,y), Globals.TILE_TERRAIN, Globals.TILE_FOREST)
 					
-				Globals.TILE_FOREST:					
-					Globals.map_tile_data[y][x] = [Vector2i(5,1), Globals.choose_randomly([0,1,2,3])]
+				Globals.TILE_FOREST:		
+					Globals.map_tile_data[y][x] = [Vector2i(5,1), choose_randomly([0,1,2,3])]
 						
 				_:  #default
+					push_error("should be never here in worldgen!")
 					pass
 					
 
@@ -187,6 +199,7 @@ func smooth_land_features(tile_type:int) -> void:
 						Globals.TILE_FOREST,
 						Globals.TILE_TERRAIN
 					)
+					
 				
 # TEMP SPAGHETTI SOLUTION	
 func smooth_forest_recursively(pos:Vector2i, selected:int, comp:int) -> void:
@@ -222,7 +235,8 @@ func smooth_forest_recursively(pos:Vector2i, selected:int, comp:int) -> void:
 		_:
 			return 		
 		
-	#smooth_forest_recursively(pos, selected, comp)
+	smooth_forest_recursively(pos, selected, comp)
+	
 
 func smooth_recursively(pos:Vector2i, selected:int, comp:int) -> void:
 	# now we are supposed to be inspecting a tile with land
@@ -255,6 +269,7 @@ func smooth_recursively(pos:Vector2i, selected:int, comp:int) -> void:
 			return 		
 		
 	smooth_recursively(pos, selected, comp)
+	
 	
 func validate_mapgen_params() -> bool:
 	if !are_coords_valid(

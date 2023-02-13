@@ -3,12 +3,13 @@ extends TileMap
 
 var x:int = -1
 var y:int = -1
-var should_remove:bool = true
+var should_remove:bool = false
 
 # Called when the node enters the scene tree for the first time.
-func _init(xpos:int, ypos:int):
+func _init(ypos:int, xpos:int, sr: bool):
 	self.x = xpos
-	self.y = ypos	
+	self.y = ypos
+	self.should_remove = sr	
 	
 	self.name = "Chunk [%d,%d]" % [x, y]	
 	self.set_tileset(Globals.TILESET_TERRAIN)

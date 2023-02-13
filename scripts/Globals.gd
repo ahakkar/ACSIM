@@ -4,23 +4,25 @@
 extends Node
 
 var chunks_loaded:int = 0
+var chunk_queue:Array = []
+var worlgen_ready:bool = false
 
 ###################################
 # CHUNK AND TERRAIN SETTINGS	  #
 ###################################
+
 # world map chunk size
 const CHUNK_SIZE:Vector2i = Vector2i(32,32)
+
 # tilemap tile types
 enum {TILE_WATER, TILE_TERRAIN, TILE_FOREST, TILE_BOG}
+
 # tilemap layers
 enum {LAYER_TERRAIN, LAYER_BUILDINGS}
 const TILESET_TERRAIN:TileSet = preload("res://scenes/Chunk.tres")
-	
-func choose_randomly(list_of_entries):
-	return list_of_entries[randi() % list_of_entries.size()]
 
 # map size is based on input image x*y pixel size
-var map_size:int
+var map_size:int = 0
 
 # store terrain type (water, land, forest etc. for every map cell)
 var map_terrain_data:Array[Array] = [[]]
