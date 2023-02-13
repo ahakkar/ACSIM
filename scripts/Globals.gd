@@ -4,7 +4,6 @@
 extends Node
 
 var chunks_loaded:int = 0
-var chunk_queue:Array = []
 var worlgen_ready:bool = false
 
 ###################################

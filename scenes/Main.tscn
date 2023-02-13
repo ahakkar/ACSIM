@@ -1,9 +1,10 @@
-[gd_scene load_steps=5 format=3 uid="uid://nfayf78xiuap"]
+[gd_scene load_steps=6 format=3 uid="uid://nfayf78xiuap"]
 
 [ext_resource type="Script" path="res://scripts/Main.gd" id="1_ysxum"]
 [ext_resource type="Script" path="res://scripts/Control.gd" id="3_1t1c8"]
 [ext_resource type="PackedScene" uid="uid://2we3txfr812u" path="res://scenes/Camera_zoom_2d.tscn" id="4_rx82t"]
 [ext_resource type="Script" path="res://scripts/EntityPlacer.gd" id="5_8jju5"]
+[ext_resource type="Script" path="res://scripts/Minimap.gd" id="5_rg28x"]
 
 [node name="Main" type="Node2D"]
 script = ExtResource("1_ysxum")
@@ -84,7 +85,25 @@ offset_right = 936.0
 offset_bottom = 256.0
 horizontal_alignment = 2
 
+[node name="Minimap" type="Container" parent="UILayer"]
+anchors_preset = -1
+anchor_top = -0.044
+anchor_right = 0.172
+anchor_bottom = 0.161
+offset_left = 1696.0
+offset_top = 735.36
+offset_right = 1807.68
+offset_bottom = 1032.16
+script = ExtResource("5_rg28x")
+
+[node name="CameraMarker" type="Sprite2D" parent="UILayer/Minimap"]
+position = Vector2(296, 392)
+
+[node name="MinimapSprite" type="Sprite2D" parent="UILayer/Minimap"]
+position = Vector2(416, 472)
+
 [connection signal="set_camera_position" from="." to="CameraZoom2D" method="_on_set_camera_position"]
+[connection signal="worldgen_ready" from="." to="UILayer/Minimap" method="_on_main_worldgen_ready"]
 [connection signal="pressed" from="UILayer/Control/ConstructionPanel/button_residental" to="UILayer/Control" method="_on_button_residental_pressed"]
 [connection signal="pressed" from="UILayer/Control/ConstructionPanel/button_commercial" to="UILayer/Control" method="_on_button_commercial_pressed"]
 [connection signal="pressed" from="UILayer/Control/ConstructionPanel/button_industrial" to="UILayer/Control" method="_on_button_industrial_pressed"]

@@ -4,6 +4,7 @@ extends Control
 
 signal button_pressed(button_name)
 @onready var debug_info = get_node(Globals.DEBUGINFO_NODE)
+@onready var minimap:Minimap
 
 # name, position
 var buttons = {
@@ -19,14 +20,15 @@ var buttons = {
 # Called when the node enters the scene tree for the first time.
 func _ready():
 	create_buttons()	
+	minimap = Minimap.new()
+	
 
 # Called every frame. 'delta' is the elapsed time since the previous frame.
 func _process(_delta):
 	debug_info.set_text(
 		str(get_viewport().get_mouse_position()) +"\n" + 
 		"FPS " + str(Engine.get_frames_per_second()) + "\n" +
-		"Zoom lvl: " + str(Globals.CAMERA_ZOOM_LEVEL) + "\n" + 
-		"Chunk queue: " + str(Globals.chunk_queue.size()) + "\n" +
+		"Zoom lvl: " + str(Globals.CAMERA_ZOOM_LEVEL) + "\n" +
 		"Camera pos: " + str(Globals.CAMERA_POSITION)
 	)
 	

@@ -12,10 +12,24 @@ extends Node2D
 var chunks:Dictionary = {}
 var window_width = DisplayServer.window_get_size(0).x
 var distance = abs((window_width/(Globals.CHUNK_SIZE.x*Globals.TILE_SIZE_X)) / 2 +1 )
+
+# for threading
+var chunk_queue:Array = []
 var mutex:Mutex
 var semaphore:Semaphore
 var thread:Thread
 var exit_thread = false
+
+var _timer:Timer
+
+
+func _exit_tree():
+	mutex.lock()
+	exit_thread = true 
+	mutex.unlock()
+
+	semaphore.post()
+	thread.wait_to_finish()
 
 
 func _init() -> void:
@@ -23,23 +37,26 @@ func _init() -> void:
 	
 	
 func _process(_delta):
-#	if !Globals.worlgen_ready || Globals.chunk_queue.size() > 64:
-#		return
-	update_chunks()
-	clean_up_chunks()
-	reset_chunks()	
-	
-	#print(self.get_child_count())
+	update_chunks()	
 	
 	
-func _ready():
+func _ready():	
 	mutex = Mutex.new()
 	semaphore = Semaphore.new()
 	exit_thread = false
 	
 	thread = Thread.new()
 	thread.start(start_chunkgen, Thread.PRIORITY_NORMAL)
+	
+	_timer = Timer.new()
+	add_child(_timer)
+	_timer.connect("timeout", _on_timer_timeout, 0)
+	_timer.set_wait_time(0.05)
+	_timer.set_one_shot(false)
+	_timer.start()
 
+func _on_timer_timeout():
+	clean_up_chunks()
 
 func start_chunkgen():
 	while true:		
@@ -52,35 +69,22 @@ func start_chunkgen():
 		if should_exit:
 			break
 		
-		if Globals.chunk_queue.size() > 0:
+		# work on emptying the generation queue
+		if chunk_queue.size() > 0:
 			mutex.lock()
-			var vars = Globals.chunk_queue.pop_front()
+			var vars = chunk_queue.pop_front()
 			mutex.unlock()
 
 			load_chunk(vars[0].y, vars[0].x, vars[1])
-
-
-# Thread must be disposed (or "joined"), for portability.
-func _exit_tree():
-	# Set exit condition to true.
-	mutex.lock()
-	exit_thread = true # Protect with Mutex.
-	mutex.unlock()
-
-	# Unblock by posting.
-	semaphore.post()
-
-	# Wait until it exits.
-	thread.wait_to_finish()
 	
-
 func clean_up_chunks():
+	mutex.lock()
 	for key in chunks:
 		var chunk = chunks[key]
 		if chunk.should_remove:
 			chunk.queue_free()
 			chunks.erase(key)
-
+	mutex.unlock()
 
 func correction_factor(d) -> float:
 	if Globals.CAMERA_ZOOM_LEVEL < 0.6:
@@ -91,8 +95,7 @@ func correction_factor(d) -> float:
 		return d * ( 1 + 2 * (1-Globals.CAMERA_ZOOM_LEVEL) )
 
 
-func get_chunk(x:int, y:int):
-	var key = str(y) + "," + str(x)
+func get_chunk(key:Vector2i):
 	if self.chunks.has(key):
 		return chunks.get(key)
 		
@@ -108,14 +111,6 @@ func load_chunk(y:int, x:int, key):
 	mutex.unlock()
 
 	
-func reset_chunks():
-	# avoid trying to edit already removed chunks
-	mutex.lock()
-	for key in chunks:
-		chunks[key].should_remove = true
-	mutex.unlock()
-		
-	
 func update_chunks():	
 	var p_x = int(Globals.CAMERA_POSITION.x- Globals.CHUNK_SIZE.x) / Globals.TILE_SIZE_X / Globals.CHUNK_SIZE.x
 	var p_y = int(Globals.CAMERA_POSITION.y- Globals.CHUNK_SIZE.y) / Globals.TILE_SIZE_Y / Globals.CHUNK_SIZE.y
@@ -130,17 +125,21 @@ func update_chunks():
 	# created by adding the coords to a work queue
 	for y in Globals.map_size/Globals.CHUNK_SIZE.y:
 		for x in Globals.map_size/Globals.CHUNK_SIZE.x:
+			
+			var key = Vector2i(y,x)
+			var chunk = null
+			
+			if chunks.has(key):	
+				chunk = get_chunk(key) 
+				
 			if (abs(x - p_x) <= zoom_corrected && abs(y - p_y) <= zoom_corrected):				
-				var key = str(y) + "," + str(x)
-				if chunks.has(key):	
-					var chunk = get_chunk(x,y) 
-					if chunk != null:
-						chunk.should_remove = false
+				if chunk != null:
+					chunk.should_remove = false
 				else:
 					mutex.lock()
-					Globals.chunk_queue.push_back([Vector2i(x, y), key])
+					chunk_queue.push_back([Vector2i(x, y), key])
 					mutex.unlock()				
 					semaphore.post()
-
-
+			elif chunks.has(key):
+				chunks[key].should_remove = true
 

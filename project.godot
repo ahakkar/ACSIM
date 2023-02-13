@@ -59,4 +59,5 @@ camera_move={
 
 [rendering]
 
+driver/threads/thread_model=2
 environment/defaults/default_clear_color=Color(0.658824, 0.329412, 0, 1)

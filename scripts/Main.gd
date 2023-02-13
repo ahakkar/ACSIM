@@ -9,6 +9,7 @@
 class_name Main
 extends Node2D
 
+signal worldgen_ready
 signal set_camera_position(pos:Vector2)
 
 # The idea is for the user to be able to choose the map from GUI later
@@ -19,7 +20,7 @@ var map_filenames:Array = [
 	"res://maps/tampere_256px.png",
 	"res://maps/tampere_10x10km_4096px.png"
 	]
-var map_filename:String = map_filenames[1]
+var map_filename:String = map_filenames[2]
 var _world_generator:WorldGenerator
 var _chunk_handler:ChunkHandler
 #var _2d_camera:CameraZoom2D
@@ -41,11 +42,14 @@ func _ready():
 
 	# add chunk handler if worldgen was successful
 	if _world_generator.generate_world(map_filename):
-		Globals.worlgen_ready = true
-		_chunk_handler = ChunkHandler.new()
-		add_child(_chunk_handler)
+		Globals.worlgen_ready = true		
 	else:
-		push_error("World generation failed :-(")
+		push_error("World generation failed :-(")	
+	
+	_chunk_handler = ChunkHandler.new()
+	add_child(_chunk_handler)
+	
+	emit_signal("worldgen_ready")
 				
 	# center camera to world map
 	emit_signal(
