@@ -7,6 +7,8 @@ signal set_camera_position(pos:Vector2)
 @onready var sprite:Sprite2D
 var is_mouse_inside_minimap:bool = false
 
+var position_multiplier
+
 
 # Called when the node enters the scene tree for the first time.
 func _ready():
@@ -22,8 +24,8 @@ func _draw():
 func _process(_delta):
 	if !is_mouse_inside_minimap:
 		Globals.camera_marker.position = Vector2i(
-			Globals.CAMERA_POSITION.x / 8,
-			Globals.CAMERA_POSITION.y / 8,
+			Globals.CAMERA_POSITION.x / position_multiplier, # 8 on 256 size map. need a forumla to calculate this
+			Globals.CAMERA_POSITION.y / position_multiplier, # 8 on 256 size map
 			)
 
 	
@@ -31,6 +33,10 @@ func _on_main_worldgen_ready():
 	self.generate_minimap()
 	self.set_minimap()
 	self.setup_camera_marker()
+	
+	# log2(x) = log10(x) / log10(2)
+	var power = log(Globals.map_size) / log(2) - 8
+	position_multiplier = 8 * pow(2, power)
 	
 	
 func _on_mouse_entered():
@@ -46,7 +52,7 @@ func _unhandled_input(event) -> void:
 			Globals.camera_marker.position = get_local_mouse_position()
 			emit_signal(
 				"set_camera_position", 
-				get_local_mouse_position() * 8
+				get_local_mouse_position() * position_multiplier # 8 on 256 size map. need a forumla to calculate this
 			)
 	
 

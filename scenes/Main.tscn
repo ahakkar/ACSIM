@@ -128,8 +128,8 @@ texture_repeat = 1
 centered = false
 
 [connection signal="set_camera_position" from="." to="CameraZoom2D" method="_on_set_camera_position"]
-[connection signal="worldgen_ready" from="." to="CameraZoom2D" method="_on_main_worldgen_ready"]
 [connection signal="worldgen_ready" from="." to="ChunkHandler" method="_on_main_worldgen_ready"]
+[connection signal="worldgen_ready" from="." to="CameraZoom2D" method="_on_main_worldgen_ready"]
 [connection signal="worldgen_ready" from="." to="UILayer/Control/Minimap" method="_on_main_worldgen_ready"]
 [connection signal="pressed" from="UILayer/Control/ConstructionPanel/button_residental" to="UILayer/Control" method="_on_button_residental_pressed"]
 [connection signal="pressed" from="UILayer/Control/ConstructionPanel/button_commercial" to="UILayer/Control" method="_on_button_commercial_pressed"]
