@@ -104,9 +104,9 @@ const GROUND_TILE_COLOR_IN_MAP_FILE: Color = Color(0,0,0)
 const WATER_TILE_COLOR_IN_MAP_FILE: Color = Color(1,1,1)
 
 # min and max sizes for a map so the map won't be unreasonably small or large
-const MAP_MIN_HEIGHT:int = 128
+const MAP_MIN_HEIGHT:int = 256
 const MAP_MAX_HEIGHT:int = 4096
-const MAP_MIN_WIDTH:int = 128
+const MAP_MIN_WIDTH:int = 256
 const MAP_MAX_WIDTH:int = 4096
 
 # tile size

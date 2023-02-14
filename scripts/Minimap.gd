@@ -6,7 +6,7 @@ extends Control
 
 # Called when the node enters the scene tree for the first time.
 func _ready():
-	minimap_texture = ImageTexture.new()	
+	self.minimap_texture = ImageTexture.new()		
 	
 
 # Called every frame. 'delta' is the elapsed time since the previous frame.
@@ -17,6 +17,7 @@ func _process(_delta):
 func _on_main_worldgen_ready():
 	self.generate_minimap()
 	self.set_minimap()
+	self.setup_camera_marker()
 	
 
 func generate_minimap() -> void:	
@@ -44,8 +45,8 @@ func generate_minimap() -> void:
 
 	
 func set_minimap() -> void:
-	sprite = self.get_child(1)
-	sprite.texture = minimap_texture
+	self.sprite = self.find_child("MinimapSprite")
+	self.sprite.texture = minimap_texture
 	
 	# Assuming the area has a child CollisionShape2D with a RectangleShape resource
 	var area_size = self.get_rect()
@@ -59,6 +60,11 @@ func set_minimap() -> void:
 	var sy = area_size.y / texture_size.y
 
 	sprite.scale = Vector2(sx, sy)
+	
+	
+func setup_camera_marker() -> void:
+	var marker = self.find_child("CameraMarker")
+	marker.position = Vector2i(1000,500)
 
 
 

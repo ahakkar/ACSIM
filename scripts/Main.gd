@@ -20,7 +20,7 @@ var map_filenames:Array = [
 	"res://maps/tampere_256px.png",
 	"res://maps/tampere_10x10km_4096px.png"
 	]
-var map_filename:String = map_filenames[4]
+var map_filename:String = map_filenames[3]
 
 var _world_generator:WorldGenerator
 
