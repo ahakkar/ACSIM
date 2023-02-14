@@ -55,16 +55,18 @@ var map_tile_data:Array[Array] = [[]]
 # CAMERA SETTINGS				  #
 ###################################
 
+var camera_marker
+
 # GAME WINDOW DEFAULT SIZE
 const DEFAULT_X_RES:int = 1920
 const DEFAULT_Y_RES:int = 1080
 
 # current camera zoom level
 var CAMERA_ZOOM_LEVEL: float = 1.0
-var CAMERA_POSITION
+var CAMERA_POSITION:Vector2i
 
 # camera movement settings
-const CAMERA_MIN_ZOOM_LEVEL: float = 0.1
+const CAMERA_MIN_ZOOM_LEVEL: float = 0.5
 const CAMERA_MAX_ZOOM_LEVEL: float = 2.0
 const CAMERA_ZOOM_FACTOR: float = 0.1
 const CAMERA_ZOOM_DURATION: float = 0.1

@@ -39,7 +39,7 @@ anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
-mouse_filter = 2
+mouse_filter = 1
 script = ExtResource("3_1t1c8")
 metadata/_edit_use_anchors_ = true
 
@@ -111,11 +111,15 @@ anchor_left = 1.0
 anchor_top = 1.0
 anchor_right = 1.0
 anchor_bottom = 1.0
+offset_left = -512.0
+offset_top = -512.0
 grow_horizontal = 0
 grow_vertical = 0
+mouse_filter = 1
 script = ExtResource("5_rg28x")
 
 [node name="CameraMarker" type="Sprite2D" parent="UILayer/Control/Minimap"]
+z_index = 1
 position = Vector2(-32, 0)
 texture = ExtResource("7_w68w7")
 
@@ -134,3 +138,6 @@ centered = false
 [connection signal="pressed" from="UILayer/Control/ConstructionPanel/button_demolish" to="UILayer/Control" method="_on_button_demolish_pressed"]
 [connection signal="pressed" from="UILayer/Control/ConstructionPanel/button_services" to="UILayer/Control" method="_on_button_services_pressed"]
 [connection signal="pressed" from="UILayer/Control/ConstructionPanel/button_social" to="UILayer/Control" method="_on_button_social_pressed"]
+[connection signal="mouse_entered" from="UILayer/Control/Minimap" to="UILayer/Control/Minimap" method="_on_mouse_entered"]
+[connection signal="mouse_exited" from="UILayer/Control/Minimap" to="UILayer/Control/Minimap" method="_on_mouse_exited"]
+[connection signal="set_camera_position" from="UILayer/Control/Minimap" to="CameraZoom2D" method="_on_set_camera_position"]

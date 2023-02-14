@@ -1,23 +1,53 @@
 class_name Minimap
 extends Control
 
+signal set_camera_position(pos:Vector2)
+
 @onready var minimap_texture:ImageTexture = null
 @onready var sprite:Sprite2D
+var is_mouse_inside_minimap:bool = false
+
 
 # Called when the node enters the scene tree for the first time.
 func _ready():
-	self.minimap_texture = ImageTexture.new()		
+	self.minimap_texture = ImageTexture.new()
+	
+
+func _draw():
+	#self.draw_rect(Rect2i(Vector2i(1,1), Vector2i(514,514)), Color(0,0,0), false, 2.0)
+	pass
 	
 
 # Called every frame. 'delta' is the elapsed time since the previous frame.
 func _process(_delta):
-	pass
-	
+	if !is_mouse_inside_minimap:
+		Globals.camera_marker.position = Vector2i(
+			Globals.CAMERA_POSITION.x / 8,
+			Globals.CAMERA_POSITION.y / 8,
+			)
+
 	
 func _on_main_worldgen_ready():
 	self.generate_minimap()
 	self.set_minimap()
 	self.setup_camera_marker()
+	
+	
+func _on_mouse_entered():
+	is_mouse_inside_minimap = true
+
+func _on_mouse_exited():
+	is_mouse_inside_minimap = false
+	
+
+func _unhandled_input(event) -> void:	
+	if is_mouse_inside_minimap:
+		if event is InputEventMouseButton and event.button_index == MOUSE_BUTTON_LEFT:
+			Globals.camera_marker.position = get_local_mouse_position()
+			emit_signal(
+				"set_camera_position", 
+				get_local_mouse_position() * 8
+			)
 	
 
 func generate_minimap() -> void:	
@@ -63,8 +93,8 @@ func set_minimap() -> void:
 	
 	
 func setup_camera_marker() -> void:
-	var marker = self.find_child("CameraMarker")
-	marker.position = Vector2i(1000,500)
+	Globals.camera_marker = self.find_child("CameraMarker")
+	
 
 
 

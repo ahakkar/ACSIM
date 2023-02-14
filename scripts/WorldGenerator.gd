@@ -1,6 +1,11 @@
 class_name WorldGenerator
 extends RefCounted
 
+
+# About biome generation with noise: https://www.redblobgames.com/maps/terrain-from-noise/
+# Trees with Poisson Disc: http://devmag.org.za/2009/05/03/poisson-disk-sampling/
+
+
 var image:Image = Image.new()	
 
 
@@ -58,13 +63,13 @@ func choose_tile(tile:Vector2i, selected, surrounding) -> Array:
 func generate_biomes() -> void:
 	# generate a new noisemap which should emulate forest-looking areas
 	var fnl = FastNoiseLite.new()
-	fnl.noise_type = FastNoiseLite.TYPE_PERLIN
+	fnl.noise_type = FastNoiseLite.TYPE_SIMPLEX
 	fnl.seed = 69 #randi()
-	fnl.frequency = 0.1
+	fnl.frequency = 0.01
 	fnl.fractal_type = FastNoiseLite.FRACTAL_FBM
-	fnl.fractal_octaves = 3
-	fnl.fractal_lacunarity = 1
-	fnl.fractal_gain = 1.746
+	fnl.fractal_octaves = 7
+	fnl.fractal_lacunarity = 1.671
+	fnl.fractal_gain = 0.947
 	
 	var water_next_to_tile:bool = false
 
@@ -84,7 +89,7 @@ func generate_biomes() -> void:
 				
 				# if there's no water next to a land tile, it can be replaced with forest
 				if !water_next_to_tile:
-					var noise_sample = fnl.get_noise_2d(x,y)
+					var noise_sample = fnl.get_noise_2d(x, y)
 					if noise_sample < 0.1:
 						Globals.map_terrain_data[y][x] = Globals.TILE_FOREST	
 					# can add other tresholds here for other biomes
