@@ -6,7 +6,6 @@ signal set_camera_position(pos:Vector2)
 @onready var minimap_texture:ImageTexture = null
 @onready var sprite:Sprite2D
 var is_mouse_inside_minimap:bool = false
-
 var position_multiplier
 
 
@@ -20,12 +19,11 @@ func _draw():
 	pass
 	
 
-# Called every frame. 'delta' is the elapsed time since the previous frame.
 func _process(_delta):
 	if !is_mouse_inside_minimap:
 		Globals.camera_marker.position = Vector2i(
-			Globals.CAMERA_POSITION.x / position_multiplier, # 8 on 256 size map. need a forumla to calculate this
-			Globals.CAMERA_POSITION.y / position_multiplier, # 8 on 256 size map
+			Globals.CAMERA_POSITION.x / position_multiplier,
+			Globals.CAMERA_POSITION.y / position_multiplier,
 			)
 
 	
@@ -34,9 +32,7 @@ func _on_main_worldgen_ready():
 	self.set_minimap()
 	self.setup_camera_marker()
 	
-	# log2(x) = log10(x) / log10(2)
-	var power = log(Globals.map_size) / log(2) - 8
-	position_multiplier = 8 * pow(2, power)
+	position_multiplier = Globals.map_size / 32
 	
 	
 func _on_mouse_entered():
