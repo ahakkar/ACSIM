@@ -22,7 +22,6 @@ var exit_thread = false
 
 var _timer:Timer
 
-
 func _exit_tree():
 	mutex.lock()
 	exit_thread = true 
@@ -35,6 +34,22 @@ func _exit_tree():
 func _init() -> void:
 	self.name = "ChunkHandler"
 	
+
+func _on_main_worldgen_ready():
+	thread.start(start_chunkgen, Thread.PRIORITY_NORMAL)
+	
+	# chunk cleanup timer
+	_timer = Timer.new()
+	add_child(_timer)
+	_timer.connect("timeout", _on_timer_timeout, 0)
+	_timer.set_wait_time(0.05)
+	_timer.set_one_shot(false)
+	_timer.start()
+	
+	
+func _on_timer_timeout():
+	clean_up_chunks()
+	
 	
 func _process(_delta):
 	update_chunks()	
@@ -46,17 +61,7 @@ func _ready():
 	exit_thread = false
 	
 	thread = Thread.new()
-	thread.start(start_chunkgen, Thread.PRIORITY_NORMAL)
 	
-	_timer = Timer.new()
-	add_child(_timer)
-	_timer.connect("timeout", _on_timer_timeout, 0)
-	_timer.set_wait_time(0.05)
-	_timer.set_one_shot(false)
-	_timer.start()
-
-func _on_timer_timeout():
-	clean_up_chunks()
 
 func start_chunkgen():
 	while true:		

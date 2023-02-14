@@ -101,7 +101,7 @@ func generate_world(filename) -> bool:
 		return false
 				
 	if (image.get_size().x / image.get_size().y) != 1:
-		push_error("Error: image size was invalidin world generator")
+		push_error("Error: image size was invalid in world generator")
 		return false
 		
 	image_size = image.get_size()

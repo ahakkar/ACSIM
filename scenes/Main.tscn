@@ -1,6 +1,7 @@
-[gd_scene load_steps=6 format=3 uid="uid://nfayf78xiuap"]
+[gd_scene load_steps=7 format=3 uid="uid://nfayf78xiuap"]
 
 [ext_resource type="Script" path="res://scripts/Main.gd" id="1_ysxum"]
+[ext_resource type="Script" path="res://scripts/ChunkHandler.gd" id="2_6cequ"]
 [ext_resource type="Script" path="res://scripts/Control.gd" id="3_1t1c8"]
 [ext_resource type="PackedScene" uid="uid://2we3txfr812u" path="res://scenes/Camera_zoom_2d.tscn" id="4_rx82t"]
 [ext_resource type="Script" path="res://scripts/EntityPlacer.gd" id="5_8jju5"]
@@ -8,6 +9,9 @@
 
 [node name="Main" type="Node2D"]
 script = ExtResource("1_ysxum")
+
+[node name="ChunkHandler" type="Node2D" parent="."]
+script = ExtResource("2_6cequ")
 
 [node name="EntityPlacer" type="Control" parent="."]
 layout_mode = 3
@@ -17,30 +21,37 @@ offset_bottom = 40.0
 script = ExtResource("5_8jju5")
 
 [node name="CameraZoom2D" parent="." instance=ExtResource("4_rx82t")]
-position = Vector2(960, 536)
-limit_left = -40000
-limit_top = -40000
-limit_right = 40000
-limit_bottom = 40000
+position = Vector2(1272, 720)
+limit_left = 0
+limit_top = 0
+limit_right = 65536
+limit_bottom = 65536
+limit_smoothed = true
 editor_draw_limits = true
 
 [node name="UILayer" type="CanvasLayer" parent="."]
 
 [node name="Control" type="Control" parent="UILayer"]
 layout_mode = 3
-anchors_preset = 5
-anchor_left = 0.5
-anchor_right = 0.5
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
 grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
 script = ExtResource("3_1t1c8")
 metadata/_edit_use_anchors_ = true
 
 [node name="ConstructionPanel" type="Panel" parent="UILayer/Control"]
 custom_minimum_size = Vector2(500, 100)
-layout_mode = 0
-offset_left = -248.0
-offset_right = 252.0
-offset_bottom = 120.0
+layout_mode = 1
+anchors_preset = 5
+anchor_left = 0.5
+anchor_right = 0.5
+offset_left = -250.0
+offset_right = 250.0
+offset_bottom = 100.0
+grow_horizontal = 2
 
 [node name="button_residental" type="Button" parent="UILayer/Control/ConstructionPanel"]
 layout_mode = 0
@@ -77,33 +88,42 @@ layout_mode = 0
 offset_right = 8.0
 offset_bottom = 8.0
 
-[node name="DebugInfo" type="Label" parent="UILayer/Control"]
-layout_mode = 0
-offset_left = 648.0
-offset_top = 16.0
-offset_right = 936.0
-offset_bottom = 256.0
-horizontal_alignment = 2
+[node name="DebugContainer" type="GridContainer" parent="UILayer/Control"]
+layout_mode = 1
+anchors_preset = 1
+anchor_left = 1.0
+anchor_right = 1.0
+offset_left = -264.0
+offset_top = 24.0
+offset_bottom = 424.0
+grow_horizontal = 0
 
-[node name="Minimap" type="Container" parent="UILayer"]
-anchors_preset = -1
-anchor_top = -0.044
-anchor_right = 0.172
-anchor_bottom = 0.161
-offset_left = 1696.0
-offset_top = 735.36
-offset_right = 1807.68
-offset_bottom = 1032.16
+[node name="DebugInfo" type="Label" parent="UILayer/Control/DebugContainer"]
+layout_mode = 2
+
+[node name="Minimap" type="Panel" parent="UILayer/Control"]
+clip_contents = true
+custom_minimum_size = Vector2(512, 512)
+layout_mode = 1
+anchors_preset = 3
+anchor_left = 1.0
+anchor_top = 1.0
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 0
+grow_vertical = 0
 script = ExtResource("5_rg28x")
 
-[node name="CameraMarker" type="Sprite2D" parent="UILayer/Minimap"]
-position = Vector2(296, 392)
+[node name="CameraMarker" type="Sprite2D" parent="UILayer/Control/Minimap"]
+position = Vector2(-32, 0)
 
-[node name="MinimapSprite" type="Sprite2D" parent="UILayer/Minimap"]
-position = Vector2(416, 472)
+[node name="MinimapSprite" type="Sprite2D" parent="UILayer/Control/Minimap"]
+texture_repeat = 1
+centered = false
 
 [connection signal="set_camera_position" from="." to="CameraZoom2D" method="_on_set_camera_position"]
-[connection signal="worldgen_ready" from="." to="UILayer/Minimap" method="_on_main_worldgen_ready"]
+[connection signal="worldgen_ready" from="." to="ChunkHandler" method="_on_main_worldgen_ready"]
+[connection signal="worldgen_ready" from="." to="UILayer/Control/Minimap" method="_on_main_worldgen_ready"]
 [connection signal="pressed" from="UILayer/Control/ConstructionPanel/button_residental" to="UILayer/Control" method="_on_button_residental_pressed"]
 [connection signal="pressed" from="UILayer/Control/ConstructionPanel/button_commercial" to="UILayer/Control" method="_on_button_commercial_pressed"]
 [connection signal="pressed" from="UILayer/Control/ConstructionPanel/button_industrial" to="UILayer/Control" method="_on_button_industrial_pressed"]

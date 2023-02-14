@@ -1,10 +1,31 @@
 # File contains global variables or constants so they all are in one place instead
-# of a million files. So you can adjust them easily from one place if needed.
+# of a million files. So you can adjust them "easily" from one place if needed.
 
 extends Node
 
 var chunks_loaded:int = 0
-var worlgen_ready:bool = false
+
+
+###################################
+# FILE PATHS					  #
+###################################
+
+const SCENE_PATH:String = "res://scenes/"
+const ART_PATH:String = "res://art/"
+const SCRIPT_PATH:String = "res://scripts"
+
+
+###################################
+# MINIMAP SETTINGS				  #
+###################################
+
+var minimap_colors:Dictionary = {
+	Globals.TILE_WATER : Color8(42, 31, 255),
+	Globals.TILE_TERRAIN: Color8(148, 113, 71),
+	Globals.TILE_FOREST: Color8(0,123,19),
+	"default": Color8(255,0,255),
+}
+
 
 ###################################
 # CHUNK AND TERRAIN SETTINGS	  #
@@ -29,9 +50,14 @@ var map_terrain_data:Array[Array] = [[]]
 # preprocess and store exact tile for every map cell to speed up setting tiles
 var map_tile_data:Array[Array] = [[]]
 
+
 ###################################
 # CAMERA SETTINGS				  #
 ###################################
+
+# GAME WINDOW DEFAULT SIZE
+const DEFAULT_X_RES:int = 1920
+const DEFAULT_Y_RES:int = 1080
 
 # current camera zoom level
 var CAMERA_ZOOM_LEVEL: float = 1.0
@@ -44,10 +70,10 @@ const CAMERA_ZOOM_FACTOR: float = 0.1
 const CAMERA_ZOOM_DURATION: float = 0.1
 const CAMERA_PAN_MULTI:float = 2.0
 
-# FILE PATHS
-const SCENE_PATH:String = "res://scenes/"
-const ART_PATH:String = "res://art/"
-const SCRIPT_PATH:String = "res://scripts"
+
+###################################
+# UI ELEMENT SETTINGS			  #
+###################################
 
 # NODE NAMES
 const WORLD_NODE:String = "World"
@@ -57,10 +83,6 @@ const CONSTRUCTION_PANEL_NODE:String = "ConstructionPanel"
 const GUI_BUILD_BUTTON_SIZE_X: int = 50
 const GUI_BUILD_BUTTON_SIZE_Y: int = 50
 const GUI_BUILD_BUTTON_SIZE: Vector2i =	Vector2i(GUI_BUILD_BUTTON_SIZE_X,GUI_BUILD_BUTTON_SIZE_Y)
-
-# GAME WINDOW DEFAULT SIZE
-const DEFAULT_X_RES:int = 1920
-const DEFAULT_Y_RES:int = 1080
 
 # maybe should use int for these instead for faster matching?
 const TYPE_RESIDENTIAL:String = "residential"
@@ -72,9 +94,14 @@ const TYPE_POWERPLANT:String = "powerplant"
 const TYPE_ROADS:String = "roads"
 const TYPE_DEMOLISH:String = "demolish"
 
+
+###################################
+# WORLD GENERATION SETTINGS		  #
+###################################
+
 # city map generation file should have black ground (0,0,0) and white water (1,1,1)
-const GROUND_TILE_COLOR_IN_MAP_FILE: Color = Color(0,0,0,1)
-const WATER_TILE_COLOR_IN_MAP_FILE: Color = Color(1,1,1,1)
+const GROUND_TILE_COLOR_IN_MAP_FILE: Color = Color(0,0,0)
+const WATER_TILE_COLOR_IN_MAP_FILE: Color = Color(1,1,1)
 
 # min and max sizes for a map so the map won't be unreasonably small or large
 const MAP_MIN_HEIGHT:int = 128
@@ -135,6 +162,11 @@ var td = {
 		"key": [Vector2i(0,0)]
 		}
 	}
+	
+	
+###################################
+# GAME ERORR MESSAGES			  #
+###################################
 
 # error messages
 const ERROR_BUILDING_TYPE_NOT_SET:String = "Building type not set, while trying to place building."

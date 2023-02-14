@@ -44,8 +44,8 @@ func _unhandled_input(event):
 		camera_zoom_in()
 	if event.is_action_pressed("camera_zoom_out"):
 		camera_zoom_out()
-	
-	if event is InputEventMouseButton and event.button_index == MOUSE_BUTTON_LEFT:
+
+	if event is InputEventMouseButton and event.button_index == MOUSE_BUTTON_LEFT:		
 		if !is_panning_camera and event.pressed:
 			is_panning_camera = true
 		if is_panning_camera and !event.pressed:

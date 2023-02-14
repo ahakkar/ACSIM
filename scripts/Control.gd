@@ -3,7 +3,7 @@ extends Control
 # var view = get_node("../View")
 
 signal button_pressed(button_name)
-@onready var debug_info = get_node(Globals.DEBUGINFO_NODE)
+@onready var debug_info = get_node("DebugContainer/" + Globals.DEBUGINFO_NODE)
 @onready var minimap:Minimap
 
 # name, position

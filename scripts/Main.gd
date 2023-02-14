@@ -20,11 +20,9 @@ var map_filenames:Array = [
 	"res://maps/tampere_256px.png",
 	"res://maps/tampere_10x10km_4096px.png"
 	]
-var map_filename:String = map_filenames[2]
-var _world_generator:WorldGenerator
-var _chunk_handler:ChunkHandler
-#var _2d_camera:CameraZoom2D
+var map_filename:String = map_filenames[4]
 
+var _world_generator:WorldGenerator
 
 func _init():
 #	DisplayServer.window_set_size(
@@ -36,21 +34,16 @@ func _init():
 
 # Called when the node enters the scene tree for the first time.
 func _ready():	 
-	# create a new world and worldgenerator
+	# create a new world with worldgenerator
 	_world_generator = WorldGenerator.new()	
-	#_2d_camera = CameraZoom2D.new()
-
-	# add chunk handler if worldgen was successful
-	if _world_generator.generate_world(map_filename):
-		Globals.worlgen_ready = true		
-	else:
-		push_error("World generation failed :-(")	
+	if !_world_generator.generate_world(map_filename):
+		push_error("World generation failed :-(")
+		quit_game()
+		
+	# connections are made from GUI
 	
-	_chunk_handler = ChunkHandler.new()
-	add_child(_chunk_handler)
-	
+	# tell other classes they can start working	after loading is done
 	emit_signal("worldgen_ready")
-				
 	# center camera to world map
 	emit_signal(
 		"set_camera_position", 
@@ -60,6 +53,5 @@ func _ready():
 	
 func quit_game():
 	get_tree().get_root().propagate_notification(NOTIFICATION_WM_CLOSE_REQUEST)
-	#SceneTree.quit
 
 

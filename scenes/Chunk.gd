@@ -5,6 +5,7 @@ var x:int = -1
 var y:int = -1
 var should_remove:bool = false
 
+
 # Called when the node enters the scene tree for the first time.
 func _init(ypos:int, xpos:int, sr: bool):
 	self.x = xpos
@@ -18,8 +19,10 @@ func _init(ypos:int, xpos:int, sr: bool):
 		y*Globals.CHUNK_SIZE.y*Globals.TILE_SIZE_Y
 		)
 		
+		
 func _ready():
 	generate_chunk()
+	
 	
 func _draw():
 	self.draw_rect(
@@ -32,6 +35,7 @@ func _draw():
 		Color(0,0,0,0.5),
 		false
 		)
+
 
 func generate_chunk() -> void:	
 	for row in Globals.CHUNK_SIZE.y:
