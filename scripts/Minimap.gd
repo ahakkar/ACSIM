@@ -2,12 +2,13 @@ class_name Minimap
 extends Control
 
 signal set_camera_position(pos:Vector2)
+signal set_map_background_texture(texture)
 
 @onready var minimap_texture:ImageTexture = null
 @onready var sprite:Sprite2D
 @onready var is_mouse_inside_minimap:bool = false
-@onready var position_multiplier
-@onready var area_size
+@onready var position_multiplier:float
+@onready var area_size:Vector2
 
 
 # Called when the node enters the scene tree for the first time.
@@ -22,7 +23,7 @@ func _draw():
 
 func _process(_delta):
 	if !is_mouse_inside_minimap:
-		Globals.camera_marker.position = Vector2i(
+		Globals.camera_marker.position = Vector2(
 			Globals.CAMERA_POSITION.x / position_multiplier,
 			Globals.CAMERA_POSITION.y / position_multiplier,
 			)
@@ -92,6 +93,8 @@ func set_minimap() -> void:
 	var sy = area_size.y / texture_size.y
 
 	sprite.scale = Vector2(sx, sy)
+	
+	emit_signal("set_map_background_texture", sprite.texture)
 	
 	
 func setup_camera_marker() -> void:

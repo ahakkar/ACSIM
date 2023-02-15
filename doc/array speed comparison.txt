@@ -1,0 +1,46 @@
+Regular array:
+
+Worldgen speed stats:
+1/5: read image data 101.457ms
+2/5: smooth water 1585.604ms
+3/5: generate biomes 932.489ms
+4/5: smooth forest 1706.94ms
+5/5: select tiles 2336.994ms
+
+Worldgen speed stats:
+1/5: read image data 100.047ms
+2/5: smooth water 1625.953ms
+3/5: generate biomes 932.566ms
+4/5: smooth forest 1696.521ms
+5/5: select tiles 2333.278ms
+
+Worldgen speed stats:
+1/5: read image data 101.602ms
+2/5: smooth water 1589.061ms
+3/5: generate biomes 937.952ms
+4/5: smooth forest 1717.81ms
+5/5: select tiles 2365.742ms
+
+
+PackedInt32Array
+
+Worldgen speed stats:
+1/5: read image data 104.307ms
+2/5: smooth water 1472.599ms
+3/5: generate biomes 880.578ms
+4/5: smooth forest 1632.503ms
+5/5: select tiles 2334.966ms
+
+Worldgen speed stats:
+1/5: read image data 105.705ms
+2/5: smooth water 1484.185ms
+3/5: generate biomes 883.91ms
+4/5: smooth forest 1627.377ms
+5/5: select tiles 2333.161ms
+
+Worldgen speed stats:
+1/5: read image data 105.343ms
+2/5: smooth water 1460.586ms
+3/5: generate biomes 876.786ms
+4/5: smooth forest 1613.83ms
+5/5: select tiles 2312.17ms

@@ -9,7 +9,11 @@ extends Node2D
 # This is done to speed up game loading and avoiding setting one large tilemap in one go
 # which is extremely slow in godot 4.0, 4096x4096 takes minutes to fill with set_cell() commands
 
+
+signal chunk_stats(chunks, removal_queue)
+
 var chunks:Dictionary = {}
+var chunks_to_remove:Array[Chunk] = []
 var window_width = DisplayServer.window_get_size(0).x
 var distance = abs((window_width/(Globals.CHUNK_SIZE.x*Globals.TILE_SIZE_X)) / 2 +1 )
 
@@ -20,7 +24,6 @@ var semaphore:Semaphore
 var thread:Thread
 var exit_thread = false
 
-var _timer:Timer
 
 func _exit_tree():
 	mutex.lock()
@@ -37,22 +40,12 @@ func _init() -> void:
 
 func _on_main_worldgen_ready():
 	thread.start(start_chunkgen, Thread.PRIORITY_NORMAL)
-	
-	# chunk cleanup timer
-	_timer = Timer.new()
-	add_child(_timer)
-	_timer.connect("timeout", _on_timer_timeout, 0)
-	_timer.set_wait_time(0.05)
-	_timer.set_one_shot(false)
-	_timer.start()
-	
-	
-func _on_timer_timeout():
 	clean_up_chunks()
-	
+
 	
 func _process(_delta):
 	update_chunks()	
+	emit_signal("chunk_stats", self.chunks.size(), self.chunks_to_remove.size())
 	
 	
 func _ready():	
@@ -83,13 +76,14 @@ func start_chunkgen():
 			load_chunk(vars[0].y, vars[0].x, vars[1])
 	
 func clean_up_chunks():
-	mutex.lock()
-	for key in chunks:
-		var chunk = chunks[key]
-		if chunk.should_remove:
+	while true:		
+		if chunks_to_remove.size() > 0:
+			mutex.lock()
+			var chunk = chunks_to_remove.pop_front()	
+			mutex.unlock()
 			chunk.queue_free()
-			chunks.erase(key)
-	mutex.unlock()
+			
+		await get_tree().create_timer(0.02).timeout
 
 func correction_factor(d) -> float:
 	if Globals.CAMERA_ZOOM_LEVEL < 0.6:
@@ -146,5 +140,6 @@ func update_chunks():
 					mutex.unlock()				
 					semaphore.post()
 			elif chunks.has(key):
-				chunks[key].should_remove = true
+				chunks_to_remove.append(chunks.get(key))
+				chunks.erase(key)
 

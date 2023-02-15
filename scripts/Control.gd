@@ -6,6 +6,9 @@ signal button_pressed(button_name)
 @onready var debug_info = get_node("DebugContainer/" + Globals.DEBUGINFO_NODE)
 @onready var minimap:Minimap
 
+var amount_of_chunks:int = 0
+var size_of_chunk_removal_queue:int = 0
+
 # name, position
 var buttons = {
 	"button_residental": [Vector2(0,0), "R"],
@@ -30,7 +33,9 @@ func _process(_delta):
 		"FPS " + str(Engine.get_frames_per_second()) + "\n" +
 		"Zoom lvl: " + str(Globals.CAMERA_ZOOM_LEVEL) + "\n" +
 		"Camera pos: " + str(Globals.CAMERA_POSITION) + "\n" +
-		"Camera pos: " + str(Globals.camera_marker.position)
+		"Camera pos: " + str(Globals.camera_marker.position) + "\n" +
+		"Chunks: " + str(self.amount_of_chunks) + "\n" +
+		"Chunk del: " + str(self.size_of_chunk_removal_queue),
 	)
 	
 # defines construction toolbar buttons	
@@ -70,3 +75,8 @@ func _on_button_services_pressed():
 
 func _on_button_social_pressed():
 	emit_signal("button_pressed", Globals.TYPE_SOCIAL)
+
+
+func _on_chunk_handler_chunk_stats(chunks, removal_queue):
+	self.amount_of_chunks = chunks
+	self.size_of_chunk_removal_queue = removal_queue

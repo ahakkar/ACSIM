@@ -24,3 +24,6 @@ position = Vector2(1480, 700)
 rotation = 0.523598
 scale = Vector2(2.6875, 2.60938)
 texture = SubResource("NoiseTexture2D_kpv1q")
+
+[node name="TileMap" type="TileMap" parent="."]
+format = 2

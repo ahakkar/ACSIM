@@ -45,7 +45,7 @@ const TILESET_TERRAIN:TileSet = preload("res://scenes/Chunk.tres")
 var map_size:int = 0
 
 # store terrain type (water, land, forest etc. for every map cell)
-var map_terrain_data:Array[Array] = [[]]
+var map_terrain_data:Array[PackedInt32Array] = [[]]
 
 # preprocess and store exact tile for every map cell to speed up setting tiles
 var map_tile_data:Array[Array] = [[]]
@@ -55,7 +55,7 @@ var map_tile_data:Array[Array] = [[]]
 # CAMERA SETTINGS				  #
 ###################################
 
-var camera_marker
+var camera_marker:Sprite2D
 
 # GAME WINDOW DEFAULT SIZE
 const DEFAULT_X_RES:int = 1920
@@ -66,7 +66,7 @@ var CAMERA_ZOOM_LEVEL: float = 1.0
 var CAMERA_POSITION:Vector2i
 
 # camera movement settings
-const CAMERA_MIN_ZOOM_LEVEL: float = 0.5
+const CAMERA_MIN_ZOOM_LEVEL: float = 0.1
 const CAMERA_MAX_ZOOM_LEVEL: float = 2.0
 const CAMERA_ZOOM_FACTOR: float = 0.1
 const CAMERA_ZOOM_DURATION: float = 0.1

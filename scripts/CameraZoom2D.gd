@@ -5,12 +5,12 @@ extends Camera2D
 signal camera_rotation_changed(new_rotation)
 signal camera_zoom_changed(new_zoom_factor)
 
-var is_panning_camera = false
-var tween
+var is_panning_camera:bool = false
+var tween:Tween
 
 var chunk_in_px:Vector2i = Vector2i(Globals.CHUNK_SIZE.x*Globals.TILE_SIZE_X, Globals.CHUNK_SIZE.y*Globals.TILE_SIZE_Y)
-var game_res = DisplayServer.window_get_size(0)
-var x_min_limit = self.game_res.x/2 - chunk_in_px.x
+var game_res:Vector2i = DisplayServer.window_get_size(0)
+var x_min_limit:int = self.game_res.x/2 - chunk_in_px.x
 
 
 func _on_main_worldgen_ready() -> void:

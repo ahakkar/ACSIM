@@ -1,4 +1,4 @@
-[gd_scene load_steps=8 format=3 uid="uid://nfayf78xiuap"]
+[gd_scene load_steps=9 format=3 uid="uid://b1bahdquscsym"]
 
 [ext_resource type="Script" path="res://scripts/Main.gd" id="1_ysxum"]
 [ext_resource type="Script" path="res://scripts/ChunkHandler.gd" id="2_6cequ"]
@@ -6,7 +6,8 @@
 [ext_resource type="PackedScene" uid="uid://2we3txfr812u" path="res://scenes/Camera_zoom_2d.tscn" id="4_rx82t"]
 [ext_resource type="Script" path="res://scripts/EntityPlacer.gd" id="5_8jju5"]
 [ext_resource type="Script" path="res://scripts/Minimap.gd" id="5_rg28x"]
-[ext_resource type="Script" path="res://scenes/CameraMarker.gd" id="7_0s6ed"]
+[ext_resource type="Script" path="res://scripts/CameraMarker.gd" id="7_6krn1"]
+[ext_resource type="Script" path="res://scripts/MapBackground.gd" id="8_ron2j"]
 
 [node name="Main" type="Node2D"]
 script = ExtResource("1_ysxum")
@@ -31,6 +32,11 @@ limit_bottom = 65536
 limit_smoothed = true
 rotation_smoothing_enabled = true
 editor_draw_limits = true
+
+[node name="MapBackground" type="Sprite2D" parent="."]
+z_index = -1
+centered = false
+script = ExtResource("8_ron2j")
 
 [node name="UILayer" type="CanvasLayer" parent="."]
 
@@ -124,7 +130,7 @@ script = ExtResource("5_rg28x")
 z_index = 1
 position = Vector2(-32, 0)
 centered = false
-script = ExtResource("7_0s6ed")
+script = ExtResource("7_6krn1")
 
 [node name="MinimapSprite" type="Sprite2D" parent="UILayer/Control/Minimap"]
 texture_repeat = 1
@@ -135,6 +141,7 @@ centered = false
 [connection signal="worldgen_ready" from="." to="CameraZoom2D" method="_on_main_worldgen_ready"]
 [connection signal="worldgen_ready" from="." to="UILayer/Control/Minimap" method="_on_main_worldgen_ready"]
 [connection signal="worldgen_ready" from="." to="UILayer/Control/Minimap/CameraMarker" method="_on_main_worldgen_ready"]
+[connection signal="chunk_stats" from="ChunkHandler" to="UILayer/Control" method="_on_chunk_handler_chunk_stats"]
 [connection signal="camera_rotation_changed" from="CameraZoom2D" to="UILayer/Control/Minimap/CameraMarker" method="_on_camera_zoom_2d_camera_rotation_changed"]
 [connection signal="camera_zoom_changed" from="CameraZoom2D" to="UILayer/Control/Minimap/CameraMarker" method="_on_camera_zoom_2d_camera_zoom_changed"]
 [connection signal="pressed" from="UILayer/Control/ConstructionPanel/button_residental" to="UILayer/Control" method="_on_button_residental_pressed"]
@@ -147,3 +154,4 @@ centered = false
 [connection signal="mouse_entered" from="UILayer/Control/Minimap" to="UILayer/Control/Minimap" method="_on_mouse_entered"]
 [connection signal="mouse_exited" from="UILayer/Control/Minimap" to="UILayer/Control/Minimap" method="_on_mouse_exited"]
 [connection signal="set_camera_position" from="UILayer/Control/Minimap" to="CameraZoom2D" method="_on_set_camera_position"]
+[connection signal="set_map_background_texture" from="UILayer/Control/Minimap" to="MapBackground" method="_on_minimap_set_map_background_texture"]

@@ -84,4 +84,6 @@ camera_reset_rotation={
 
 [rendering]
 
+textures/default_filters/texture_mipmap_bias=0.5
 environment/defaults/default_clear_color=Color(0, 0, 0, 1)
+textures/canvas_textures/default_texture_filter=2

@@ -12,6 +12,9 @@ func _init(ypos:int, xpos:int, sr: bool):
 	self.y = ypos
 	self.should_remove = sr	
 	
+	#self.texture_filter = CanvasItem.TEXTURE_FILTER_LINEAR_WITH_MIPMAPS_ANISOTROPIC
+	self.cell_quadrant_size = 32
+	
 	self.name = "Chunk [%d,%d]" % [x, y]	
 	self.set_tileset(Globals.TILESET_TERRAIN)
 	self.position = Vector2i(
@@ -24,17 +27,18 @@ func _ready():
 	generate_chunk()
 	
 	
-func _draw():
-	self.draw_rect(
-		Rect2(
-			Vector2(0,0),
-			Vector2(
-				Globals.CHUNK_SIZE.x*Globals.TILE_SIZE_X, 
-				Globals.CHUNK_SIZE.y*Globals.TILE_SIZE_Y)
-			),
-		Color(0,0,0,0.5),
-		false
-		)
+# draws borders around the chunk
+#func _draw():
+#	self.draw_rect(
+#		Rect2(
+#			Vector2(0,0),
+#			Vector2(
+#				Globals.CHUNK_SIZE.x*Globals.TILE_SIZE_X, 
+#				Globals.CHUNK_SIZE.y*Globals.TILE_SIZE_Y)
+#			),
+#		Color(0,0,0,0.5),
+#		false
+#		)
 
 
 func generate_chunk() -> void:	
