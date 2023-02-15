@@ -23,11 +23,13 @@ script = ExtResource("5_8jju5")
 
 [node name="CameraZoom2D" parent="." instance=ExtResource("4_rx82t")]
 position = Vector2(1272, 720)
+ignore_rotation = false
 limit_left = 0
 limit_top = 0
 limit_right = 65536
 limit_bottom = 65536
 limit_smoothed = true
+rotation_smoothing_enabled = true
 editor_draw_limits = true
 
 [node name="UILayer" type="CanvasLayer" parent="."]

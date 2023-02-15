@@ -6,6 +6,10 @@
 # - Then click and drag to draw the lines of grey cubes.
 # - etc.
 
+
+# https://github.com/dfloer/SC2k-docs
+
+
 class_name Main
 extends Node2D
 
