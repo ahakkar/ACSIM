@@ -1,0 +1,26 @@
+[gd_scene load_steps=4 format=3 uid="uid://b3onvgtcvpk3q"]
+
+[sub_resource type="Gradient" id="Gradient_fu8gh"]
+interpolation_mode = 2
+
+[sub_resource type="FastNoiseLite" id="FastNoiseLite_54wht"]
+noise_type = 5
+frequency = 0.034
+fractal_type = 0
+fractal_octaves = 1
+fractal_lacunarity = 204.627
+fractal_gain = 2.103
+fractal_weighted_strength = 0.32
+cellular_distance_function = 1
+cellular_jitter = 0.884
+
+[sub_resource type="NoiseTexture2D" id="NoiseTexture2D_kpv1q"]
+generate_mipmaps = false
+color_ramp = SubResource("Gradient_fu8gh")
+noise = SubResource("FastNoiseLite_54wht")
+
+[node name="ParcelNoiseTesting" type="Sprite2D"]
+position = Vector2(1480, 700)
+rotation = 0.523598
+scale = Vector2(2.6875, 2.60938)
+texture = SubResource("NoiseTexture2D_kpv1q")

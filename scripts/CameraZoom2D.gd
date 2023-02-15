@@ -2,11 +2,12 @@
 class_name CameraZoom2D
 extends Camera2D
 
+signal camera_rotation_changed(new_rotation)
+signal camera_zoom_changed(new_zoom_factor)
+
 var is_panning_camera = false
 var tween
-var _timer:Timer
 
-var camera_bounds:Array = [Vector2(0,0), Vector2(256*16, 256*16)]
 var chunk_in_px:Vector2i = Vector2i(Globals.CHUNK_SIZE.x*Globals.TILE_SIZE_X, Globals.CHUNK_SIZE.y*Globals.TILE_SIZE_Y)
 var game_res = DisplayServer.window_get_size(0)
 var x_min_limit = self.game_res.x/2 - chunk_in_px.x
@@ -18,19 +19,6 @@ func _on_main_worldgen_ready() -> void:
 	self.set_limit(SIDE_RIGHT, Globals.map_size*Globals.TILE_SIZE_X + chunk_in_px.x)
 	self.set_limit(SIDE_TOP, -chunk_in_px.y)
 	self.set_limit(SIDE_BOTTOM, Globals.map_size*Globals.TILE_SIZE_Y + chunk_in_px.y)	
-	
-	# create timer for repeating camera rotation
-	if !_timer:
-		_timer = Timer.new()
-		_timer.set_wait_time(0.1)
-		_timer.set_one_shot(false)
-		add_child(_timer)		
-	
-var is_camera_rotating: bool = false
-
-
-func rotate_camera(step:float) -> void:
-	self.rotation_degrees += step
 	
 
 func _on_set_camera_position(pos: Vector2) -> void:	
@@ -52,8 +40,13 @@ func _ready() -> void:
 	pass
 
 	
-func _set_camera_zoom_level(value: float) -> void:
-	Globals.CAMERA_ZOOM_LEVEL = clamp(value, Globals.CAMERA_MIN_ZOOM_LEVEL, Globals.CAMERA_MAX_ZOOM_LEVEL)		
+func _set_camera_zoom_level(value: float) -> void:		
+	# keep zoom level in bounds, return if zoom level was at min or max zoom
+	var new_zoom_level = clamp(value, Globals.CAMERA_MIN_ZOOM_LEVEL, Globals.CAMERA_MAX_ZOOM_LEVEL)
+	if new_zoom_level == Globals.CAMERA_ZOOM_LEVEL:
+		return
+		
+	Globals.CAMERA_ZOOM_LEVEL = new_zoom_level
 	
 	#interpolate frames between zoom levels to make zooming look smoother
 	tween = get_tree().create_tween()
@@ -63,6 +56,8 @@ func _set_camera_zoom_level(value: float) -> void:
 		Vector2(Globals.CAMERA_ZOOM_LEVEL, Globals.CAMERA_ZOOM_LEVEL),
 		Globals.CAMERA_ZOOM_DURATION
 	)
+	
+	emit_signal("camera_zoom_changed", new_zoom_level)
 
 	
 func _unhandled_input(event):	
@@ -85,22 +80,8 @@ func _unhandled_input(event):
 			is_panning_camera = false
 
 	if event is InputEventMouseMotion and is_panning_camera:
-		#var new_x = x + d * cos(theta)
-		#var new_y = y + d * sin(theta)
-		#self.position -= event.relative * Globals.CAMERA_PAN_MULTI
-		# √[(x₂ - x₁)² + (y₂ - y₁)²]
-		
-		var d = sqrt(pow(event.position.x - 2560/2, 2) + pow(event.position.y - 1440/2, 2))		
-		
-		var new_x = self.position.x + d * cos(self.rotation)
-		var new_y = self.position.y + d * sin(self.rotation)
-		
-		#var new_vect = Vector2(new_x, new_y)
-		
-		#print ("distance: " , d, " ", new_x, " ", new_y)
-		
-		self.position = Vector2(new_x, new_y)
-		#self.position -= event.relative * Globals.CAMERA_PAN_MULTI
+		# rotate event.relative vector with camera rotation so camera moves to "correct" direction
+		self.position -= event.relative.rotated(self.rotation) * Globals.CAMERA_PAN_MULTI
 		
 		# prevent camera from going overboard
 		self.position.x = clamp(
@@ -116,7 +97,7 @@ func _unhandled_input(event):
 			
 
 func camera_zoom_in() -> void:	
-	_set_camera_zoom_level(Globals.CAMERA_ZOOM_LEVEL - Globals.CAMERA_ZOOM_FACTOR)		
+	_set_camera_zoom_level(Globals.CAMERA_ZOOM_LEVEL - Globals.CAMERA_ZOOM_FACTOR)
 	
 
 func camera_zoom_out() -> void:
@@ -129,7 +110,10 @@ func get_camera_position():
 
 func reset_camera_rotation() -> void:
 	self.rotation_degrees = 0
+	emit_signal("camera_rotation_changed", self.rotation)
 	
-
+func rotate_camera(step:float) -> void:
+	self.rotation_degrees += step
+	emit_signal("camera_rotation_changed", self.rotation)
 
 

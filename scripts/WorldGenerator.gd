@@ -93,7 +93,12 @@ func generate_biomes() -> void:
 					if noise_sample < 0.1:
 						Globals.map_terrain_data[y][x] = Globals.TILE_FOREST	
 					# can add other tresholds here for other biomes
-					
+
+
+func generate_parcels() -> void:
+	# divide the land area Cadastres / Parcels
+	pass
+
 
 func generate_world(filename) -> bool:	
 	var image_size:Vector2i
@@ -127,6 +132,8 @@ func generate_world(filename) -> bool:
 	end = Time.get_ticks_usec()
 	print("2/5: smooth water ", (end-start)/1000.0, "ms")
 	
+	generate_parcels()
+	
 	start = Time.get_ticks_usec()	
 	generate_biomes()
 	end = Time.get_ticks_usec()
@@ -135,7 +142,7 @@ func generate_world(filename) -> bool:
 	start = Time.get_ticks_usec()	
 	smooth_land_features(Globals.TILE_FOREST) # smooth out forest
 	end = Time.get_ticks_usec()
-	print("4/5: smooth forest ", (end-start)/1000.0, "ms")	
+	print("4/5: smooth forest ", (end-start)/1000.0, "ms")		
 
 	start = Time.get_ticks_usec()	
 	select_tilemap_tiles()

@@ -5,8 +5,9 @@ signal set_camera_position(pos:Vector2)
 
 @onready var minimap_texture:ImageTexture = null
 @onready var sprite:Sprite2D
-var is_mouse_inside_minimap:bool = false
-var position_multiplier
+@onready var is_mouse_inside_minimap:bool = false
+@onready var position_multiplier
+@onready var area_size
 
 
 # Called when the node enters the scene tree for the first time.
@@ -28,11 +29,14 @@ func _process(_delta):
 
 	
 func _on_main_worldgen_ready():
+	# Assuming the area has a child CollisionShape2D with a RectangleShape resource
+	area_size = self.get_rect().size
+	
+	position_multiplier = Globals.map_size / 32
+	
 	self.generate_minimap()
 	self.set_minimap()
 	self.setup_camera_marker()
-	
-	position_multiplier = Globals.map_size / 32
 	
 	
 func _on_mouse_entered():
@@ -79,10 +83,6 @@ func generate_minimap() -> void:
 func set_minimap() -> void:
 	self.sprite = self.find_child("MinimapSprite")
 	self.sprite.texture = minimap_texture
-	
-	# Assuming the area has a child CollisionShape2D with a RectangleShape resource
-	var area_size = self.get_rect()
-	area_size = area_size.size
 
 	# The size of a sprite is determined from its texture
 	var texture_size = sprite.texture.get_size()
