@@ -8,6 +8,8 @@ signal button_pressed(button_name)
 
 var amount_of_chunks:int = 0
 var size_of_chunk_removal_queue:int = 0
+var update_debug_info:bool = false
+
 
 # name, position
 var buttons = {
@@ -20,6 +22,45 @@ var buttons = {
 	"button_social": [Vector2(150,50), "So"],	
 }
 
+func _on_chunk_handler_chunk_stats(chunks, removal_queue):
+	self.amount_of_chunks = chunks
+	self.size_of_chunk_removal_queue = removal_queue
+
+
+# sends signals which View catches and places selected type of buildings
+func _on_button_residental_pressed():
+	emit_signal("button_pressed", Globals.TYPE_RESIDENTIAL)
+	
+	
+func _on_button_commercial_pressed():
+	emit_signal("button_pressed", Globals.TYPE_COMMERCIAL)
+
+
+func _on_button_industrial_pressed():
+	emit_signal("button_pressed", Globals.TYPE_INDUSTRIAL)
+
+
+func _on_button_roads_pressed():
+	emit_signal("button_pressed", Globals.TYPE_ROADS)
+
+
+func _on_button_demolish_pressed():
+	emit_signal("button_pressed", Globals.TYPE_DEMOLISH)
+	
+
+func _on_button_services_pressed():
+	emit_signal("button_pressed", Globals.TYPE_SERVICES)
+
+
+func _on_button_social_pressed():
+	emit_signal("button_pressed", Globals.TYPE_SOCIAL)
+
+
+func _on_main_worldgen_ready():
+	self.set_process(true)
+	update_debug_info = true
+
+
 # Called when the node enters the scene tree for the first time.
 func _ready():
 	create_buttons()	
@@ -28,15 +69,9 @@ func _ready():
 
 # Called every frame. 'delta' is the elapsed time since the previous frame.
 func _process(_delta):
-	debug_info.set_text(
-		str(get_viewport().get_mouse_position()) +"\n" + 
-		"FPS " + str(Engine.get_frames_per_second()) + "\n" +
-		"Zoom lvl: " + str(Globals.CAMERA_ZOOM_LEVEL) + "\n" +
-		"Camera pos: " + str(Globals.CAMERA_POSITION) + "\n" +
-		"Camera pos: " + str(Globals.camera_marker.position) + "\n" +
-		"Chunks: " + str(self.amount_of_chunks) + "\n" +
-		"Chunk del: " + str(self.size_of_chunk_removal_queue),
-	)
+	if update_debug_info:
+		update_debug_info_func()
+
 	
 # defines construction toolbar buttons	
 func create_buttons():
@@ -53,31 +88,16 @@ func create_buttons():
 		node_path.set_anchor(SIDE_TOP, anchor_top)
 		node_path.set_text(values[1])
 		node_path.show()
+		
+func update_debug_info_func():
+	debug_info.set_text(
+		str(get_viewport().get_mouse_position()) +"\n" + 
+		"FPS " + str(Engine.get_frames_per_second()) + "\n" +
+		"Zoom lvl: " + str(Globals.CAMERA_ZOOM_LEVEL) + "\n" +
+		"Camera pos: " + str(Globals.CAMERA_POSITION) + "\n" +
+		"Camera pos: " + str(Globals.camera_marker.position) + "\n" +
+		"Chunks: " + str(self.amount_of_chunks) + "\n" +
+		"Chunk del: " + str(self.size_of_chunk_removal_queue),
+	)
 
 
-# sends signals which View catches and places selected type of buildings
-func _on_button_residental_pressed():
-	emit_signal("button_pressed", Globals.TYPE_RESIDENTIAL)
-	
-func _on_button_commercial_pressed():
-	emit_signal("button_pressed", Globals.TYPE_COMMERCIAL)
-
-func _on_button_industrial_pressed():
-	emit_signal("button_pressed", Globals.TYPE_INDUSTRIAL)
-
-func _on_button_roads_pressed():
-	emit_signal("button_pressed", Globals.TYPE_ROADS)
-
-func _on_button_demolish_pressed():
-	emit_signal("button_pressed", Globals.TYPE_DEMOLISH)
-
-func _on_button_services_pressed():
-	emit_signal("button_pressed", Globals.TYPE_SERVICES)
-
-func _on_button_social_pressed():
-	emit_signal("button_pressed", Globals.TYPE_SOCIAL)
-
-
-func _on_chunk_handler_chunk_stats(chunks, removal_queue):
-	self.amount_of_chunks = chunks
-	self.size_of_chunk_removal_queue = removal_queue

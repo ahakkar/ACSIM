@@ -1,0 +1,9 @@
+[gd_resource type="Theme" load_steps=2 format=3 uid="uid://clswkwdkqsx87"]
+
+[ext_resource type="FontFile" uid="uid://bo6o24t6oku65" path="res://art/fonts/Flexi_IBM_VGA_False.ttf" id="1_vpce8"]
+
+[resource]
+default_font = ExtResource("1_vpce8")
+default_font_size = 72
+/colors/background_color = Color(0, 0, 0, 0)
+/fonts/font_props = ExtResource("1_vpce8")

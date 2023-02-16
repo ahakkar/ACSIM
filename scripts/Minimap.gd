@@ -9,6 +9,7 @@ signal set_map_background_texture(texture)
 @onready var is_mouse_inside_minimap:bool = false
 @onready var position_multiplier:float
 @onready var area_size:Vector2
+var observe_mouse_inside_minimap:bool = false
 
 
 # Called when the node enters the scene tree for the first time.
@@ -22,7 +23,7 @@ func _draw():
 	
 
 func _process(_delta):
-	if !is_mouse_inside_minimap:
+	if !is_mouse_inside_minimap and observe_mouse_inside_minimap:
 		Globals.camera_marker.position = Vector2(
 			Globals.CAMERA_POSITION.x / position_multiplier,
 			Globals.CAMERA_POSITION.y / position_multiplier,
@@ -31,6 +32,8 @@ func _process(_delta):
 	
 func _on_main_worldgen_ready():
 	# Assuming the area has a child CollisionShape2D with a RectangleShape resource
+	self.set_process(true)
+	observe_mouse_inside_minimap = true
 	area_size = self.get_rect().size
 	
 	position_multiplier = Globals.map_size / 32

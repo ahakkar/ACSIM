@@ -87,6 +87,7 @@ const GUI_BUILD_BUTTON_SIZE_Y: int = 50
 const GUI_BUILD_BUTTON_SIZE: Vector2i =	Vector2i(GUI_BUILD_BUTTON_SIZE_X,GUI_BUILD_BUTTON_SIZE_Y)
 
 # maybe should use int for these instead for faster matching?
+# ^ yes TODO switch to enum
 const TYPE_RESIDENTIAL:String = "residential"
 const TYPE_COMMERCIAL:String = "commercial"
 const TYPE_INDUSTRIAL:String = "industrial"
@@ -95,6 +96,16 @@ const TYPE_SOCIAL:String = "social"
 const TYPE_POWERPLANT:String = "powerplant"
 const TYPE_ROADS:String = "roads"
 const TYPE_DEMOLISH:String = "demolish"
+
+# Main menu buttons
+enum {
+	MAINMENU_NEW_GAME, 
+	MAINMENU_LOAD_GAME,
+	MAINMENU_RESUME_GAME,
+	MAINMENU_OPTIONS, 
+	MAINMENU_CREDITS,
+	MAINMENU_QUIT_GAME,
+	}
 
 
 ###################################

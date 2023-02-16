@@ -1,11 +1,9 @@
-[gd_scene load_steps=3 format=3 uid="uid://bflqpejouge8r"]
+[gd_scene load_steps=5 format=3 uid="uid://bflqpejouge8r"]
 
-[sub_resource type="ImageTexture" id="ImageTexture_qii6u"]
-
-[sub_resource type="LabelSettings" id="LabelSettings_tb1vr"]
-font_size = 64
-outline_size = 20
-outline_color = Color(0, 0, 0, 1)
+[ext_resource type="Script" path="res://scripts/MainMenuBar.gd" id="1_50qd7"]
+[ext_resource type="Theme" uid="uid://clswkwdkqsx87" path="res://themes/mainmenu_button_theme.tres" id="1_jy0t0"]
+[ext_resource type="Texture2D" uid="uid://ccbum282wlrrj" path="res://art/backgrounds/mainmenu_background.png" id="2_7rmv5"]
+[ext_resource type="Texture2D" uid="uid://jsnvlmenolg8" path="res://art/logos/mainmenu_logo.png" id="3_etjlt"]
 
 [node name="MainMenu" type="Control"]
 layout_mode = 3
@@ -15,48 +13,70 @@ anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
 
-[node name="MenuBackground" type="Sprite2D" parent="."]
-position = Vector2(-2, -3.99994)
-scale = Vector2(2566, 1448)
-texture = SubResource("ImageTexture_qii6u")
-flip_h = true
-
-[node name="MarginContainer" type="MarginContainer" parent="."]
+[node name="MainMenuBar" type="GridContainer" parent="."]
 layout_mode = 0
-offset_right = 2560.0
-offset_bottom = 1440.0
-
-[node name="MenuBar" type="VSplitContainer" parent="MarginContainer"]
-layout_mode = 2
+offset_left = 1050.0
+offset_top = 515.0
+offset_right = 1530.0
+offset_bottom = 1155.0
 size_flags_horizontal = 4
 size_flags_vertical = 4
+theme_override_constants/v_separation = 32
+script = ExtResource("1_50qd7")
+metadata/_edit_use_anchors_ = true
 
-[node name="Menu_NewGame" type="Label" parent="MarginContainer/MenuBar"]
+[node name="Menu_NewGame" type="Button" parent="MainMenuBar"]
 layout_mode = 2
-text = "New Game"
-label_settings = SubResource("LabelSettings_tb1vr")
+theme = ExtResource("1_jy0t0")
+text = " New Game"
+alignment = 0
 
-[node name="Menu_LoadGame" type="Label" parent="MarginContainer/MenuBar"]
+[node name="Menu_LoadGame" type="Button" parent="MainMenuBar"]
 layout_mode = 2
-text = "Load Game"
-label_settings = SubResource("LabelSettings_tb1vr")
+theme = ExtResource("1_jy0t0")
+text = " Load Game"
+alignment = 0
 
-[node name="Menu_ResumeGame" type="Label" parent="MarginContainer/MenuBar"]
+[node name="Menu_ResumeGame" type="Button" parent="MainMenuBar"]
 layout_mode = 2
-text = "Resume Game"
-label_settings = SubResource("LabelSettings_tb1vr")
+size_flags_horizontal = 0
+size_flags_vertical = 0
+theme = ExtResource("1_jy0t0")
+text = " Resume Game "
+alignment = 0
 
-[node name="Menu_Options" type="Label" parent="MarginContainer/MenuBar"]
+[node name="Menu_Options" type="Button" parent="MainMenuBar"]
 layout_mode = 2
-text = "Options"
-label_settings = SubResource("LabelSettings_tb1vr")
+size_flags_horizontal = 0
+theme = ExtResource("1_jy0t0")
+text = " Options     "
 
-[node name="Menu_Credits" type="Label" parent="MarginContainer/MenuBar"]
+[node name="Menu_Credits" type="Button" parent="MainMenuBar"]
 layout_mode = 2
-text = "Credits"
-label_settings = SubResource("LabelSettings_tb1vr")
+theme = ExtResource("1_jy0t0")
+text = " Credits"
+alignment = 0
 
-[node name="Menu_ExitGame" type="Label" parent="MarginContainer/MenuBar"]
+[node name="Menu_ExitGame" type="Button" parent="MainMenuBar"]
 layout_mode = 2
-text = "Exit Game"
-label_settings = SubResource("LabelSettings_tb1vr")
+theme = ExtResource("1_jy0t0")
+text = " Exit Game"
+alignment = 0
+
+[node name="MenuBackground" type="Sprite2D" parent="."]
+z_index = -1
+position = Vector2(1320, 736)
+texture = ExtResource("2_7rmv5")
+
+[node name="MenuLogo" type="Sprite2D" parent="."]
+position = Vector2(856, 592)
+rotation = -1.5708
+scale = Vector2(0.547831, 0.547831)
+texture = ExtResource("3_etjlt")
+
+[connection signal="pressed" from="MainMenuBar/Menu_NewGame" to="MainMenuBar" method="_on_menu_new_game_pressed"]
+[connection signal="pressed" from="MainMenuBar/Menu_LoadGame" to="MainMenuBar" method="_on_menu_load_game_pressed"]
+[connection signal="pressed" from="MainMenuBar/Menu_ResumeGame" to="MainMenuBar" method="_on_menu_resume_game_pressed"]
+[connection signal="pressed" from="MainMenuBar/Menu_Options" to="MainMenuBar" method="_on_menu_options_pressed"]
+[connection signal="pressed" from="MainMenuBar/Menu_Credits" to="MainMenuBar" method="_on_menu_credits_pressed"]
+[connection signal="pressed" from="MainMenuBar/Menu_ExitGame" to="MainMenuBar" method="_on_menu_exit_game_pressed"]

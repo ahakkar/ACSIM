@@ -39,20 +39,18 @@ func _init() -> void:
 	
 
 func _on_main_worldgen_ready():
-	thread.start(start_chunkgen, Thread.PRIORITY_NORMAL)
-	clean_up_chunks()
+	if !thread.is_started():
+		thread.start(start_chunkgen, Thread.PRIORITY_NORMAL)
+		clean_up_chunks()
 
-	
-#func _process(_delta):
-#	update_chunks()		
-	
 	
 func _ready():	
 	mutex = Mutex.new()
 	semaphore = Semaphore.new()
 	exit_thread = false
 	
-	thread = Thread.new()
+	if !thread:
+		thread = Thread.new()
 	
 	process_delay_chunks()
 	process_delay_stats()
