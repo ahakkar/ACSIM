@@ -1,0 +1,62 @@
+[gd_scene load_steps=3 format=3 uid="uid://bflqpejouge8r"]
+
+[sub_resource type="ImageTexture" id="ImageTexture_qii6u"]
+
+[sub_resource type="LabelSettings" id="LabelSettings_tb1vr"]
+font_size = 64
+outline_size = 20
+outline_color = Color(0, 0, 0, 1)
+
+[node name="MainMenu" type="Control"]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="MenuBackground" type="Sprite2D" parent="."]
+position = Vector2(-2, -3.99994)
+scale = Vector2(2566, 1448)
+texture = SubResource("ImageTexture_qii6u")
+flip_h = true
+
+[node name="MarginContainer" type="MarginContainer" parent="."]
+layout_mode = 0
+offset_right = 2560.0
+offset_bottom = 1440.0
+
+[node name="MenuBar" type="VSplitContainer" parent="MarginContainer"]
+layout_mode = 2
+size_flags_horizontal = 4
+size_flags_vertical = 4
+
+[node name="Menu_NewGame" type="Label" parent="MarginContainer/MenuBar"]
+layout_mode = 2
+text = "New Game"
+label_settings = SubResource("LabelSettings_tb1vr")
+
+[node name="Menu_LoadGame" type="Label" parent="MarginContainer/MenuBar"]
+layout_mode = 2
+text = "Load Game"
+label_settings = SubResource("LabelSettings_tb1vr")
+
+[node name="Menu_ResumeGame" type="Label" parent="MarginContainer/MenuBar"]
+layout_mode = 2
+text = "Resume Game"
+label_settings = SubResource("LabelSettings_tb1vr")
+
+[node name="Menu_Options" type="Label" parent="MarginContainer/MenuBar"]
+layout_mode = 2
+text = "Options"
+label_settings = SubResource("LabelSettings_tb1vr")
+
+[node name="Menu_Credits" type="Label" parent="MarginContainer/MenuBar"]
+layout_mode = 2
+text = "Credits"
+label_settings = SubResource("LabelSettings_tb1vr")
+
+[node name="Menu_ExitGame" type="Label" parent="MarginContainer/MenuBar"]
+layout_mode = 2
+text = "Exit Game"
+label_settings = SubResource("LabelSettings_tb1vr")

@@ -15,13 +15,6 @@ script = ExtResource("1_ysxum")
 [node name="ChunkHandler" type="Node2D" parent="."]
 script = ExtResource("2_6cequ")
 
-[node name="EntityPlacer" type="Control" parent="."]
-layout_mode = 3
-anchors_preset = 0
-offset_right = 40.0
-offset_bottom = 40.0
-script = ExtResource("5_8jju5")
-
 [node name="CameraZoom2D" parent="." instance=ExtResource("4_rx82t")]
 position = Vector2(1272, 720)
 ignore_rotation = false
@@ -39,6 +32,14 @@ centered = false
 script = ExtResource("8_ron2j")
 
 [node name="UILayer" type="CanvasLayer" parent="."]
+visible = false
+
+[node name="EntityPlacer" type="Control" parent="UILayer"]
+layout_mode = 3
+anchors_preset = 0
+offset_right = 40.0
+offset_bottom = 40.0
+script = ExtResource("5_8jju5")
 
 [node name="Control" type="Control" parent="UILayer"]
 layout_mode = 3

@@ -12,6 +12,8 @@ var chunk_in_px:Vector2i = Vector2i(Globals.CHUNK_SIZE.x*Globals.TILE_SIZE_X, Gl
 var game_res:Vector2i = DisplayServer.window_get_size(0)
 var x_min_limit:int = self.game_res.x/2 - chunk_in_px.x
 
+#@onready var captured_image = $CapturedImage
+
 
 func _on_main_worldgen_ready() -> void:
 	# set camera bounds to map size, with chunk_in_px room to go over	
@@ -73,6 +75,9 @@ func _unhandled_input(event):
 	if event.is_action_pressed("camera_reset_rotation"):
 		reset_camera_rotation()
 		
+	if event.is_action_pressed("take_screenshot"):
+		take_screenshot()
+		
 	if event is InputEventMouseButton and event.button_index == MOUSE_BUTTON_LEFT:		
 		if !is_panning_camera and event.pressed:
 			is_panning_camera = true
@@ -115,5 +120,27 @@ func reset_camera_rotation() -> void:
 func rotate_camera(step:float) -> void:
 	self.rotation_degrees += step
 	emit_signal("camera_rotation_changed", self.rotation)
+	
+		
+func take_screenshot() -> void:	
+	# Saves screenshot to user://
+	# Windows: %APPDATA%\Godot\app_userdata\[project_name]
+	# macOS: ~/Library/Application Support/Godot/app_userdata/[project_name]
+	# Linux: ~/.local/share/godot/app_userdata/[project_name]
+	
+	var user_path:String = "user://screenshots/"
+	var moment:Dictionary = Time.get_datetime_dict_from_system()
+	var time:String = "%s-%s-%s_%s_%s-%s" % [
+		moment.get("year"),
+		moment.get("month"),
+		moment.get("day"),
+		moment.get("hour"),
+		moment.get("minute"),
+		moment.get("second")
+		]
+	var path:String = user_path + "acsim_" + time + ".png"	
+	var captured_image:Image = get_viewport().get_texture().get_image()	
+
+	captured_image.save_png(path)
 
 

@@ -6,8 +6,9 @@ extends RefCounted
 # Trees with Poisson Disc: http://devmag.org.za/2009/05/03/poisson-disk-sampling/
 
 
-var image:Image = Image.new()	
+signal worldgenerator_function_called(message:String, runtime:float)
 
+var image:Image = Image.new()	
 
 var directions:Array = [
 	Vector2i(0,1),	# south
@@ -46,6 +47,7 @@ func choose_tile(tile:Vector2i, selected, surrounding) -> Array:
 	# this is because a tile can have more than 1 option
 	var selected_tile = Globals.td[surrounding].get(surrounding_tiles)
 	var tile_coords:Vector2i
+	
 	if selected_tile == null:
 		tile_coords = Globals.td[selected].get("default")[0]
 	elif selected_tile.size() > 1:
@@ -53,16 +55,13 @@ func choose_tile(tile:Vector2i, selected, surrounding) -> Array:
 	else:
 		tile_coords = selected_tile[0]
 		
-	return [
-		tile_coords,
-		0 if selected_tile else choose_randomly([0,1,2,3])
-		]
+	return [tile_coords, 0 if selected_tile else choose_randomly([0,1,2,3])]
 		
 	
 # Generates biomes, like forest and bog
 func generate_biomes() -> void:
 	# generate a new noisemap which should emulate forest-looking areas
-	var fnl = FastNoiseLite.new()
+	var fnl:FastNoiseLite = FastNoiseLite.new()
 	fnl.noise_type = FastNoiseLite.TYPE_SIMPLEX
 	fnl.seed = 69 #randi()
 	fnl.frequency = 0.01
@@ -97,16 +96,14 @@ func generate_biomes() -> void:
 
 func generate_parcels() -> void:
 	# divide the land area Cadastres / Parcels
-	pass
+	print("generating parcels")
 
 
 func generate_world(filename) -> bool:	
-	var image_size:Vector2i
-	
 	# Try to load the image which we used to place water & ground to world map		
 	image = load(filename)		
 	if image == null:
-		var errmsg = Globals.ERROR_FAILED_TO_LOAD_FILE
+		var errmsg:String = Globals.ERROR_FAILED_TO_LOAD_FILE
 		push_error(errmsg % filename)
 		return false
 				
@@ -114,45 +111,41 @@ func generate_world(filename) -> bool:
 		push_error("Error: image size was invalid in world generator")
 		return false
 		
-	image_size = image.get_size()
+	var image_size:Vector2i = image.get_size()
 	Globals.map_size = image_size.x
 	
 	if !validate_mapgen_params():
 		push_error("Error: invalid mapgen size parameters in world generator")
 		return false	
-
-	print("Worldgen speed stats:")
-	var start = Time.get_ticks_usec()	
-	read_image_pixel_data()
-	var end = Time.get_ticks_usec()
-	print("1/5: read image data ", (end-start)/1000.0, "ms")
+		
+	# idx 0: message sent to GUI, 1: function call, 2: optional args
+	var worldgen_calls:Array[Array] = [
+		["Reading image data", "read_image_pixel_data"],
+		["Smoothing water", "smooth_land_features", Globals.TILE_WATER],
+		["Generating parcels", "generate_parcels"],
+		["Generating biomes", "generate_biomes"],
+		["Smoothing forests", "smooth_land_features", Globals.TILE_FOREST],
+		["Precalculating tilemap tiles", "select_tilemap_tiles"],
+		]
 	
-	start = Time.get_ticks_usec()	
-	smooth_land_features(Globals.TILE_WATER)  # smooth water	
-	end = Time.get_ticks_usec()
-	print("2/5: smooth water ", (end-start)/1000.0, "ms")
-	
-	generate_parcels()
-	
-	start = Time.get_ticks_usec()	
-	generate_biomes()
-	end = Time.get_ticks_usec()
-	print("3/5: generate biomes ", (end-start)/1000.0, "ms")
-	
-	start = Time.get_ticks_usec()	
-	smooth_land_features(Globals.TILE_FOREST) # smooth out forest
-	end = Time.get_ticks_usec()
-	print("4/5: smooth forest ", (end-start)/1000.0, "ms")		
-
-	start = Time.get_ticks_usec()	
-	select_tilemap_tiles()
-	end = Time.get_ticks_usec()
-	print("5/5: select tiles ", (end-start)/1000.0, "ms")	
+	# do this to send the generation stage and processing time to GUI
+	var start:int;
+	var end:int;
+			
+	for function in worldgen_calls:
+		start = Time.get_ticks_usec()			
+		if function.size() == 3:
+			self.call(function[1], function[2])
+		else:
+			self.call(function[1])
+		
+		end = Time.get_ticks_usec()		
+		emit_signal("worldgenerator_function_called", (end-start)/1000.0, function[0])
 
 	return true
 	
 
-func read_image_pixel_data():
+func read_image_pixel_data() -> void:
 	# initialize the array to have enough rows
 	Globals.map_terrain_data.resize(Globals.map_size)
 	Globals.map_tile_data.resize(Globals.map_size)
@@ -160,8 +153,7 @@ func read_image_pixel_data():
 	for y in Globals.map_size:
 		#initialize the row to have enough columns
 		Globals.map_terrain_data[y].resize(Globals.map_size)
-		Globals.map_tile_data[y].resize(Globals.map_size)
-		
+		Globals.map_tile_data[y].resize(Globals.map_size)		
 
 		for x in Globals.map_size:
 			if image.get_pixel(x, y) == Globals.WATER_TILE_COLOR_IN_MAP_FILE:

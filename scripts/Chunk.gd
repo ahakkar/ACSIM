@@ -3,14 +3,11 @@ extends TileMap
 
 var x:int = -1
 var y:int = -1
-var should_remove:bool = false
-
 
 # Called when the node enters the scene tree for the first time.
-func _init(ypos:int, xpos:int, sr: bool):
+func _init(ypos:int, xpos:int):
 	self.x = xpos
 	self.y = ypos
-	self.should_remove = sr	
 	
 	#self.texture_filter = CanvasItem.TEXTURE_FILTER_LINEAR_WITH_MIPMAPS_ANISOTROPIC
 	self.cell_quadrant_size = 32

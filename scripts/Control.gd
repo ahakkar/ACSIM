@@ -54,6 +54,7 @@ func create_buttons():
 		node_path.set_text(values[1])
 		node_path.show()
 
+
 # sends signals which View catches and places selected type of buildings
 func _on_button_residental_pressed():
 	emit_signal("button_pressed", Globals.TYPE_RESIDENTIAL)

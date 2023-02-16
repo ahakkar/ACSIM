@@ -14,15 +14,15 @@ signal chunk_stats(chunks, removal_queue)
 
 var chunks:Dictionary = {}
 var chunks_to_remove:Array[Chunk] = []
-var window_width = DisplayServer.window_get_size(0).x
-var distance = abs((window_width/(Globals.CHUNK_SIZE.x*Globals.TILE_SIZE_X)) / 2 +1 )
+var window_width:int = DisplayServer.window_get_size(0).x
+var distance:int = abs((window_width/(Globals.CHUNK_SIZE.x*Globals.TILE_SIZE_X)) / 2 +1 )
 
 # for threading
 var chunk_queue:Array = []
 var mutex:Mutex
 var semaphore:Semaphore
 var thread:Thread
-var exit_thread = false
+var exit_thread:bool = false
 
 
 func _exit_tree():
@@ -43,9 +43,8 @@ func _on_main_worldgen_ready():
 	clean_up_chunks()
 
 	
-func _process(_delta):
-	update_chunks()	
-	emit_signal("chunk_stats", self.chunks.size(), self.chunks_to_remove.size())
+#func _process(_delta):
+#	update_chunks()		
 	
 	
 func _ready():	
@@ -54,6 +53,22 @@ func _ready():
 	exit_thread = false
 	
 	thread = Thread.new()
+	
+	process_delay_chunks()
+	process_delay_stats()
+		
+
+func process_delay_chunks() -> void:
+	while true:
+		update_chunks()	
+		await get_tree().create_timer(0.05).timeout
+		
+
+func process_delay_stats() -> void:
+	# emit stats about chunk amounts every 0,5s
+	while true:
+		emit_signal("chunk_stats", self.chunks.size(), self.chunks_to_remove.size())
+		await get_tree().create_timer(0.5).timeout	
 	
 
 func start_chunkgen():
@@ -68,7 +83,7 @@ func start_chunkgen():
 			break
 		
 		# work on emptying the generation queue
-		if chunk_queue.size() > 0:
+		if not chunk_queue.is_empty():
 			mutex.lock()
 			var vars = chunk_queue.pop_front()
 			mutex.unlock()
@@ -77,7 +92,7 @@ func start_chunkgen():
 	
 func clean_up_chunks():
 	while true:		
-		if chunks_to_remove.size() > 0:
+		if not chunks_to_remove.is_empty():
 			mutex.lock()
 			var chunk = chunks_to_remove.pop_front()	
 			mutex.unlock()
@@ -102,7 +117,7 @@ func get_chunk(key:Vector2i):
 
 
 func load_chunk(y:int, x:int, key):	
-	var chunk = Chunk.new(y, x, false)	
+	var chunk = Chunk.new(y, x)	
 	call_deferred("add_child", chunk)
 		
 	mutex.lock()	
@@ -111,12 +126,12 @@ func load_chunk(y:int, x:int, key):
 
 	
 func update_chunks():	
-	var p_x = int(Globals.CAMERA_POSITION.x- Globals.CHUNK_SIZE.x) / Globals.TILE_SIZE_X / Globals.CHUNK_SIZE.x
-	var p_y = int(Globals.CAMERA_POSITION.y- Globals.CHUNK_SIZE.y) / Globals.TILE_SIZE_Y / Globals.CHUNK_SIZE.y
+	var p_x:float = int(Globals.CAMERA_POSITION.x- Globals.CHUNK_SIZE.x) / Globals.TILE_SIZE_X / Globals.CHUNK_SIZE.x
+	var p_y:float = int(Globals.CAMERA_POSITION.y- Globals.CHUNK_SIZE.y) / Globals.TILE_SIZE_Y / Globals.CHUNK_SIZE.y
 	
 	# When updating chunks, adjust chunk rendering distance 
 	# based on current zoom level.
-	var zoom_corrected = correction_factor(distance)
+	var zoom_corrected:float = correction_factor(distance)
 
 	# iterate through all the chunks. if a chunk is in camera range,
 	# and it exists, it should not be removed
@@ -132,13 +147,12 @@ func update_chunks():
 				chunk = get_chunk(key) 
 				
 			if (abs(x - p_x) <= zoom_corrected && abs(y - p_y) <= zoom_corrected):				
-				if chunk != null:
-					chunk.should_remove = false
-				else:
+				if chunk == null:	
 					mutex.lock()
 					chunk_queue.push_back([Vector2i(x, y), key])
 					mutex.unlock()				
 					semaphore.post()
+					
 			elif chunks.has(key):
 				chunks_to_remove.append(chunks.get(key))
 				chunks.erase(key)
