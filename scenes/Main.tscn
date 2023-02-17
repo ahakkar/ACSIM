@@ -1,9 +1,11 @@
-[gd_scene load_steps=10 format=3 uid="uid://b1bahdquscsym"]
+[gd_scene load_steps=12 format=3 uid="uid://b1bahdquscsym"]
 
 [ext_resource type="Script" path="res://scripts/Main.gd" id="1_ysxum"]
+[ext_resource type="Script" path="res://scripts/EventBus.gd" id="2_0j1ud"]
 [ext_resource type="Script" path="res://scripts/ChunkHandler.gd" id="2_6cequ"]
-[ext_resource type="PackedScene" uid="uid://bflqpejouge8r" path="res://scenes/MainMenu.tscn" id="2_wfpe2"]
+[ext_resource type="PackedScene" uid="uid://dq7jmiqon170p" path="res://scenes/MainMenu.tscn" id="2_wfpe2"]
 [ext_resource type="Script" path="res://scripts/Control.gd" id="3_1t1c8"]
+[ext_resource type="Script" path="res://scripts/Game.gd" id="4_4tr6y"]
 [ext_resource type="PackedScene" uid="uid://2we3txfr812u" path="res://scenes/Camera_zoom_2d.tscn" id="4_rx82t"]
 [ext_resource type="Script" path="res://scripts/EntityPlacer.gd" id="5_8jju5"]
 [ext_resource type="Script" path="res://scripts/Minimap.gd" id="5_rg28x"]
@@ -13,16 +15,21 @@
 [node name="Main" type="Node2D"]
 script = ExtResource("1_ysxum")
 
-[node name="MainMenu" parent="." instance=ExtResource("2_wfpe2")]
+[node name="EventBus" type="Node" parent="."]
+script = ExtResource("2_0j1ud")
 
-[node name="Game" type="Node2D" parent="."]
+[node name="MainMenu" parent="EventBus" instance=ExtResource("2_wfpe2")]
+process_mode = 2
+
+[node name="Game" type="Node2D" parent="EventBus"]
 process_mode = 1
 visible = false
+script = ExtResource("4_4tr6y")
 
-[node name="ChunkHandler" type="Node2D" parent="Game"]
+[node name="ChunkHandler" type="Node2D" parent="EventBus/Game"]
 script = ExtResource("2_6cequ")
 
-[node name="CameraZoom2D" parent="Game" instance=ExtResource("4_rx82t")]
+[node name="CameraZoom2D" parent="EventBus/Game" instance=ExtResource("4_rx82t")]
 position = Vector2(1272, 720)
 ignore_rotation = false
 limit_left = 0
@@ -33,23 +40,22 @@ limit_smoothed = true
 rotation_smoothing_enabled = true
 editor_draw_limits = true
 
-[node name="MapBackground" type="Sprite2D" parent="Game"]
+[node name="MapBackground" type="Sprite2D" parent="EventBus/Game"]
 z_index = -1
 centered = false
 script = ExtResource("8_ron2j")
 
-[node name="UILayer" type="CanvasLayer" parent="Game"]
-process_mode = 1
+[node name="UILayer" type="CanvasLayer" parent="EventBus/Game"]
 visible = false
 
-[node name="EntityPlacer" type="Control" parent="Game/UILayer"]
+[node name="EntityPlacer" type="Control" parent="EventBus/Game/UILayer"]
 layout_mode = 3
 anchors_preset = 0
 offset_right = 40.0
 offset_bottom = 40.0
 script = ExtResource("5_8jju5")
 
-[node name="Control" type="Control" parent="Game/UILayer"]
+[node name="Control" type="Control" parent="EventBus/Game/UILayer"]
 layout_mode = 3
 anchors_preset = 15
 anchor_right = 1.0
@@ -60,7 +66,7 @@ mouse_filter = 1
 script = ExtResource("3_1t1c8")
 metadata/_edit_use_anchors_ = true
 
-[node name="ConstructionPanel" type="Panel" parent="Game/UILayer/Control"]
+[node name="ConstructionPanel" type="Panel" parent="EventBus/Game/UILayer/Control"]
 custom_minimum_size = Vector2(500, 100)
 layout_mode = 1
 anchors_preset = 5
@@ -71,42 +77,42 @@ offset_right = 250.0
 offset_bottom = 100.0
 grow_horizontal = 2
 
-[node name="button_residental" type="Button" parent="Game/UILayer/Control/ConstructionPanel"]
+[node name="button_residental" type="Button" parent="EventBus/Game/UILayer/Control/ConstructionPanel"]
 layout_mode = 0
 offset_right = 8.0
 offset_bottom = 8.0
 
-[node name="button_commercial" type="Button" parent="Game/UILayer/Control/ConstructionPanel"]
+[node name="button_commercial" type="Button" parent="EventBus/Game/UILayer/Control/ConstructionPanel"]
 layout_mode = 0
 offset_right = 8.0
 offset_bottom = 8.0
 
-[node name="button_industrial" type="Button" parent="Game/UILayer/Control/ConstructionPanel"]
+[node name="button_industrial" type="Button" parent="EventBus/Game/UILayer/Control/ConstructionPanel"]
 layout_mode = 0
 offset_right = 8.0
 offset_bottom = 8.0
 
-[node name="button_roads" type="Button" parent="Game/UILayer/Control/ConstructionPanel"]
+[node name="button_roads" type="Button" parent="EventBus/Game/UILayer/Control/ConstructionPanel"]
 layout_mode = 0
 offset_right = 8.0
 offset_bottom = 8.0
 
-[node name="button_demolish" type="Button" parent="Game/UILayer/Control/ConstructionPanel"]
+[node name="button_demolish" type="Button" parent="EventBus/Game/UILayer/Control/ConstructionPanel"]
 layout_mode = 0
 offset_right = 8.0
 offset_bottom = 8.0
 
-[node name="button_services" type="Button" parent="Game/UILayer/Control/ConstructionPanel"]
+[node name="button_services" type="Button" parent="EventBus/Game/UILayer/Control/ConstructionPanel"]
 layout_mode = 0
 offset_right = 8.0
 offset_bottom = 8.0
 
-[node name="button_social" type="Button" parent="Game/UILayer/Control/ConstructionPanel"]
+[node name="button_social" type="Button" parent="EventBus/Game/UILayer/Control/ConstructionPanel"]
 layout_mode = 0
 offset_right = 8.0
 offset_bottom = 8.0
 
-[node name="DebugContainer" type="GridContainer" parent="Game/UILayer/Control"]
+[node name="DebugContainer" type="GridContainer" parent="EventBus/Game/UILayer/Control"]
 layout_mode = 1
 anchors_preset = 1
 anchor_left = 1.0
@@ -116,10 +122,10 @@ offset_top = 24.0
 offset_bottom = 424.0
 grow_horizontal = 0
 
-[node name="DebugInfo" type="Label" parent="Game/UILayer/Control/DebugContainer"]
+[node name="DebugInfo" type="Label" parent="EventBus/Game/UILayer/Control/DebugContainer"]
 layout_mode = 2
 
-[node name="Minimap" type="Panel" parent="Game/UILayer/Control"]
+[node name="Minimap" type="Panel" parent="EventBus/Game/UILayer/Control"]
 clip_contents = true
 custom_minimum_size = Vector2(512, 512)
 layout_mode = 1
@@ -135,33 +141,27 @@ grow_vertical = 0
 mouse_filter = 1
 script = ExtResource("5_rg28x")
 
-[node name="CameraMarker" type="Sprite2D" parent="Game/UILayer/Control/Minimap"]
+[node name="CameraMarker" type="Sprite2D" parent="EventBus/Game/UILayer/Control/Minimap"]
 z_index = 1
 position = Vector2(-32, 0)
 centered = false
 script = ExtResource("7_6krn1")
 
-[node name="MinimapSprite" type="Sprite2D" parent="Game/UILayer/Control/Minimap"]
+[node name="MinimapSprite" type="Sprite2D" parent="EventBus/Game/UILayer/Control/Minimap"]
 texture_repeat = 1
 centered = false
 
-[connection signal="set_camera_position" from="." to="Game/CameraZoom2D" method="_on_set_camera_position"]
-[connection signal="worldgen_ready" from="." to="Game/ChunkHandler" method="_on_main_worldgen_ready"]
-[connection signal="worldgen_ready" from="." to="Game/CameraZoom2D" method="_on_main_worldgen_ready"]
-[connection signal="worldgen_ready" from="." to="Game/UILayer/Control" method="_on_main_worldgen_ready"]
-[connection signal="worldgen_ready" from="." to="Game/UILayer/Control/Minimap" method="_on_main_worldgen_ready"]
-[connection signal="worldgen_ready" from="." to="Game/UILayer/Control/Minimap/CameraMarker" method="_on_main_worldgen_ready"]
-[connection signal="chunk_stats" from="Game/ChunkHandler" to="Game/UILayer/Control" method="_on_chunk_handler_chunk_stats"]
-[connection signal="camera_rotation_changed" from="Game/CameraZoom2D" to="Game/UILayer/Control/Minimap/CameraMarker" method="_on_camera_zoom_2d_camera_rotation_changed"]
-[connection signal="camera_zoom_changed" from="Game/CameraZoom2D" to="Game/UILayer/Control/Minimap/CameraMarker" method="_on_camera_zoom_2d_camera_zoom_changed"]
-[connection signal="pressed" from="Game/UILayer/Control/ConstructionPanel/button_residental" to="Game/UILayer/Control" method="_on_button_residental_pressed"]
-[connection signal="pressed" from="Game/UILayer/Control/ConstructionPanel/button_commercial" to="Game/UILayer/Control" method="_on_button_commercial_pressed"]
-[connection signal="pressed" from="Game/UILayer/Control/ConstructionPanel/button_industrial" to="Game/UILayer/Control" method="_on_button_industrial_pressed"]
-[connection signal="pressed" from="Game/UILayer/Control/ConstructionPanel/button_roads" to="Game/UILayer/Control" method="_on_button_roads_pressed"]
-[connection signal="pressed" from="Game/UILayer/Control/ConstructionPanel/button_demolish" to="Game/UILayer/Control" method="_on_button_demolish_pressed"]
-[connection signal="pressed" from="Game/UILayer/Control/ConstructionPanel/button_services" to="Game/UILayer/Control" method="_on_button_services_pressed"]
-[connection signal="pressed" from="Game/UILayer/Control/ConstructionPanel/button_social" to="Game/UILayer/Control" method="_on_button_social_pressed"]
-[connection signal="mouse_entered" from="Game/UILayer/Control/Minimap" to="Game/UILayer/Control/Minimap" method="_on_mouse_entered"]
-[connection signal="mouse_exited" from="Game/UILayer/Control/Minimap" to="Game/UILayer/Control/Minimap" method="_on_mouse_exited"]
-[connection signal="set_camera_position" from="Game/UILayer/Control/Minimap" to="Game/CameraZoom2D" method="_on_set_camera_position"]
-[connection signal="set_map_background_texture" from="Game/UILayer/Control/Minimap" to="Game/MapBackground" method="_on_minimap_set_map_background_texture"]
+[connection signal="chunk_stats" from="EventBus/Game/ChunkHandler" to="EventBus/Game/UILayer/Control" method="_on_chunk_handler_chunk_stats"]
+[connection signal="camera_rotation_changed" from="EventBus/Game/CameraZoom2D" to="EventBus/Game/UILayer/Control/Minimap/CameraMarker" method="_on_camera_zoom_2d_camera_rotation_changed"]
+[connection signal="camera_zoom_changed" from="EventBus/Game/CameraZoom2D" to="EventBus/Game/UILayer/Control/Minimap/CameraMarker" method="_on_camera_zoom_2d_camera_zoom_changed"]
+[connection signal="pressed" from="EventBus/Game/UILayer/Control/ConstructionPanel/button_residental" to="EventBus/Game/UILayer/Control" method="_on_button_residental_pressed"]
+[connection signal="pressed" from="EventBus/Game/UILayer/Control/ConstructionPanel/button_commercial" to="EventBus/Game/UILayer/Control" method="_on_button_commercial_pressed"]
+[connection signal="pressed" from="EventBus/Game/UILayer/Control/ConstructionPanel/button_industrial" to="EventBus/Game/UILayer/Control" method="_on_button_industrial_pressed"]
+[connection signal="pressed" from="EventBus/Game/UILayer/Control/ConstructionPanel/button_roads" to="EventBus/Game/UILayer/Control" method="_on_button_roads_pressed"]
+[connection signal="pressed" from="EventBus/Game/UILayer/Control/ConstructionPanel/button_demolish" to="EventBus/Game/UILayer/Control" method="_on_button_demolish_pressed"]
+[connection signal="pressed" from="EventBus/Game/UILayer/Control/ConstructionPanel/button_services" to="EventBus/Game/UILayer/Control" method="_on_button_services_pressed"]
+[connection signal="pressed" from="EventBus/Game/UILayer/Control/ConstructionPanel/button_social" to="EventBus/Game/UILayer/Control" method="_on_button_social_pressed"]
+[connection signal="mouse_entered" from="EventBus/Game/UILayer/Control/Minimap" to="EventBus/Game/UILayer/Control/Minimap" method="_on_mouse_entered"]
+[connection signal="mouse_exited" from="EventBus/Game/UILayer/Control/Minimap" to="EventBus/Game/UILayer/Control/Minimap" method="_on_mouse_exited"]
+[connection signal="set_camera_position" from="EventBus/Game/UILayer/Control/Minimap" to="EventBus" method="set_camera_position"]
+[connection signal="set_map_background_texture" from="EventBus/Game/UILayer/Control/Minimap" to="EventBus/Game" method="_on_minimap_set_map_background_texture"]

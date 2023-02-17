@@ -37,56 +37,6 @@ func _exit_tree():
 func _init() -> void:
 	self.name = "ChunkHandler"
 	
-
-func _on_main_worldgen_ready():
-	if !thread.is_started():
-		thread.start(start_chunkgen, Thread.PRIORITY_NORMAL)
-		clean_up_chunks()
-
-	
-func _ready():	
-	mutex = Mutex.new()
-	semaphore = Semaphore.new()
-	exit_thread = false
-	
-	if !thread:
-		thread = Thread.new()
-	
-	process_delay_chunks()
-	process_delay_stats()
-		
-
-func process_delay_chunks() -> void:
-	while true:
-		update_chunks()	
-		await get_tree().create_timer(0.05).timeout
-		
-
-func process_delay_stats() -> void:
-	# emit stats about chunk amounts every 0,5s
-	while true:
-		emit_signal("chunk_stats", self.chunks.size(), self.chunks_to_remove.size())
-		await get_tree().create_timer(0.5).timeout	
-	
-
-func start_chunkgen():
-	while true:		
-		semaphore.wait()
-
-		mutex.lock()
-		var should_exit = exit_thread # Protect with Mutex.
-		mutex.unlock()
-
-		if should_exit:
-			break
-		
-		# work on emptying the generation queue
-		if not chunk_queue.is_empty():
-			mutex.lock()
-			var vars = chunk_queue.pop_front()
-			mutex.unlock()
-
-			load_chunk(vars[0].y, vars[0].x, vars[1])
 	
 func clean_up_chunks():
 	while true:		
@@ -97,6 +47,7 @@ func clean_up_chunks():
 			chunk.queue_free()
 			
 		await get_tree().create_timer(0.02).timeout
+
 
 func correction_factor(d) -> float:
 	if Globals.CAMERA_ZOOM_LEVEL < 0.6:
@@ -121,6 +72,55 @@ func load_chunk(y:int, x:int, key):
 	mutex.lock()	
 	chunks[key] = chunk	
 	mutex.unlock()
+
+
+func process_delay_chunks() -> void:
+	while true:
+		update_chunks()	
+		await get_tree().create_timer(0.05).timeout
+		
+
+func process_delay_stats() -> void:
+	# emit stats about chunk amounts every 0,5s
+	while true:
+		emit_signal("chunk_stats", self.chunks.size(), self.chunks_to_remove.size())
+		await get_tree().create_timer(0.5).timeout	
+	
+
+func set_ready():
+	mutex = Mutex.new()
+	semaphore = Semaphore.new()
+	exit_thread = false
+	
+	if !thread:
+		thread = Thread.new()
+		
+	if !thread.is_started():
+		thread.start(start_chunkgen, Thread.PRIORITY_NORMAL)
+		clean_up_chunks()
+	
+	process_delay_chunks()
+	process_delay_stats()
+
+
+func start_chunkgen():
+	while true:		
+		semaphore.wait()
+
+		mutex.lock()
+		var should_exit = exit_thread # Protect with Mutex.
+		mutex.unlock()
+
+		if should_exit:
+			break
+		
+		# work on emptying the generation queue
+		if not chunk_queue.is_empty():
+			mutex.lock()
+			var vars = chunk_queue.pop_front()
+			mutex.unlock()
+
+			load_chunk(vars[0].y, vars[0].x, vars[1])
 
 	
 func update_chunks():	

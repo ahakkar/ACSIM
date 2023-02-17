@@ -1,7 +1,7 @@
-[gd_scene load_steps=5 format=3 uid="uid://bflqpejouge8r"]
+[gd_scene load_steps=5 format=3 uid="uid://dq7jmiqon170p"]
 
-[ext_resource type="Script" path="res://scripts/MainMenuBar.gd" id="1_50qd7"]
 [ext_resource type="Theme" uid="uid://clswkwdkqsx87" path="res://themes/mainmenu_button_theme.tres" id="1_jy0t0"]
+[ext_resource type="Script" path="res://scripts/MainMenu.gd" id="1_rpwyu"]
 [ext_resource type="Texture2D" uid="uid://ccbum282wlrrj" path="res://art/backgrounds/mainmenu_background.png" id="2_7rmv5"]
 [ext_resource type="Texture2D" uid="uid://jsnvlmenolg8" path="res://art/logos/mainmenu_logo.png" id="3_etjlt"]
 
@@ -12,6 +12,7 @@ anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
+script = ExtResource("1_rpwyu")
 
 [node name="MainMenuBar" type="GridContainer" parent="."]
 layout_mode = 0
@@ -22,7 +23,6 @@ offset_bottom = 1155.0
 size_flags_horizontal = 4
 size_flags_vertical = 4
 theme_override_constants/v_separation = 32
-script = ExtResource("1_50qd7")
 metadata/_edit_use_anchors_ = true
 
 [node name="Menu_NewGame" type="Button" parent="MainMenuBar"]
@@ -74,9 +74,9 @@ rotation = -1.5708
 scale = Vector2(0.547831, 0.547831)
 texture = ExtResource("3_etjlt")
 
-[connection signal="pressed" from="MainMenuBar/Menu_NewGame" to="MainMenuBar" method="_on_menu_new_game_pressed"]
-[connection signal="pressed" from="MainMenuBar/Menu_LoadGame" to="MainMenuBar" method="_on_menu_load_game_pressed"]
-[connection signal="pressed" from="MainMenuBar/Menu_ResumeGame" to="MainMenuBar" method="_on_menu_resume_game_pressed"]
-[connection signal="pressed" from="MainMenuBar/Menu_Options" to="MainMenuBar" method="_on_menu_options_pressed"]
-[connection signal="pressed" from="MainMenuBar/Menu_Credits" to="MainMenuBar" method="_on_menu_credits_pressed"]
-[connection signal="pressed" from="MainMenuBar/Menu_ExitGame" to="MainMenuBar" method="_on_menu_exit_game_pressed"]
+[connection signal="pressed" from="MainMenuBar/Menu_NewGame" to="." method="_on_menu_new_game_pressed"]
+[connection signal="pressed" from="MainMenuBar/Menu_LoadGame" to="." method="_on_menu_load_game_pressed"]
+[connection signal="pressed" from="MainMenuBar/Menu_ResumeGame" to="." method="_on_menu_resume_game_pressed"]
+[connection signal="pressed" from="MainMenuBar/Menu_Options" to="." method="_on_menu_options_pressed"]
+[connection signal="pressed" from="MainMenuBar/Menu_Credits" to="." method="_on_menu_credits_pressed"]
+[connection signal="pressed" from="MainMenuBar/Menu_ExitGame" to="." method="_on_menu_exit_game_pressed"]

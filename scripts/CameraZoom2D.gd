@@ -15,18 +15,6 @@ var x_min_limit:int = self.game_res.x/2 - chunk_in_px.x
 #@onready var captured_image = $CapturedImage
 
 
-func _on_main_worldgen_ready() -> void:
-	# set camera bounds to map size, with chunk_in_px room to go over	
-	self.set_limit(SIDE_LEFT, -chunk_in_px.x)
-	self.set_limit(SIDE_RIGHT, Globals.map_size*Globals.TILE_SIZE_X + chunk_in_px.x)
-	self.set_limit(SIDE_TOP, -chunk_in_px.y)
-	self.set_limit(SIDE_BOTTOM, Globals.map_size*Globals.TILE_SIZE_Y + chunk_in_px.y)	
-	
-
-func _on_set_camera_position(pos: Vector2) -> void:	
-	self.position = pos	
-	
-
 func _process(_delta) -> void:		
 	Globals.CAMERA_POSITION = self.position		
 	
@@ -142,5 +130,17 @@ func take_screenshot() -> void:
 	var captured_image:Image = get_viewport().get_texture().get_image()	
 
 	captured_image.save_png(path)
+	
+		
+func set_ready() -> void:
+	# set camera bounds to map size, with chunk_in_px room to go over	
+	self.set_limit(SIDE_LEFT, -chunk_in_px.x)
+	self.set_limit(SIDE_RIGHT, Globals.map_size*Globals.TILE_SIZE_X + chunk_in_px.x)
+	self.set_limit(SIDE_TOP, -chunk_in_px.y)
+	self.set_limit(SIDE_BOTTOM, Globals.map_size*Globals.TILE_SIZE_Y + chunk_in_px.y)	
+	
+
+func set_camera_position(pos: Vector2) -> void:	
+	self.position = pos	
 
 

@@ -2,13 +2,14 @@ class_name Minimap
 extends Control
 
 signal set_camera_position(pos:Vector2)
-signal set_map_background_texture(texture)
+signal set_map_background_texture(texture, scaling)
 
 @onready var minimap_texture:ImageTexture = null
 @onready var sprite:Sprite2D
 @onready var is_mouse_inside_minimap:bool = false
 @onready var position_multiplier:float
 @onready var area_size:Vector2
+@onready var node_camera_marker:CameraMarker
 var observe_mouse_inside_minimap:bool = false
 
 
@@ -22,26 +23,13 @@ func _draw():
 	pass
 	
 
-func _process(_delta):
-	if !is_mouse_inside_minimap and observe_mouse_inside_minimap:
-		Globals.camera_marker.position = Vector2(
-			Globals.CAMERA_POSITION.x / position_multiplier,
-			Globals.CAMERA_POSITION.y / position_multiplier,
-			)
+#func _process(_delta):
+#	if !is_mouse_inside_minimap and observe_mouse_inside_minimap:
+#		node_camera_marker.set_position(Vector2(
+#			Globals.CAMERA_POSITION.x / position_multiplier,
+#			Globals.CAMERA_POSITION.y / position_multiplier,
+#			))
 
-	
-func _on_main_worldgen_ready():
-	# Assuming the area has a child CollisionShape2D with a RectangleShape resource
-	self.set_process(true)
-	observe_mouse_inside_minimap = true
-	area_size = self.get_rect().size
-	
-	position_multiplier = Globals.map_size / 32
-	
-	self.generate_minimap()
-	self.set_minimap()
-	self.setup_camera_marker()
-	
 	
 func _on_mouse_entered():
 	is_mouse_inside_minimap = true
@@ -53,10 +41,10 @@ func _on_mouse_exited():
 func _unhandled_input(event) -> void:	
 	if is_mouse_inside_minimap:
 		if event is InputEventMouseButton and event.button_index == MOUSE_BUTTON_LEFT:
-			Globals.camera_marker.position = get_local_mouse_position()
+			node_camera_marker.set_camera_marker_position(get_local_mouse_position())
 			emit_signal(
 				"set_camera_position", 
-				get_local_mouse_position() * position_multiplier # 8 on 256 size map. need a forumla to calculate this
+				get_local_mouse_position() * position_multiplier
 			)
 	
 
@@ -83,6 +71,10 @@ func generate_minimap() -> void:
 			
 	minimap_texture = ImageTexture.create_from_image(image)		
 
+
+func set_camera_marker() -> void:
+	node_camera_marker = self.find_child("CameraMarker")
+	
 	
 func set_minimap() -> void:
 	self.sprite = self.find_child("MinimapSprite")
@@ -97,12 +89,23 @@ func set_minimap() -> void:
 
 	sprite.scale = Vector2(sx, sy)
 	
-	emit_signal("set_map_background_texture", sprite.texture)
+	emit_signal("set_map_background_texture", sprite.texture, Vector2(16, 16))
+	
+
+func set_ready() -> void:
+	# Assuming the area has a child CollisionShape2D with a RectangleShape resource
+	self.set_process(true)
+	observe_mouse_inside_minimap = true
+	area_size = self.get_rect().size
+	
+	position_multiplier = Globals.map_size / 32
+	
+	self.generate_minimap()
+	self.set_minimap()
+	self.set_camera_marker()
 	
 	
-func setup_camera_marker() -> void:
-	Globals.camera_marker = self.find_child("CameraMarker")
-	
+
 
 
 

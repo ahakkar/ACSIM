@@ -1,3 +1,4 @@
+class_name CameraMarker
 extends Sprite2D
 
 var size_multiplier:float
@@ -26,3 +27,7 @@ func _on_camera_zoom_2d_camera_zoom_changed(new_zoom_factor):
 func _on_main_worldgen_ready() -> void:
 	size_multiplier = Globals.map_size / 32
 	w_s = DisplayServer.window_get_size(0) / size_multiplier
+
+
+func set_camera_marker_position(pos:Vector2) -> void:
+	self.position = pos
