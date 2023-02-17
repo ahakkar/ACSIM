@@ -16,6 +16,7 @@ script = ExtResource("1_ysxum")
 [node name="MainMenu" parent="." instance=ExtResource("2_wfpe2")]
 
 [node name="Game" type="Node2D" parent="."]
+process_mode = 1
 visible = false
 
 [node name="ChunkHandler" type="Node2D" parent="Game"]

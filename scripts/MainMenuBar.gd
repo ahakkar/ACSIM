@@ -29,5 +29,5 @@ func _on_menu_credits_pressed():
 
 
 func _on_menu_exit_game_pressed():
-	#emit_signal("button_pressed", Globals.MAINMENU_QUIT_GAME)
-	get_tree().quit()
+	emit_signal("button_pressed", Globals.MAINMENU_QUIT_GAME)
+	

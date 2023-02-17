@@ -63,39 +63,49 @@ func start_new_game():
 	
 func _on_mainmenu_button_pressed(button:int):
 	match button:
-		0:	# new game
+		Globals.MAINMENU_NEW_GAME:
 			start_new_game()
 			self.find_child("Menu_NewGame").disabled = true
 			self.find_child("Menu_ResumeGame").disabled = false
-		1:  # load game:
+		Globals.MAINMENU_LOAD_GAME:
 			pass
-		2:	# resume game
+		Globals.MAINMENU_RESUME_GAME:
 			# TODO save camera position before opening menu, restore camera position when closing menu
 			self.find_child("Game").process_mode = PROCESS_MODE_INHERIT
-			self.find_child("Game").show()
-			self.find_child("UILayer").show()
-			self.find_child("MainMenu").hide()
+			toggle_main_menu_visibility()
+		Globals.MAINMENU_QUIT_GAME:
+			quit_game()
 		_:
 			push_error("Error: Main: unknown signal at _on_mainmenu_button_pressed: ", button)
 			
 func _unhandled_input(event) -> void:
 	if event.is_action_pressed("open_main_menu"):
-		emit_signal(
-			"set_camera_position", 
-			Vector2(
-				DisplayServer.window_get_size(0).x/2,
-				DisplayServer.window_get_size(0).y/2
-				)
-			)		
-		self.find_child("Game").hide()
-		self.find_child("UILayer").hide()
-		self.find_child("MainMenu").show()
-		await get_tree().create_timer(0.2).timeout
+		# move mainmenu to current game camera position
+		var mainmenu_pos = Globals.CAMERA_POSITION
+		mainmenu_pos.x -= DisplayServer.window_get_size(0).x/2 
+		mainmenu_pos.y -= DisplayServer.window_get_size(0).y/2
+		self.find_child("MainMenu").position = mainmenu_pos
+
+		# show the menu
+		toggle_main_menu_visibility()
+		#await get_tree().create_timer(0.2).timeout
 		self.find_child("Game").process_mode = PROCESS_MODE_DISABLED
-		
+
+
+func toggle_main_menu_visibility():
+	var items = [find_child("Game"), find_child("UILayer"), find_child("MainMenu")]
 	
+	for item in items:
+		if !item:
+			push_error("Error: While toggling main menu visibility. Missing UI element " + item)
+		if item.visible:
+			item.hide()
+			continue
+		item.show()
+
 func quit_game():
 	get_tree().get_root().propagate_notification(NOTIFICATION_WM_CLOSE_REQUEST)
+	get_tree().quit()
 
 
 
