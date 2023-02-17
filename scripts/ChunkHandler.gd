@@ -26,12 +26,14 @@ var exit_thread:bool = false
 
 
 func _exit_tree():
+	if !thread:
+		return
 	mutex.lock()
 	exit_thread = true 
 	mutex.unlock()
 
 	semaphore.post()
-	thread.wait_to_finish()
+	thread.wait_to_finish()	
 
 
 func _init() -> void:

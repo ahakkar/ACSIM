@@ -1,5 +1,5 @@
 # Class handles the camera zoom and movement in the game
-class_name CameraZoom2D
+class_name Camera
 extends Camera2D
 
 signal camera_rotation_changed(new_rotation)
@@ -8,30 +8,47 @@ signal camera_zoom_changed(new_zoom_factor)
 var is_panning_camera:bool = false
 var tween:Tween
 
-var chunk_in_px:Vector2i = Vector2i(Globals.CHUNK_SIZE.x*Globals.TILE_SIZE_X, Globals.CHUNK_SIZE.y*Globals.TILE_SIZE_Y)
+var chunk_in_px:Vector2i = Vector2i(
+	Globals.CHUNK_SIZE.x * Globals.TILE_SIZE_X, 
+	Globals.CHUNK_SIZE.y * Globals.TILE_SIZE_Y)
 var game_res:Vector2i = DisplayServer.window_get_size(0)
 var x_min_limit:int = self.game_res.x/2 - chunk_in_px.x
 
-#@onready var captured_image = $CapturedImage
-
-
-func _ready() -> void:
-	pass
-	
 
 func _process(_delta) -> void:
-	Globals.CAMERA_POSITION = self.get_camera_position()
+	Globals.CAMERA_POSITION = self.get_camera_position()	
 
 
-func set_ready() -> void:
+func get_camera_position():
+	return self.position
+	
+
+func get_camera_panning() -> bool:
+	return self.is_panning_camera
+	
+
+func get_camera_rotation():
+	return self.rotation
+	
+
+func set_camera_panning(value:bool) -> void:
+	self.is_panning_camera = value
+	
+
+func set_camera_position(pos: Vector2) -> void:		
+	self.position = pos	
+	print("camera pos set:", self.position)	
+
+
+func set_camera_limits() -> void:
 	# set camera bounds to map size, with chunk_in_px room to go over	
 	self.set_limit(SIDE_LEFT, -chunk_in_px.x)
 	self.set_limit(SIDE_RIGHT, Globals.map_size*Globals.TILE_SIZE_X + chunk_in_px.x)
 	self.set_limit(SIDE_TOP, -chunk_in_px.y)
 	self.set_limit(SIDE_BOTTOM, Globals.map_size*Globals.TILE_SIZE_Y + chunk_in_px.y)	
-	
-	
-func _set_camera_zoom_level(value: float) -> void:		
+
+
+func set_camera_zoom_level(value: float) -> void:		
 	# keep zoom level in bounds, return if zoom level was at min or max zoom
 	var new_zoom_level = clamp(value, Globals.CAMERA_MIN_ZOOM_LEVEL, Globals.CAMERA_MAX_ZOOM_LEVEL)
 	if new_zoom_level == Globals.CAMERA_ZOOM_LEVEL:
@@ -51,27 +68,7 @@ func _set_camera_zoom_level(value: float) -> void:
 	emit_signal("camera_zoom_changed", new_zoom_level)
 	
 
-func get_camera_position():
-	return self.position
-	
-
-func get_camera_panning() -> bool:
-	return self.is_panning_camera
-	
-
-func get_camera_rotation():
-	return self.rotation
-	
-
-func set_camera_panning(value:bool) -> void:
-	self.is_panning_camera = value
-	
-
-func set_camera_position(pos: Vector2) -> void:	
-	self.position = pos	
-	
-
-func clamp_camera_position() -> void:
+func clamp_camera_position() -> void:	
 	self.position.x = clamp(
 		self.position.x,
 		x_min_limit, 
@@ -84,16 +81,16 @@ func clamp_camera_position() -> void:
 			);
 			
 
-func camera_pan_position(value) -> void:
+func camera_pan_position(value) -> void:	
 	self.position -= value
 
 
 func camera_zoom_in() -> void:	
-	_set_camera_zoom_level(Globals.CAMERA_ZOOM_LEVEL - Globals.CAMERA_ZOOM_FACTOR)
+	set_camera_zoom_level(Globals.CAMERA_ZOOM_LEVEL - Globals.CAMERA_ZOOM_FACTOR)
 	
 
 func camera_zoom_out() -> void:
-	_set_camera_zoom_level(Globals.CAMERA_ZOOM_LEVEL + Globals.CAMERA_ZOOM_DURATION)
+	set_camera_zoom_level(Globals.CAMERA_ZOOM_LEVEL + Globals.CAMERA_ZOOM_DURATION)
 	
 
 func camera_reset_rotation() -> void:

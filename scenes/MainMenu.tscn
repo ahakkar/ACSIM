@@ -23,7 +23,6 @@ offset_bottom = 1155.0
 size_flags_horizontal = 4
 size_flags_vertical = 4
 theme_override_constants/v_separation = 32
-metadata/_edit_use_anchors_ = true
 
 [node name="Menu_NewGame" type="Button" parent="MainMenuBar"]
 layout_mode = 2
@@ -65,8 +64,9 @@ alignment = 0
 
 [node name="MenuBackground" type="Sprite2D" parent="."]
 z_index = -1
-position = Vector2(1320, 736)
+scale = Vector2(0.67, 0.667)
 texture = ExtResource("2_7rmv5")
+centered = false
 
 [node name="MenuLogo" type="Sprite2D" parent="."]
 position = Vector2(856, 592)

@@ -96,7 +96,8 @@ func generate_biomes() -> void:
 
 func generate_parcels() -> void:
 	# divide the land area Cadastres / Parcels
-	print("generating parcels")
+	#print("generating parcels")
+	pass
 
 
 func generate_world(filename) -> bool:	

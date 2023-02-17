@@ -34,9 +34,8 @@ func _ready():
 	
 
 # Called every frame. 'delta' is the elapsed time since the previous frame.
-#func _process(_delta):
-#	if update_debug_info:
-#		update_debug_info_func()
+func _process(_delta):	
+	update_debug_info_func()
 		
 
 # sends signals which View catches and places selected type of buildings
@@ -91,13 +90,18 @@ func create_buttons():
 		
 func update_debug_info_func():
 	debug_info.set_text(
-		str(get_viewport().get_mouse_position()) +"\n" + 
-		"FPS " + str(Engine.get_frames_per_second()) + "\n" +
-		"Zoom lvl: " + str(Globals.CAMERA_ZOOM_LEVEL) + "\n" +
-		"Camera pos: " + str(Globals.CAMERA_POSITION) + "\n" +
-		"Camera pos: " + str(Globals.camera_marker.position) + "\n" +
+		"Camera pos: " + str(Globals.CAMERA_POSITION) + "\n" + 
 		"Chunks: " + str(self.amount_of_chunks) + "\n" +
-		"Chunk del: " + str(self.size_of_chunk_removal_queue),
-	)
+		"Chunk del: " + str(self.size_of_chunk_removal_queue)
+		) 
+#	debug_info.set_text(
+#		#str(get_viewport().get_mouse_position()) +"\n" + 
+#		"FPS " + str(Engine.get_frames_per_second()) + "\n" +
+#		"Zoom lvl: " + str(Globals.CAMERA_ZOOM_LEVEL) + "\n" +
+#		"Camera pos: " + str(Globals.CAMERA_POSITION) + "\n" +
+#		"Camera pos: " + str(Globals.camera_marker.position) + "\n" +
+#		"Chunks: " + str(self.amount_of_chunks) + "\n" +
+#		"Chunk del: " + str(self.size_of_chunk_removal_queue),
+#	)
 
 

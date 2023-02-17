@@ -1,24 +1,15 @@
 # https://github.com/dfloer/SC2k-docs
 
 class_name Main
-extends Node2D
-
+extends Node
 
 var bus:EventBus
 
 
-func _init() -> void:	
-#	DisplayServer.window_set_size(
-#		#Vector2i(Globals.DEFAULT_X_RES, Globals.DEFAULT_Y_RES)
-#		Vector2i(3800,2000)
-#	)
-	pass
-	
-
 func _ready() -> void:
 	pause_game()
 	bus = find_child("EventBus")
-	bus.set_camera_position(Vector2(16*256/2, 16*256/2))
+	bus.set_ready()	
 
 
 func pause_game() -> void:
