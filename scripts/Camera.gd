@@ -41,6 +41,9 @@ func set_camera_position(pos: Vector2) -> void:
 
 
 func set_camera_limits() -> void:
+	if Globals.map_size < Globals.MAP_MIN_WIDTH:
+		push_error("Camera: implausible map size '" + str(Globals.map_size) + "' while setting camera limits:")
+		
 	# set camera bounds to map size, with chunk_in_px room to go over	
 	self.set_limit(SIDE_LEFT, -chunk_in_px.x)
 	self.set_limit(SIDE_RIGHT, Globals.map_size*Globals.TILE_SIZE_X + chunk_in_px.x)

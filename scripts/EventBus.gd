@@ -16,7 +16,7 @@ var map_filenames:Array = [
 	"res://maps/tampere_256px.png",
 	"res://maps/tampere_10x10km_4096px.png"
 	]
-var map_filename:String = map_filenames[3]
+var map_filename:String = map_filenames[1]
 var _world_generator:WorldGenerator
 
 
@@ -78,7 +78,7 @@ func _unhandled_input(event) -> void:
 		node_camera.camera_reset_rotation()
 		
 	if event.is_action_pressed("take_screenshot"):
-		node_camera.take_screenshot()		
+		node_camera.camera_take_screenshot()		
 
 	if event is InputEventMouseButton and event.button_index == MOUSE_BUTTON_LEFT:		
 		if !node_camera.get_camera_panning() and event.pressed:
@@ -152,6 +152,10 @@ func start_new_game():
 	node_mainmenu.set_visible(false)
 	node_game.set_visible(true)
 	node_uilayer.set_visible(true)
+	
+	var node_infolayer:InfoLayer
+	node_infolayer = find_child("InfoLayer")
+	node_infolayer.set_visible(true)
 	
 	# set camera to center of the map
 	node_camera.camera_reset_rotation()

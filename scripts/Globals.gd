@@ -5,6 +5,29 @@ extends Node
 
 var chunks_loaded:int = 0
 
+###################################
+# VARIABLE GAME DATA, saved		  #
+###################################
+
+# map size is based on input image x*y pixel size
+@export var map_size:int
+
+# store terrain type (water, land, forest etc. for every map cell)
+@export var map_terrain_data:Array[PackedInt32Array] = [[]]
+
+# preprocess and store exact tile for every map cell to speed up setting tiles
+@export var map_tile_data:Array[Array] = [[]]
+
+# list of parcels the map is divided to
+@export var map_parcel_data:Array[Array] = [[]]
+
+# current camera zoom level
+@export var CAMERA_ZOOM_LEVEL:float
+@export var CAMERA_POSITION:Vector2i
+
+# minimap texture, used also as save game's imagetexture
+@export var minimap_texture:ImageTexture = null
+
 
 ###################################
 # FILE PATHS					  #
@@ -20,9 +43,9 @@ const SCRIPT_PATH:String = "res://scripts"
 ###################################
 
 var minimap_colors:Dictionary = {
-	Globals.TILE_WATER : Color8(42, 31, 255),
+	Globals.TILE_WATER  : Color8(42, 31, 255),
 	Globals.TILE_TERRAIN: Color8(148, 113, 71),
-	Globals.TILE_FOREST: Color8(0,123,19),
+	Globals.TILE_FOREST : Color8(0,123,19),
 	"default": Color8(255,0,255),
 }
 
@@ -37,33 +60,23 @@ const CHUNK_SIZE:Vector2i = Vector2i(32,32)
 # tilemap tile types
 enum {TILE_WATER, TILE_TERRAIN, TILE_FOREST, TILE_BOG}
 
+# parcel owner types
+enum {PARCEL_CITY, PARCEL_STATE, PARCEL_PRIVATE}
+
 # tilemap layers
 enum {LAYER_TERRAIN, LAYER_BUILDINGS}
 const TILESET_TERRAIN:TileSet = preload("res://scenes/Chunk.tres")
-
-# map size is based on input image x*y pixel size
-var map_size:int = 0
-
-# store terrain type (water, land, forest etc. for every map cell)
-var map_terrain_data:Array[PackedInt32Array] = [[]]
-
-# preprocess and store exact tile for every map cell to speed up setting tiles
-var map_tile_data:Array[Array] = [[]]
-
 
 ###################################
 # CAMERA SETTINGS				  #
 ###################################
 
+# minimap camera marker sprite
 var camera_marker:Sprite2D
 
 # GAME WINDOW DEFAULT SIZE
 const DEFAULT_X_RES:int = 1920
 const DEFAULT_Y_RES:int = 1080
-
-# current camera zoom level
-var CAMERA_ZOOM_LEVEL: float = 1.0
-var CAMERA_POSITION:Vector2i
 
 # camera movement settings
 const CAMERA_MIN_ZOOM_LEVEL: float = 0.1

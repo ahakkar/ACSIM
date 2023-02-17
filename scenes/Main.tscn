@@ -1,4 +1,4 @@
-[gd_scene load_steps=14 format=3 uid="uid://c5deq5s55q0ii"]
+[gd_scene load_steps=15 format=3 uid="uid://c5deq5s55q0ii"]
 
 [ext_resource type="Script" path="res://scripts/Main.gd" id="1_ysxum"]
 [ext_resource type="Script" path="res://scripts/EventBus.gd" id="2_0j1ud"]
@@ -13,6 +13,7 @@
 [ext_resource type="Script" path="res://scripts/CameraMarker.gd" id="7_6krn1"]
 [ext_resource type="Script" path="res://scripts/MapBackground.gd" id="8_ron2j"]
 [ext_resource type="Script" path="res://scripts/UILayer.gd" id="9_ebec0"]
+[ext_resource type="Script" path="res://scripts/InfoLayer.gd" id="14_hbedy"]
 
 [node name="Main" type="Node"]
 script = ExtResource("1_ysxum")
@@ -44,6 +45,10 @@ centered = false
 script = ExtResource("8_ron2j")
 
 [node name="MainMenu" parent="EventBus" instance=ExtResource("2_wfpe2")]
+
+[node name="InfoLayer" type="Node2D" parent="EventBus"]
+visible = false
+script = ExtResource("14_hbedy")
 
 [node name="UILayer" type="CanvasLayer" parent="EventBus"]
 process_mode = 1

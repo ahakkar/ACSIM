@@ -4,7 +4,6 @@ extends Control
 signal set_camera_position(pos:Vector2)
 signal set_map_background_texture(texture, scaling)
 
-@onready var minimap_texture:ImageTexture = null
 @onready var sprite:Sprite2D
 @onready var is_mouse_inside_minimap:bool = false
 @onready var position_multiplier:float
@@ -15,7 +14,7 @@ var observe_mouse_inside_minimap:bool = false
 
 # Called when the node enters the scene tree for the first time.
 func _ready():
-	self.minimap_texture = ImageTexture.new()
+	Globals.minimap_texture = ImageTexture.new()
 	
 
 func _draw():
@@ -69,7 +68,7 @@ func generate_minimap() -> void:
 						
 			image.set_pixel(x, y, color)
 			
-	minimap_texture = ImageTexture.create_from_image(image)		
+	Globals.minimap_texture = ImageTexture.create_from_image(image)		
 
 
 func set_camera_marker() -> void:
@@ -79,7 +78,7 @@ func set_camera_marker() -> void:
 	
 func set_minimap() -> void:
 	self.sprite = self.find_child("MinimapSprite")
-	self.sprite.texture = minimap_texture
+	self.sprite.texture = Globals.minimap_texture
 
 	# The size of a sprite is determined from its texture
 	var texture_size = sprite.texture.get_size()

@@ -93,11 +93,46 @@ func generate_biomes() -> void:
 						Globals.map_terrain_data[y][x] = Globals.TILE_FOREST	
 					# can add other tresholds here for other biomes
 
+# TODO move to globals later
+var parcel_width = 16
+var parcel_height = 64
+
+# forests are not generated yet so can just compare water and terrain
+func is_filled_with_water(coords:Vector2i) -> bool:
+	var terrain_tile_count:int = 0
+
+	for y in range(coords.y, coords.y + parcel_height):
+		for x in range(coords.x, coords.x + parcel_width):
+			if Globals.map_terrain_data[y][x] == Globals.TILE_TERRAIN:
+				terrain_tile_count += 1
+				
+	# parcel is ok if it has at least one land
+	if terrain_tile_count > 0:
+		return false
+	return true
 
 func generate_parcels() -> void:
 	# divide the land area Cadastres / Parcels
-	#print("generating parcels")
-	pass
+	# TODO better solution, this is something my skills were able to handle at proto stage
+	# should replace with a real/better algo when I am skilled enough to do it
+	Globals.map_parcel_data.resize(Globals.map_size / parcel_height)
+	
+	for y in Globals.map_size / parcel_height:
+		Globals.map_parcel_data[y].resize(Globals.map_size / parcel_width)		
+		for x in Globals.map_size / parcel_width:
+			# ignore parcels full fo water
+			if !is_filled_with_water(Vector2i(y,x)):
+				# 0 = top left corner, 1 = bottom right corner, 2 = owner
+				Globals.map_parcel_data[y][x] = [
+					Vector2i(y * parcel_height, x * parcel_width),
+					Vector2i(y * parcel_height + parcel_height, x * parcel_width + parcel_width),
+					Globals.PARCEL_STATE
+				]
+				
+	#for row in Globals.map_parcel_data:
+#		print(row)
+		#for col in row:
+		#	print(Globals.map_parcel_data[row][col])
 
 
 func generate_world(filename) -> bool:	
