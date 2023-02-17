@@ -27,6 +27,18 @@ func _on_chunk_handler_chunk_stats(chunks, removal_queue):
 	self.size_of_chunk_removal_queue = removal_queue
 
 
+# Called when the node enters the scene tree for the first time.
+func _ready():
+	create_buttons()	
+	minimap = Minimap.new()
+	
+
+# Called every frame. 'delta' is the elapsed time since the previous frame.
+#func _process(_delta):
+#	if update_debug_info:
+#		update_debug_info_func()
+		
+
 # sends signals which View catches and places selected type of buildings
 func _on_button_residental_pressed():
 	emit_signal("button_pressed", Globals.TYPE_RESIDENTIAL)
@@ -59,18 +71,6 @@ func _on_button_social_pressed():
 func _on_main_worldgen_ready():
 	self.set_process(true)
 	update_debug_info = true
-
-
-# Called when the node enters the scene tree for the first time.
-func _ready():
-	create_buttons()	
-	minimap = Minimap.new()
-	
-
-# Called every frame. 'delta' is the elapsed time since the previous frame.
-func _process(_delta):
-	if update_debug_info:
-		update_debug_info_func()
 
 	
 # defines construction toolbar buttons	

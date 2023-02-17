@@ -18,11 +18,24 @@ var map_filename:String = map_filenames[3]
 var _world_generator:WorldGenerator
 
 
+func _process(_delta) -> void:	
+	while Input.is_action_pressed("camera_rotate_left_stepless"):
+		node_game.camera_rotate(-0.1)
+		await get_tree().create_timer(0.2).timeout
+	while Input.is_action_pressed("camera_rotate_right_stepless"):
+		node_game.camera_rotate(0.1)
+		await get_tree().create_timer(0.2).timeout
+
+
 func _ready():
 	node_mainmenu.set_ready()	
 
 	
 func _unhandled_input(event) -> void:
+	###################################
+	# MAIN MENU						  #
+	###################################
+	
 	if event.is_action_pressed("open_main_menu"):
 		# move mainmenu to current game camera position
 		var mainmenu_pos = Globals.CAMERA_POSITION
@@ -34,6 +47,38 @@ func _unhandled_input(event) -> void:
 		toggle_main_menu_visibility()
 		#await get_tree().create_timer(0.2).timeout
 		self.find_child("Game").process_mode = PROCESS_MODE_DISABLED
+		
+	###################################
+	# GAME CAMERA					  #
+	###################################
+		
+	if event.is_action_pressed("camera_zoom_in"):
+		node_game.camera_zoom_in()
+	if event.is_action_pressed("camera_zoom_out"):
+		node_game.camera_zoom_out()
+		
+	if event.is_action_pressed("camera_rotate_left_fixed_step"):		
+		node_game.camera_rotate(-45)
+	if event.is_action_pressed("camera_rotate_right_fixed_step"):
+		node_game.camera_rotate(45)		
+	if event.is_action_pressed("camera_reset_rotation"):
+		node_game.camera_reset_rotation()
+		
+	if event.is_action_pressed("take_screenshot"):
+		node_game.take_screenshot()		
+
+	if event is InputEventMouseButton and event.button_index == MOUSE_BUTTON_LEFT:		
+		if !node_game.camera_get_panning() and event.pressed:			
+			node_game.camera_set_panning(true)
+		if node_game.camera_get_panning() and !event.pressed:
+			node_game.camera_set_panning(false)
+
+	if event is InputEventMouseMotion and node_game.camera_get_panning():		
+		# rotate event.relative vector with camera rotation so camera moves to "correct" direction
+		node_game.camera_pan_position(event.relative.rotated(node_game.camera_get_rotation()) * Globals.CAMERA_PAN_MULTI)
+		
+		# prevent camera from going overboard
+		node_game.camera_clamp_position()
 
 
 func _on_mainmenu_button_pressed(button:int):
@@ -89,7 +134,7 @@ func toggle_main_menu_visibility():
 		node_mainmenu.show()	
 
 func set_camera_position(pos:Vector2):
-	node_game.set_camera_position(pos)
+	node_game.camera_set_position(pos)
 	
 
 

@@ -23,12 +23,12 @@ func _draw():
 	pass
 	
 
-#func _process(_delta):
-#	if !is_mouse_inside_minimap and observe_mouse_inside_minimap:
-#		node_camera_marker.set_position(Vector2(
-#			Globals.CAMERA_POSITION.x / position_multiplier,
-#			Globals.CAMERA_POSITION.y / position_multiplier,
-#			))
+func _process(_delta):
+	if !is_mouse_inside_minimap and observe_mouse_inside_minimap:
+		node_camera_marker.set_position(Vector2(
+			Globals.CAMERA_POSITION.x / position_multiplier,
+			Globals.CAMERA_POSITION.y / position_multiplier,
+			))
 
 	
 func _on_mouse_entered():
@@ -74,6 +74,7 @@ func generate_minimap() -> void:
 
 func set_camera_marker() -> void:
 	node_camera_marker = self.find_child("CameraMarker")
+	node_camera_marker.set_camera_marker()
 	
 	
 func set_minimap() -> void:

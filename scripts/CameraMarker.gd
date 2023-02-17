@@ -24,10 +24,11 @@ func _on_camera_zoom_2d_camera_zoom_changed(new_zoom_factor):
 	
 
 # Sets the initial size of the camera box, after game is loaded
-func _on_main_worldgen_ready() -> void:
+func set_camera_marker() -> void:
+	print("setting marker rdy")
 	size_multiplier = Globals.map_size / 32
 	w_s = DisplayServer.window_get_size(0) / size_multiplier
 
 
 func set_camera_marker_position(pos:Vector2) -> void:
-	self.position = pos
+	print("marker pos: ", pos)

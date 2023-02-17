@@ -15,20 +15,21 @@ var x_min_limit:int = self.game_res.x/2 - chunk_in_px.x
 #@onready var captured_image = $CapturedImage
 
 
-func _process(_delta) -> void:		
-	Globals.CAMERA_POSITION = self.position		
-	
-	while Input.is_action_pressed("camera_rotate_left_stepless"):
-		rotate_camera(-0.1)
-		await get_tree().create_timer(0.2).timeout
-	while Input.is_action_pressed("camera_rotate_right_stepless"):
-		rotate_camera(0.1)
-		await get_tree().create_timer(0.2).timeout
-
-
 func _ready() -> void:
 	pass
+	
 
+func _process(_delta) -> void:
+	Globals.CAMERA_POSITION = self.get_camera_position()
+
+
+func set_ready() -> void:
+	# set camera bounds to map size, with chunk_in_px room to go over	
+	self.set_limit(SIDE_LEFT, -chunk_in_px.x)
+	self.set_limit(SIDE_RIGHT, Globals.map_size*Globals.TILE_SIZE_X + chunk_in_px.x)
+	self.set_limit(SIDE_TOP, -chunk_in_px.y)
+	self.set_limit(SIDE_BOTTOM, Globals.map_size*Globals.TILE_SIZE_Y + chunk_in_px.y)	
+	
 	
 func _set_camera_zoom_level(value: float) -> void:		
 	# keep zoom level in bounds, return if zoom level was at min or max zoom
@@ -48,46 +49,44 @@ func _set_camera_zoom_level(value: float) -> void:
 	)
 	
 	emit_signal("camera_zoom_changed", new_zoom_level)
-
 	
-func _unhandled_input(event):	
-	if event.is_action_pressed("camera_zoom_in"):
-		camera_zoom_in()
-	if event.is_action_pressed("camera_zoom_out"):
-		camera_zoom_out()
-		
-	if event.is_action_pressed("camera_rotate_left_fixed_step"):		
-		rotate_camera(-45)
-	if event.is_action_pressed("camera_rotate_right_fixed_step"):
-		rotate_camera(45)		
-	if event.is_action_pressed("camera_reset_rotation"):
-		reset_camera_rotation()
-		
-	if event.is_action_pressed("take_screenshot"):
-		take_screenshot()
-		
-	if event is InputEventMouseButton and event.button_index == MOUSE_BUTTON_LEFT:		
-		if !is_panning_camera and event.pressed:
-			is_panning_camera = true
-		if is_panning_camera and !event.pressed:
-			is_panning_camera = false
 
-	if event is InputEventMouseMotion and is_panning_camera:
-		# rotate event.relative vector with camera rotation so camera moves to "correct" direction
-		self.position -= event.relative.rotated(self.rotation) * Globals.CAMERA_PAN_MULTI
-		
-		# prevent camera from going overboard
-		self.position.x = clamp(
-			self.position.x,
-			x_min_limit, 
-			Globals.map_size*Globals.TILE_SIZE_X - chunk_in_px.x
-			);
-		self.position.y = clamp(
-			self.position.y,
-			0,
-			Globals.map_size*Globals.TILE_SIZE_Y
+func get_camera_position():
+	return self.position
+	
+
+func get_camera_panning() -> bool:
+	return self.is_panning_camera
+	
+
+func get_camera_rotation():
+	return self.rotation
+	
+
+func set_camera_panning(value:bool) -> void:
+	self.is_panning_camera = value
+	
+
+func set_camera_position(pos: Vector2) -> void:	
+	self.position = pos	
+	
+
+func clamp_camera_position() -> void:
+	self.position.x = clamp(
+		self.position.x,
+		x_min_limit, 
+		Globals.map_size*Globals.TILE_SIZE_X - chunk_in_px.x
+		);
+	self.position.y = clamp(
+		self.position.y,
+		0,
+		Globals.map_size*Globals.TILE_SIZE_Y
 			);
 			
+
+func camera_pan_position(value) -> void:
+	self.position -= value
+
 
 func camera_zoom_in() -> void:	
 	_set_camera_zoom_level(Globals.CAMERA_ZOOM_LEVEL - Globals.CAMERA_ZOOM_FACTOR)
@@ -96,21 +95,18 @@ func camera_zoom_in() -> void:
 func camera_zoom_out() -> void:
 	_set_camera_zoom_level(Globals.CAMERA_ZOOM_LEVEL + Globals.CAMERA_ZOOM_DURATION)
 	
-	
-func get_camera_position():
-	return self.position
-	
 
-func reset_camera_rotation() -> void:
+func camera_reset_rotation() -> void:
 	self.rotation_degrees = 0
 	emit_signal("camera_rotation_changed", self.rotation)
 	
-func rotate_camera(step:float) -> void:
+	
+func camera_rotate(step:float) -> void:
 	self.rotation_degrees += step
 	emit_signal("camera_rotation_changed", self.rotation)
 	
 		
-func take_screenshot() -> void:	
+func camera_take_screenshot() -> void:	
 	# Saves screenshot to user://
 	# Windows: %APPDATA%\Godot\app_userdata\[project_name]
 	# macOS: ~/Library/Application Support/Godot/app_userdata/[project_name]
@@ -132,15 +128,5 @@ func take_screenshot() -> void:
 	captured_image.save_png(path)
 	
 		
-func set_ready() -> void:
-	# set camera bounds to map size, with chunk_in_px room to go over	
-	self.set_limit(SIDE_LEFT, -chunk_in_px.x)
-	self.set_limit(SIDE_RIGHT, Globals.map_size*Globals.TILE_SIZE_X + chunk_in_px.x)
-	self.set_limit(SIDE_TOP, -chunk_in_px.y)
-	self.set_limit(SIDE_BOTTOM, Globals.map_size*Globals.TILE_SIZE_Y + chunk_in_px.y)	
-	
-
-func set_camera_position(pos: Vector2) -> void:	
-	self.position = pos	
 
 

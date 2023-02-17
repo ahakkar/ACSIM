@@ -142,7 +142,7 @@ mouse_filter = 1
 script = ExtResource("5_rg28x")
 
 [node name="CameraMarker" type="Sprite2D" parent="EventBus/Game/UILayer/Control/Minimap"]
-z_index = 1
+z_index = 10
 position = Vector2(-32, 0)
 centered = false
 script = ExtResource("7_6krn1")

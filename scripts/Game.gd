@@ -31,11 +31,51 @@ func set_map_background_texture(sprite, scaling:Vector2) -> void:
 	node_mapbackground.set_map_background_texture(sprite, scaling)
 	
 
-func set_camera_position(pos:Vector2):
+func camera_clamp_position() -> void:
+	node_camera.clamp_camera_position()
+	
+
+func camera_pan_position(value):
+	node_camera.camera_pan_position(value)
+	
+
+func camera_zoom_out() -> void:
+	node_camera.camera_zoom_out()
+		
+
+func camera_zoom_in() -> void:
+	node_camera.camera_zoom_in()
+		
+
+func camera_rotate(value) -> void:
+	node_camera.camera_rotate(value)
+	
+		
+func camera_reset_rotation() -> void:
+	node_camera.camera_reset_rotation()
+
+
+func camera_get_panning() -> bool:
+	return node_camera.get_camera_panning()
+	
+
+func camera_get_rotation():
+	return node_camera.get_camera_rotation()	
+	
+	
+func camera_set_panning(value:bool) -> void:
+	node_camera.set_camera_panning(value)
+	
+
+func camera_set_position(pos:Vector2) -> void:
 	node_camera.set_camera_position(pos)
 	
 
-func toggle_visibility():
+func camera_take_screenshot() -> void:
+	node_camera.camera_take_screenshot()		
+	
+
+func toggle_visibility() -> void:
 	if self.visible:
 		self.hide()
 	else:
