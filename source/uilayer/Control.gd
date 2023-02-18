@@ -90,6 +90,7 @@ func create_buttons():
 		
 func update_debug_info_func():
 	debug_info.set_text(
+		"FPS " + str(Engine.get_frames_per_second()) + "\n" +
 		"Camera pos: " + str(Globals.CAMERA_POSITION) + "\n" + 
 		"Chunks: " + str(self.amount_of_chunks) + "\n" +
 		"Chunk del: " + str(self.size_of_chunk_removal_queue)

@@ -10,7 +10,7 @@
 [ext_resource type="Script" path="res://source/game/MapBackground.gd" id="7_nh2ol"]
 [ext_resource type="Script" path="res://source/infolayer/InfoLayer.gd" id="9_dg6uy"]
 [ext_resource type="Script" path="res://source/uilayer/UILayer.gd" id="10_l2a8p"]
-[ext_resource type="Script" path="res://source/EntityPlacer.gd" id="11_rf6kr"]
+[ext_resource type="Script" path="res://source/uilayer/EntityPlacer.gd" id="11_gtqb3"]
 [ext_resource type="Script" path="res://source/uilayer/Control.gd" id="12_vhsyq"]
 [ext_resource type="Script" path="res://source/uilayer/Minimap.gd" id="13_80u53"]
 [ext_resource type="Script" path="res://source/uilayer/CameraMarker.gd" id="14_rvt3n"]
@@ -60,7 +60,7 @@ layout_mode = 3
 anchors_preset = 0
 offset_right = 40.0
 offset_bottom = 40.0
-script = ExtResource("11_rf6kr")
+script = ExtResource("11_gtqb3")
 
 [node name="Control" type="Control" parent="EventBus/UILayer"]
 layout_mode = 3

@@ -39,35 +39,6 @@ const SCRIPT_PATH:String = "res://scripts"
 
 
 ###################################
-# MINIMAP SETTINGS				  #
-###################################
-
-var minimap_colors:Dictionary = {
-	Globals.TILE_WATER  : Color8(42, 31, 255),
-	Globals.TILE_TERRAIN: Color8(148, 113, 71),
-	Globals.TILE_FOREST : Color8(0,123,19),
-	"default": Color8(255,0,255),
-}
-
-
-###################################
-# CHUNK AND TERRAIN SETTINGS	  #
-###################################
-
-# world map chunk size
-const CHUNK_SIZE:Vector2i = Vector2i(32,32)
-
-# tilemap tile types
-enum {TILE_WATER, TILE_TERRAIN, TILE_FOREST, TILE_BOG}
-
-# parcel owner types
-enum {PARCEL_CITY, PARCEL_STATE, PARCEL_PRIVATE}
-
-# tilemap layers
-enum {LAYER_TERRAIN, LAYER_BUILDINGS}
-const TILESET_TERRAIN:TileSet = preload("res://scenes/Chunk.tres")
-
-###################################
 # CAMERA SETTINGS				  #
 ###################################
 
@@ -87,41 +58,6 @@ const CAMERA_PAN_MULTI:float = 2.0
 
 
 ###################################
-# UI ELEMENT SETTINGS			  #
-###################################
-
-# NODE NAMES
-const WORLD_NODE:String = "World"
-const DEBUGINFO_NODE:String = "DebugInfo"
-const CONSTRUCTION_PANEL_NODE:String = "ConstructionPanel"
-
-const GUI_BUILD_BUTTON_SIZE_X: int = 50
-const GUI_BUILD_BUTTON_SIZE_Y: int = 50
-const GUI_BUILD_BUTTON_SIZE: Vector2i =	Vector2i(GUI_BUILD_BUTTON_SIZE_X,GUI_BUILD_BUTTON_SIZE_Y)
-
-# maybe should use int for these instead for faster matching?
-# ^ yes TODO switch to enum
-const TYPE_RESIDENTIAL:String = "residential"
-const TYPE_COMMERCIAL:String = "commercial"
-const TYPE_INDUSTRIAL:String = "industrial"
-const TYPE_SERVICES:String = "services"
-const TYPE_SOCIAL:String = "social"
-const TYPE_POWERPLANT:String = "powerplant"
-const TYPE_ROADS:String = "roads"
-const TYPE_DEMOLISH:String = "demolish"
-
-# Main menu buttons
-enum {
-	MAINMENU_NEW_GAME, 
-	MAINMENU_LOAD_GAME,
-	MAINMENU_RESUME_GAME,
-	MAINMENU_OPTIONS, 
-	MAINMENU_CREDITS,
-	MAINMENU_QUIT_GAME,
-	}
-
-
-###################################
 # WORLD GENERATION SETTINGS		  #
 ###################################
 
@@ -138,6 +74,23 @@ const MAP_MAX_WIDTH:int = 4096
 # tile size
 const TILE_SIZE_X:int = 16
 const TILE_SIZE_Y:int = 16
+
+const INFOLAYER_PARCEL_BORDER:Color = Color8(200,25,25,220)
+const INFOLAYER_PARCEL_FILL:Color = Color8(128,128,128,220)
+
+# parcel info is saved to a struct
+class Parcel:
+	var start:Vector2i
+	var size:Vector2i
+	var owner:int
+	var value:float
+
+# parcel size
+const PARCEL_WIDTH:int = 16
+const PARCEL_HEIGHT:int = 64
+
+var STARTING_AREA_WIDTH_IN_PARCELS:int = 5
+var STARTING_AREA_HEIGHT_IN_PARCELS:int = 2
 
 # tile dict to tilemap
 var td = {
@@ -188,7 +141,100 @@ var td = {
 		"key": [Vector2i(0,0)]
 		}
 	}
+
+
+###################################
+# CHUNK AND TERRAIN SETTINGS	  #
+###################################
+
+# world map chunk size
+const CHUNK_SIZE:Vector2i = Vector2i(32,32)
+
+# tilemap tile types
+enum {TILE_WATER, TILE_TERRAIN, TILE_FOREST, TILE_BOG}
+
+# parcel owner types
+enum {PARCEL_CITY, PARCEL_STATE, PARCEL_PRIVATE}
+
+# tilemap layers
+enum {LAYER_TERRAIN, LAYER_BUILDINGS}
+const TILESET_TERRAIN:TileSet = preload("res://scenes/Chunk.tres")
+
+
+###################################
+# MAIN MENU SETTINGS			  #
+###################################
+
+
+###################################
+# INFOLAYER SETTINGS			  #
+###################################
+
+enum {
+	INFOLAYER_PARCELS,
+	INFOLAYER_LAND_VALUE,
+	INFOLAYER_ZONETYPES,
+	INFOLAYER_TRAFFIC,
+	INFOLAYER_NOISE,
+	INFOLAYER_POLLUTION,
+	INFOLAYER_GARBAGE,
+	INFOLAYER_HAPPINESS,
+	INFOLAYER_EDUCATION,
+	INFOLAYER_CRIME,
+	INFOLAYER_FIRE,
+	INFOLAYER_HEAT,
+	INFOLAYER_WATER,
+	INFOLAYER_SNOW,
+	INFOLAYER_DISTRICTS,
+	}
+
+
+###################################
+# UI ELEMENT SETTINGS			  #
+###################################
+
+# NODE NAMES
+const WORLD_NODE:String = "World"
+const DEBUGINFO_NODE:String = "DebugInfo"
+const CONSTRUCTION_PANEL_NODE:String = "ConstructionPanel"
+
+const GUI_BUILD_BUTTON_SIZE_X: int = 50
+const GUI_BUILD_BUTTON_SIZE_Y: int = 50
+const GUI_BUILD_BUTTON_SIZE: Vector2i =	Vector2i(GUI_BUILD_BUTTON_SIZE_X,GUI_BUILD_BUTTON_SIZE_Y)
+
+# maybe should use int for these instead for faster matching?
+# ^ yes TODO switch to enum
+const TYPE_RESIDENTIAL:String = "residential"
+const TYPE_COMMERCIAL:String = "commercial"
+const TYPE_INDUSTRIAL:String = "industrial"
+const TYPE_SERVICES:String = "services"
+const TYPE_SOCIAL:String = "social"
+const TYPE_POWERPLANT:String = "powerplant"
+const TYPE_ROADS:String = "roads"
+const TYPE_DEMOLISH:String = "demolish"
+
+# Main menu buttons
+enum {
+	MAINMENU_NEW_GAME, 
+	MAINMENU_LOAD_GAME,
+	MAINMENU_RESUME_GAME,
+	MAINMENU_OPTIONS, 
+	MAINMENU_CREDITS,
+	MAINMENU_QUIT_GAME,
+	}
 	
+
+###################################
+# MINIMAP SETTINGS				  #
+###################################
+
+var minimap_colors:Dictionary = {
+	Globals.TILE_WATER  : Color8(42, 31, 255),
+	Globals.TILE_TERRAIN: Color8(148, 113, 71),
+	Globals.TILE_FOREST : Color8(0,123,19),
+	"default": Color8(255,0,255),
+}
+
 	
 ###################################
 # GAME ERORR MESSAGES			  #

@@ -155,6 +155,7 @@ func start_new_game():
 	
 	var node_infolayer:InfoLayer
 	node_infolayer = find_child("InfoLayer")
+	node_infolayer.set_draw_mode(0)
 	node_infolayer.set_visible(true)
 	
 	# set camera to center of the map

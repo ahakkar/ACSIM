@@ -89,11 +89,11 @@ func camera_pan_position(value) -> void:
 
 
 func camera_zoom_in() -> void:	
-	set_camera_zoom_level(Globals.CAMERA_ZOOM_LEVEL - Globals.CAMERA_ZOOM_FACTOR)
+	set_camera_zoom_level(Globals.CAMERA_ZOOM_LEVEL + Globals.CAMERA_ZOOM_FACTOR)
 	
 
 func camera_zoom_out() -> void:
-	set_camera_zoom_level(Globals.CAMERA_ZOOM_LEVEL + Globals.CAMERA_ZOOM_DURATION)
+	set_camera_zoom_level(Globals.CAMERA_ZOOM_LEVEL - Globals.CAMERA_ZOOM_DURATION)
 	
 
 func camera_reset_rotation() -> void:
