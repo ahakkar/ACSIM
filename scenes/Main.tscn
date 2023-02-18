@@ -119,6 +119,10 @@ layout_mode = 0
 offset_right = 8.0
 offset_bottom = 8.0
 
+[node name="button_infolayer_parcels" type="Button" parent="EventBus/UILayer/Control/ConstructionPanel"]
+offset_right = 8.0
+offset_bottom = 8.0
+
 [node name="DebugContainer" type="GridContainer" parent="EventBus/UILayer/Control"]
 layout_mode = 1
 anchors_preset = 1
@@ -159,6 +163,7 @@ texture_repeat = 1
 centered = false
 
 [connection signal="chunk_stats" from="EventBus/Game/ChunkHandler" to="EventBus/UILayer/Control" method="_on_chunk_handler_chunk_stats"]
+[connection signal="infolayer_button_pressed" from="EventBus/UILayer/Control" to="EventBus" method="_on_control_infolayer_button_pressed"]
 [connection signal="pressed" from="EventBus/UILayer/Control/ConstructionPanel/button_residental" to="EventBus/UILayer/Control" method="_on_button_residental_pressed"]
 [connection signal="pressed" from="EventBus/UILayer/Control/ConstructionPanel/button_commercial" to="EventBus/UILayer/Control" method="_on_button_commercial_pressed"]
 [connection signal="pressed" from="EventBus/UILayer/Control/ConstructionPanel/button_industrial" to="EventBus/UILayer/Control" method="_on_button_industrial_pressed"]
@@ -166,6 +171,7 @@ centered = false
 [connection signal="pressed" from="EventBus/UILayer/Control/ConstructionPanel/button_demolish" to="EventBus/UILayer/Control" method="_on_button_demolish_pressed"]
 [connection signal="pressed" from="EventBus/UILayer/Control/ConstructionPanel/button_services" to="EventBus/UILayer/Control" method="_on_button_services_pressed"]
 [connection signal="pressed" from="EventBus/UILayer/Control/ConstructionPanel/button_social" to="EventBus/UILayer/Control" method="_on_button_social_pressed"]
+[connection signal="pressed" from="EventBus/UILayer/Control/ConstructionPanel/button_infolayer_parcels" to="EventBus/UILayer/Control" method="_on_button_infolayer_parcels_pressed"]
 [connection signal="mouse_entered" from="EventBus/UILayer/Control/Minimap" to="EventBus/UILayer/Control/Minimap" method="_on_mouse_entered"]
 [connection signal="mouse_exited" from="EventBus/UILayer/Control/Minimap" to="EventBus/UILayer/Control/Minimap" method="_on_mouse_exited"]
 [connection signal="set_camera_position" from="EventBus/UILayer/Control/Minimap" to="EventBus" method="set_camera_position"]

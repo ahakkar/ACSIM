@@ -1,15 +1,11 @@
 class_name InfoLayer
 extends Node2D
 
-var draw_mode:int = -1
+var draw_mode:int
 
-# displays various info layers of the game
-
-# Called when the node enters the scene tree for the first time.
 func _ready():
-	pass # Replace with function body.
-	
-
+	#no layer disible by default
+	draw_mode = Globals.INFLAYER_LAYERS_HIDDEN
 
 
 func _draw():
@@ -31,6 +27,8 @@ func _draw():
 		Globals.INFOLAYER_WATER:pass
 		Globals.INFOLAYER_SNOW:pass
 		Globals.INFOLAYER_DISTRICTS:pass
+		_: #default
+			push_error("InfoLayer: invalid draw mode '%s' specified!" % draw_mode)
 		
 
 # Called every frame. 'delta' is the elapsed time since the previous frame.
@@ -67,6 +65,7 @@ func get_draw_mode() -> int:
 	
 
 func set_draw_mode(mode:int) -> void:
+	# change draw mode and redraw if it is not used
 	self.draw_mode = mode
 	if self.draw_mode >= 0:
 		queue_redraw()

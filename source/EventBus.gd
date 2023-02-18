@@ -5,6 +5,7 @@ extends Node
 @onready var node_mainmenu:MainMenu
 @onready var node_game:Game
 @onready var node_camera:Camera
+@onready var node_infolayer:InfoLayer
 @onready var node_uilayer:UILayer
 
 
@@ -34,6 +35,7 @@ func _ready():
 	node_mainmenu = find_child("MainMenu")
 	node_game = find_child("Game")
 	node_camera = find_child("Camera")
+	node_infolayer = find_child("InfoLayer")
 	node_uilayer = find_child("UILayer")	
 	
 	
@@ -94,6 +96,17 @@ func _unhandled_input(event) -> void:
 		node_camera.clamp_camera_position()
 
 
+func _on_control_infolayer_button_pressed(button_type):
+	var current_layer:int = node_infolayer.get_draw_mode()
+	
+	if current_layer == button_type:
+		node_infolayer.set_draw_mode(Globals.INFLAYER_LAYERS_HIDDEN)
+		node_infolayer.set_visible(false)
+	else:
+		node_infolayer.set_draw_mode(button_type)
+		node_infolayer.set_visible(true)
+	
+
 func _on_mainmenu_button_pressed(button:int):
 	match button:
 		Globals.MAINMENU_NEW_GAME:			
@@ -153,11 +166,6 @@ func start_new_game():
 	node_game.set_visible(true)
 	node_uilayer.set_visible(true)
 	
-	var node_infolayer:InfoLayer
-	node_infolayer = find_child("InfoLayer")
-	node_infolayer.set_draw_mode(0)
-	node_infolayer.set_visible(true)
-	
 	# set camera to center of the map
 	node_camera.camera_reset_rotation()
 	node_camera.set_camera_position(
@@ -165,8 +173,5 @@ func start_new_game():
 		Globals.map_size / 2.0 * Globals.TILE_SIZE_Y)
 		)
 		
-		
-	
-
 
 

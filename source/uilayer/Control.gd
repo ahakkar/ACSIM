@@ -2,7 +2,8 @@ extends Control
 
 # var view = get_node("../View")
 
-signal button_pressed(button_name)
+signal construction_button_pressed(button_name, button_type)
+signal infolayer_button_pressed(button_type)
 @onready var debug_info = get_node("DebugContainer/" + Globals.DEBUGINFO_NODE)
 @onready var minimap:Minimap
 
@@ -20,6 +21,7 @@ var buttons = {
 	"button_demolish": [Vector2(50,50), "Dm"],
 	"button_services": [Vector2(100,50), "Sv"],		
 	"button_social": [Vector2(150,50), "So"],	
+	"button_infolayer_parcels": [Vector2(200,50), "Prc"],	
 }
 
 func _on_chunk_handler_chunk_stats(chunks, removal_queue):
@@ -40,31 +42,35 @@ func _process(_delta):
 
 # sends signals which View catches and places selected type of buildings
 func _on_button_residental_pressed():
-	emit_signal("button_pressed", Globals.TYPE_RESIDENTIAL)
+	emit_signal("construction_button_pressed", Globals.TYPE_RESIDENTIAL, 0)
 	
 	
 func _on_button_commercial_pressed():
-	emit_signal("button_pressed", Globals.TYPE_COMMERCIAL)
+	emit_signal("construction_button_pressed", Globals.TYPE_COMMERCIAL, 0)
 
 
 func _on_button_industrial_pressed():
-	emit_signal("button_pressed", Globals.TYPE_INDUSTRIAL)
+	emit_signal("construction_button_pressed", Globals.TYPE_INDUSTRIAL, 0)
 
 
 func _on_button_roads_pressed():
-	emit_signal("button_pressed", Globals.TYPE_ROADS)
+	emit_signal("construction_button_pressed", Globals.TYPE_ROADS, 0)
 
 
 func _on_button_demolish_pressed():
-	emit_signal("button_pressed", Globals.TYPE_DEMOLISH)
+	emit_signal("construction_button_pressed", Globals.TYPE_DEMOLISH, 0)
 	
 
 func _on_button_services_pressed():
-	emit_signal("button_pressed", Globals.TYPE_SERVICES)
+	emit_signal("construction_button_pressed", Globals.TYPE_SERVICES, 0)
 
 
 func _on_button_social_pressed():
-	emit_signal("button_pressed", Globals.TYPE_SOCIAL)
+	emit_signal("construction_button_pressed", Globals.TYPE_SOCIAL, 0)
+	
+
+func _on_button_infolayer_parcels_pressed():
+	emit_signal("infolayer_button_pressed", Globals.INFOLAYER_PARCELS)	
 
 
 func _on_main_worldgen_ready():

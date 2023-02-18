@@ -188,6 +188,7 @@ enum {
 	INFOLAYER_DISTRICTS,
 	}
 
+const INFLAYER_LAYERS_HIDDEN:int = -1
 
 ###################################
 # UI ELEMENT SETTINGS			  #
