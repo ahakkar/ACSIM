@@ -1,15 +1,15 @@
+class_name UIControl
 extends Control
 
 # var view = get_node("../View")
 
 signal construction_button_pressed(button_name, button_type)
 signal infolayer_button_pressed(button_type)
-@onready var debug_info = get_node("DebugContainer/" + Globals.DEBUGINFO_NODE)
-@onready var minimap:Minimap
+#@onready var node_minimap:Minimap
+@onready var node_debuginfo:DebugInfo
 
 var amount_of_chunks:int = 0
 var size_of_chunk_removal_queue:int = 0
-var update_debug_info:bool = false
 
 
 # name, position
@@ -30,15 +30,12 @@ func _on_chunk_handler_chunk_stats(chunks, removal_queue):
 
 
 # Called when the node enters the scene tree for the first time.
-func _ready():
+func set_ready():
 	create_buttons()	
-	minimap = Minimap.new()
+	##node_minimap = Minimap.new()
+	node_debuginfo = find_child("DebugInfo")
+	node_debuginfo.set_ready()
 	
-
-# Called every frame. 'delta' is the elapsed time since the previous frame.
-func _process(_delta):	
-	update_debug_info_func()
-		
 
 # sends signals which View catches and places selected type of buildings
 func _on_button_residental_pressed():
@@ -75,7 +72,6 @@ func _on_button_infolayer_parcels_pressed():
 
 func _on_main_worldgen_ready():
 	self.set_process(true)
-	update_debug_info = true
 
 	
 # defines construction toolbar buttons	
@@ -94,21 +90,5 @@ func create_buttons():
 		node_path.set_text(values[1])
 		node_path.show()
 		
-func update_debug_info_func():
-	debug_info.set_text(
-		"FPS " + str(Engine.get_frames_per_second()) + "\n" +
-		"Camera pos: " + str(Globals.CAMERA_POSITION) + "\n" + 
-		"Chunks: " + str(self.amount_of_chunks) + "\n" +
-		"Chunk del: " + str(self.size_of_chunk_removal_queue)
-		) 
-#	debug_info.set_text(
-#		#str(get_viewport().get_mouse_position()) +"\n" + 
-#		"FPS " + str(Engine.get_frames_per_second()) + "\n" +
-#		"Zoom lvl: " + str(Globals.CAMERA_ZOOM_LEVEL) + "\n" +
-#		"Camera pos: " + str(Globals.CAMERA_POSITION) + "\n" +
-#		"Camera pos: " + str(Globals.camera_marker.position) + "\n" +
-#		"Chunks: " + str(self.amount_of_chunks) + "\n" +
-#		"Chunk del: " + str(self.size_of_chunk_removal_queue),
-#	)
 
 

@@ -11,12 +11,12 @@ func _draw():
 	
 	
 # Rotates the box if camera is rotated
-func _on_camera_zoom_2d_camera_rotation_changed(new_rotation):
+func set_camera_marker_rotation(new_rotation):
 	self.rotation = new_rotation
 
 
 # Redraws the box to a different size if camera is zoomed
-func _on_camera_zoom_2d_camera_zoom_changed(new_zoom_factor):
+func set_camera_marker_zoom(new_zoom_factor):
 	w_s    = DisplayServer.window_get_size(0) / size_multiplier
 	w_s.x /= new_zoom_factor
 	w_s.y /= new_zoom_factor

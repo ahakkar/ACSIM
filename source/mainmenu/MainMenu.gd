@@ -3,13 +3,9 @@ extends Control
 
 signal button_pressed(button_name)
 
-# Connect main menu to Main game
-
-#func _process(delta):
-#	print("aaa")
-
 
 func set_ready():
+	# Connect main menu to Main game
 	self.connect("button_pressed", self.get_parent()._on_mainmenu_button_pressed, CONNECT_PERSIST)
 	self.find_child("Menu_ResumeGame").disabled = true
 	

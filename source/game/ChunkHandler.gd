@@ -10,7 +10,7 @@ extends Node2D
 # which is extremely slow in godot 4.0, 4096x4096 takes minutes to fill with set_cell() commands
 
 
-signal chunk_stats(chunks, removal_queue)
+signal chunk_stats(chunks:int, removal_queue:int)
 
 var chunks:Dictionary = {}
 var chunks_to_remove:Array[Chunk] = []

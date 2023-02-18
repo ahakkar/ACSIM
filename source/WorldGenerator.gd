@@ -94,30 +94,6 @@ func generate_biomes() -> void:
 					# can add other tresholds here for other biomes
 
 
-# forests are not generated yet so can just compare water and terrain
-func is_filled_with_water(coords:Vector2i) -> bool:
-	var terrain_tile_count:int = 0
-
-#	0*64, 0*64 +64-1 = 0-63
-#	1*64, 1*64 +63 = 64-127
-#	2*64, 2*64 +63 = 128-191
-#	3*64, 3*64 +63 = 192-255
-	for y in range(
-		coords.y*Globals.PARCEL_HEIGHT,
-		coords.y*Globals.PARCEL_HEIGHT + Globals.PARCEL_HEIGHT-1
-		):
-		for x in range(
-			coords.x*Globals.PARCEL_WIDTH,
-			coords.x*Globals.PARCEL_WIDTH + Globals.PARCEL_WIDTH-1
-			):
-			if Globals.map_terrain_data[y][x] == Globals.TILE_TERRAIN:
-				terrain_tile_count += 1
-		
-	# parcel is ok if it has at least one land
-	if terrain_tile_count > 0:
-		return false
-	return true
-
 func generate_parcels() -> void:
 	# divide the land area Cadastres / Parcels
 	# TODO better solution, this is something my skills were able to handle at proto stage
@@ -144,16 +120,6 @@ func generate_parcels() -> void:
 	# not used, but could be used later
 	var total_parcels = Globals.map_size/Globals.PARCEL_WIDTH * Globals.map_size / Globals.PARCEL_HEIGHT	
 	give_starting_parcels_for_city(total_parcels)
-
-func give_starting_parcels_for_city(_amount:int) -> void:
-	# gives a x*y parcel initial starting area for the player
-	var p_x = Globals.map_size/Globals.PARCEL_WIDTH/2
-	var p_y = Globals.map_size/Globals.PARCEL_HEIGHT/2
-	
-	for y in range(0, Globals.STARTING_AREA_HEIGHT_IN_PARCELS):
-		for x in range(0, Globals.STARTING_AREA_WIDTH_IN_PARCELS):
-			if Globals.map_parcel_data[p_y-y][p_x-x] != null:
-				Globals.map_parcel_data[p_y-y][p_x-x].owner = Globals.PARCEL_CITY
 
 
 func generate_world(filename) -> bool:	
@@ -200,7 +166,44 @@ func generate_world(filename) -> bool:
 		emit_signal("worldgenerator_function_called", (end-start)/1000.0, function[0])
 
 	return true
+
+
+func give_starting_parcels_for_city(_amount:int) -> void:
+	# gives a x*y parcel initial starting area for the player
+	var p_x = Globals.map_size/Globals.PARCEL_WIDTH/2
+	var p_y = Globals.map_size/Globals.PARCEL_HEIGHT/2
 	
+	for y in range(0, Globals.STARTING_AREA_HEIGHT_IN_PARCELS):
+		for x in range(0, Globals.STARTING_AREA_WIDTH_IN_PARCELS):
+			if Globals.map_parcel_data[p_y-y][p_x-x] != null:
+				Globals.map_parcel_data[p_y-y][p_x-x].owner = Globals.PARCEL_CITY
+
+
+# forests are not generated yet so can just compare water and terrain
+func is_filled_with_water(coords:Vector2i) -> bool:
+	#var terrain_tile_count:int = 0
+
+#	0*64, 0*64 +64-1 = 0-63
+#	1*64, 1*64 +63 = 64-127
+#	2*64, 2*64 +63 = 128-191
+#	3*64, 3*64 +63 = 192-255
+	for y in range(
+		coords.y*Globals.PARCEL_HEIGHT,
+		coords.y*Globals.PARCEL_HEIGHT + Globals.PARCEL_HEIGHT-1
+		):
+		for x in range(
+			coords.x*Globals.PARCEL_WIDTH,
+			coords.x*Globals.PARCEL_WIDTH + Globals.PARCEL_WIDTH-1
+			):
+			if Globals.map_terrain_data[y][x] == Globals.TILE_TERRAIN:
+				return false
+				#terrain_tile_count += 1
+		
+	# parcel is ok if it has at least one land
+	#if terrain_tile_count > 0:
+	#	return false
+	return true
+		
 
 func read_image_pixel_data() -> void:
 	# initialize the array to have enough rows

@@ -4,6 +4,7 @@ extends Camera2D
 
 signal camera_rotation_changed(new_rotation)
 signal camera_zoom_changed(new_zoom_factor)
+signal camera_pos_changed(new_pos)
 
 var is_panning_camera:bool = false
 var tween:Tween
@@ -31,13 +32,17 @@ func get_camera_rotation():
 	return self.rotation
 	
 
+func get_camera_zoom_level() -> float:
+	return Globals.CAMERA_ZOOM_LEVEL
+
+
 func set_camera_panning(value:bool) -> void:
 	self.is_panning_camera = value
 	
 
 func set_camera_position(pos: Vector2) -> void:		
 	self.position = pos	
-	print("camera pos set:", self.position)	
+	emit_signal("camera_pos_changed", pos)
 
 
 func set_camera_limits() -> void:

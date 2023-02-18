@@ -94,7 +94,6 @@ func set_minimap() -> void:
 
 func set_ready() -> void:
 	# Assuming the area has a child CollisionShape2D with a RectangleShape resource
-	self.set_process(true)
 	observe_mouse_inside_minimap = true
 	area_size = self.get_rect().size
 	

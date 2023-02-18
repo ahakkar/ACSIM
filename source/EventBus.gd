@@ -9,6 +9,8 @@ extends Node
 @onready var node_uilayer:UILayer
 
 
+var previous_zoom: float
+
 # The idea is for the user to be able to choose the map from GUI later
 var map_filenames:Array = [
 	"res://maps/tampere_10x10km_1000px.png",
@@ -51,17 +53,21 @@ func _unhandled_input(event) -> void:
 	###################################
 	
 	if event.is_action_pressed("open_main_menu"):
-		# move mainmenu to current game camera position
-		var mainmenu_pos = Globals.CAMERA_POSITION
-		mainmenu_pos.x -= DisplayServer.window_get_size(0).x/2 
-		mainmenu_pos.y -= DisplayServer.window_get_size(0).y/2
-		node_mainmenu.set_position(mainmenu_pos, false)
-
 		# show the menu
-		node_mainmenu.set_visible(true)
-		node_game.set_visible(false)
-		node_uilayer.set_visible(false)
-		node_main.pause_game()
+		if node_mainmenu.visible:
+			self.toggle_mainmenu()
+			node_main.unpause_game()
+		else:
+			node_mainmenu.set_scale(Vector2(1.0/Globals.CAMERA_ZOOM_LEVEL, 1.0/Globals.CAMERA_ZOOM_LEVEL))
+			
+			# move mainmenu to current game camera position
+			var mainmenu_pos = Globals.CAMERA_POSITION
+			mainmenu_pos.x -= DisplayServer.window_get_size(0).x/2
+			mainmenu_pos.y -= DisplayServer.window_get_size(0).y/2
+			node_mainmenu.set_position(mainmenu_pos, false)
+			
+			self.toggle_mainmenu()
+			node_main.pause_game()
 		
 	###################################
 	# GAME CAMERA					  #
@@ -96,6 +102,14 @@ func _unhandled_input(event) -> void:
 		node_camera.clamp_camera_position()
 
 
+func _on_camera_rotation_changed(new_rotation):
+	node_uilayer.camera_rotation_changed(new_rotation)	
+
+
+func _on_camera_zoom_changed(new_zoom_factor):
+	node_uilayer.camera_zoom_changed(new_zoom_factor)	
+
+
 func _on_control_infolayer_button_pressed(button_type):
 	var current_layer:int = node_infolayer.get_draw_mode()
 	
@@ -116,7 +130,7 @@ func _on_mainmenu_button_pressed(button:int):
 			pass
 			
 		Globals.MAINMENU_RESUME_GAME:
-			resume_game()
+			self.toggle_mainmenu()
 			
 		Globals.MAINMENU_OPTIONS:
 			pass
@@ -129,18 +143,27 @@ func _on_mainmenu_button_pressed(button:int):
 			
 		_:
 			push_error("Error: Main: unknown signal at _on_mainmenu_button_pressed: ", button)
-			
-
-func resume_game() -> void:
-	# TODO save camera position before opening menu, restore camera position when closing menu
-	node_main.unpause_game()
-	node_mainmenu.set_visible(false)
-	node_game.set_visible(true)
-	node_uilayer.set_visible(true)
 	
-
-func set_camera_position(pos:Vector2):
+	
+func _on_set_camera_position(pos:Vector2):
 	node_camera.set_camera_position(pos)
+
+func toggle_mainmenu() -> void:
+	# TODO save camera position before opening menu, restore camera position when closing menu
+	if node_mainmenu.visible:
+		node_mainmenu.set_visible(false)
+	else:
+		node_mainmenu.set_visible(true)
+	
+	if node_game.visible:		
+		node_game.set_visible(false)
+	else:
+		node_game.set_visible(true)
+	
+	if node_uilayer.visible:
+		node_uilayer.set_visible(false)
+	else:
+		node_uilayer.set_visible(true)
 	
 
 func start_new_game():
@@ -173,5 +196,8 @@ func start_new_game():
 		Globals.map_size / 2.0 * Globals.TILE_SIZE_Y)
 		)
 		
+
+
+
 
 

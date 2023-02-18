@@ -22,7 +22,7 @@ var chunks_loaded:int = 0
 @export var map_parcel_data:Array[Array] = [[]]
 
 # current camera zoom level
-@export var CAMERA_ZOOM_LEVEL:float
+@export var CAMERA_ZOOM_LEVEL:float = 1.0
 @export var CAMERA_POSITION:Vector2i
 
 # minimap texture, used also as save game's imagetexture
