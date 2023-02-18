@@ -1,66 +1,66 @@
-[gd_scene load_steps=15 format=3 uid="uid://c5deq5s55q0ii"]
+[gd_scene load_steps=15 format=3 uid="uid://b2jnn81mmg5wt"]
 
-[ext_resource type="Script" path="res://scripts/Main.gd" id="1_ysxum"]
-[ext_resource type="Script" path="res://scripts/EventBus.gd" id="2_0j1ud"]
-[ext_resource type="Script" path="res://scripts/ChunkHandler.gd" id="2_6cequ"]
-[ext_resource type="PackedScene" uid="uid://dq7jmiqon170p" path="res://scenes/MainMenu.tscn" id="2_wfpe2"]
-[ext_resource type="Script" path="res://scripts/Control.gd" id="3_1t1c8"]
-[ext_resource type="Script" path="res://scripts/Camera.gd" id="3_15x8g"]
-[ext_resource type="Script" path="res://scripts/Game.gd" id="4_4tr6y"]
-[ext_resource type="Script" path="res://scripts/Simulation.gd" id="5_0dxab"]
-[ext_resource type="Script" path="res://scripts/EntityPlacer.gd" id="5_8jju5"]
-[ext_resource type="Script" path="res://scripts/Minimap.gd" id="5_rg28x"]
-[ext_resource type="Script" path="res://scripts/CameraMarker.gd" id="7_6krn1"]
-[ext_resource type="Script" path="res://scripts/MapBackground.gd" id="8_ron2j"]
-[ext_resource type="Script" path="res://scripts/UILayer.gd" id="9_ebec0"]
-[ext_resource type="Script" path="res://scripts/InfoLayer.gd" id="14_hbedy"]
+[ext_resource type="Script" path="res://source/Main.gd" id="1_vnd1v"]
+[ext_resource type="Script" path="res://source/EventBus.gd" id="2_qhcs8"]
+[ext_resource type="PackedScene" path="res://scenes/MainMenu.tscn" id="2_wfpe2"]
+[ext_resource type="Script" path="res://source/camera/Camera.gd" id="3_4khcd"]
+[ext_resource type="Script" path="res://source/game/Game.gd" id="4_3cif6"]
+[ext_resource type="Script" path="res://source/game/Simulation.gd" id="5_hkn6c"]
+[ext_resource type="Script" path="res://source/game/ChunkHandler.gd" id="6_bwq3e"]
+[ext_resource type="Script" path="res://source/game/MapBackground.gd" id="7_nh2ol"]
+[ext_resource type="Script" path="res://source/infolayer/InfoLayer.gd" id="9_dg6uy"]
+[ext_resource type="Script" path="res://source/uilayer/UILayer.gd" id="10_l2a8p"]
+[ext_resource type="Script" path="res://source/EntityPlacer.gd" id="11_rf6kr"]
+[ext_resource type="Script" path="res://source/uilayer/Control.gd" id="12_vhsyq"]
+[ext_resource type="Script" path="res://source/uilayer/Minimap.gd" id="13_80u53"]
+[ext_resource type="Script" path="res://source/uilayer/CameraMarker.gd" id="14_rvt3n"]
 
 [node name="Main" type="Node"]
-script = ExtResource("1_ysxum")
+script = ExtResource("1_vnd1v")
 
 [node name="EventBus" type="Node" parent="."]
 process_mode = 3
-script = ExtResource("2_0j1ud")
+script = ExtResource("2_qhcs8")
 
 [node name="Camera" type="Camera2D" parent="EventBus"]
 process_mode = 1
 position = Vector2(1280, 720)
 ignore_rotation = false
-script = ExtResource("3_15x8g")
+script = ExtResource("3_4khcd")
 
 [node name="Game" type="Node2D" parent="EventBus"]
 process_mode = 1
 visible = false
-script = ExtResource("4_4tr6y")
+script = ExtResource("4_3cif6")
 
 [node name="Simulation" type="Node" parent="EventBus/Game"]
-script = ExtResource("5_0dxab")
+script = ExtResource("5_hkn6c")
 
 [node name="ChunkHandler" type="Node2D" parent="EventBus/Game"]
-script = ExtResource("2_6cequ")
+script = ExtResource("6_bwq3e")
 
 [node name="MapBackground" type="Sprite2D" parent="EventBus/Game"]
 z_index = -1
 centered = false
-script = ExtResource("8_ron2j")
+script = ExtResource("7_nh2ol")
 
 [node name="MainMenu" parent="EventBus" instance=ExtResource("2_wfpe2")]
 
 [node name="InfoLayer" type="Node2D" parent="EventBus"]
 visible = false
-script = ExtResource("14_hbedy")
+script = ExtResource("9_dg6uy")
 
 [node name="UILayer" type="CanvasLayer" parent="EventBus"]
 process_mode = 1
 visible = false
-script = ExtResource("9_ebec0")
+script = ExtResource("10_l2a8p")
 
 [node name="EntityPlacer" type="Control" parent="EventBus/UILayer"]
 layout_mode = 3
 anchors_preset = 0
 offset_right = 40.0
 offset_bottom = 40.0
-script = ExtResource("5_8jju5")
+script = ExtResource("11_rf6kr")
 
 [node name="Control" type="Control" parent="EventBus/UILayer"]
 layout_mode = 3
@@ -70,7 +70,7 @@ anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
 mouse_filter = 1
-script = ExtResource("3_1t1c8")
+script = ExtResource("12_vhsyq")
 metadata/_edit_use_anchors_ = true
 
 [node name="ConstructionPanel" type="Panel" parent="EventBus/UILayer/Control"]
@@ -146,13 +146,13 @@ offset_top = -512.0
 grow_horizontal = 0
 grow_vertical = 0
 mouse_filter = 1
-script = ExtResource("5_rg28x")
+script = ExtResource("13_80u53")
 
 [node name="CameraMarker" type="Sprite2D" parent="EventBus/UILayer/Control/Minimap"]
 z_index = 10
 position = Vector2(-32, 0)
 centered = false
-script = ExtResource("7_6krn1")
+script = ExtResource("14_rvt3n")
 
 [node name="MinimapSprite" type="Sprite2D" parent="EventBus/UILayer/Control/Minimap"]
 texture_repeat = 1
